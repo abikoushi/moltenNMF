@@ -1,10 +1,10 @@
-This is e-pTeX, Version 3.14159265-p3.8.3-191112-2.6 (utf8.euc) (TeX Live 2020) (preloaded format=platex 2020.5.19)  22 MAR 2022 00:58
+This is e-pTeX, Version 3.14159265-p3.8.3-191112-2.6 (utf8.euc) (TeX Live 2020) (preloaded format=platex 2020.5.19)  22 MAR 2022 21:15
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**計算メモ.tex
-(./荐^^88膊^^97�^^83＜^^83�.tex
+**note.tex
+(./note.tex
 pLaTeX2e <2020-04-12> (based on LaTeX2e <2020-02-02> patch level 5)
 L3 programming layer <2020-05-15>
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amscls/amsart.cls
@@ -201,8 +201,9 @@ File: l3backend-dvips.def 2020-05-05 L3 backend support: dvips
 \g__pdf_backend_annotation_int=\count190
 \g__pdf_backend_link_int=\count191
 \g__pdf_backend_link_sf_int=\count192
-) (./荐^^88膊^^97�^^83＜^^83�.aux)
-\openout1 = `計算メモ.aux'.
+)
+No file note.aux.
+\openout1 = `note.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
 LaTeX Font Info:    ... okay on input line 15.
@@ -223,7 +224,6 @@ LaTeX Font Info:    ... okay on input line 15.
 LaTeX Font Info:    Checking defaults for JT1/mc/m/n on input line 15.
 LaTeX Font Info:    ... okay on input line 15.
 LaTeX Font Info:    Trying to load font information for U+msa on input line 15.
-
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
@@ -277,20 +277,36 @@ LaTeX Font Info:    Font shape `JY1/mc/b/n' in size <12> not available
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <12> not available
 (Font)              Font shape `JY1/gt/m/n' tried instead on input line 16.
 LaTeX Font Info:    Kanji font shape `JY1/mc/m/sc' undefined
-(Font)              No change on input line 17.
+(Font)              No change on input line 18.
 
-Overfull \hbox (6.52222pt too wide) detected at line 35
+Overfull \hbox (6.52222pt too wide) detected at line 37
 []
  []
 
-[1] [2] (./荐^^88膊^^97�^^83＜^^83�.aux) ) 
-Here is how much of TeX's memory you used:
- 3293 strings out of 480987
- 43928 string characters out of 5912924
- 303034 words of memory out of 5000000
- 19289 multiletter control sequences out of 15000+600000
- 543923 words of font info for 72 fonts, out of 8000000 for 9000
- 1090 hyphenation exceptions out of 8191
- 38i,12n,33p,345b,277s stack positions out of 5000i,500n,10000p,200000b,80000s
+[1]
+LaTeX Font Info:    Kanji font shape `JY1/mc/m/sc' undefined
+(Font)              No change on input line 51.
 
-Output written on 計算メモ.dvi (2 pages, 6596 bytes).
+
+LaTeX Warning: Reference `geney' on page 2 undefined on input line 62.
+
+LaTeX Font Info:    Kanji font shape `JY1/mc/m/it' undefined
+(Font)              No change on input line 67.
+[2] [3] (./note.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 3313 strings out of 480987
+ 44075 string characters out of 5912924
+ 303055 words of memory out of 5000000
+ 19302 multiletter control sequences out of 15000+600000
+ 546732 words of font info for 81 fonts, out of 8000000 for 9000
+ 1090 hyphenation exceptions out of 8191
+ 38i,13n,33p,341b,287s stack positions out of 5000i,500n,10000p,200000b,80000s
+
+Output written on note.dvi (3 pages, 11588 bytes).

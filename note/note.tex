@@ -1,0 +1,154 @@
+\documentclass[12pt]{amsart}
+\usepackage{geometry}                % See geometry.pdf to learn the layout options. There are lots.
+\geometry{a4paper}                   % ... or a4paper or a5paper or ... 
+%\geometry{landscape}                % Activate for for rotated page geometry
+%\usepackage[parfill]{parskip}    % Activate to begin paragraphs with an empty line rather than an indent
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\DeclareGraphicsRule{.tif}{png}{.png}{`convert #1 `dirname #1`/`basename #1 .tif`.png}
+
+\title{molten component analysis}
+\author{Ko ABE}
+%\date{}                                           % Activate to display a given date or no date
+
+\begin{document}
+\maketitle
+
+\section{Normal distribution}
+\subsection{Estimation}
+
+Now, consider following data generating process; 
+\begin{align*}
+y_n &\sim \mathcal{N}\left(\sum_{l=1}^L \prod_{d=1}^D\mu_{dl}^{x_{nd}}, \lambda^{-1}\right)\\
+\mu_{dl} & \sim \mathcal{N}(0,\tau^{-1}) % \lambda &\sim \mathcal{G}(a,b),
+\end{align*}
+where $\mathcal{N}(\mu,\sigma^2)$ is normal distribution with mean $\mu$ and variance $\sigma^2$. 
+
+After some manipulation, we get following result; 
+\begin{align*}
+&\sum_{n=1}^{N} \log p(\mu_{dl}|y, X, \mu_{dl}^{(c)},\sigma^2)\\
+&= \sum_{n=1}^{N}\left(-\frac{\lambda}{2}\left\{ y_n -\sum_{l=1}^L\prod_{j=1}^D \mu_{j,l}^{x_{nj}} \right\}^2\right) -\tau \frac{\mu_{dl}^2}{2} + C\\
+&= \sum_{n=1}^{N}\left(-\frac{\lambda}{2}\left\{ y_n -\sum_{l'\neq l}\prod_{j=1}^D \mu_{jl'}^{x_{n,j}}-\prod_{j=1}^D \mu_{jl}^{x_{nj}} \right\}^2\right)-\tau \frac{\mu_{jl}^2}{2}+ C\\
+&=\sum_{n=1}^{N}\left(-\frac{\lambda}{2}\left\{\prod_{j =1}^D \mu_{jl}^{2x_{nj}}-2\prod_{j=1}^D \mu_{jl}^{x_{nj}}\left(y_n -\sum_{l'\neq l}\prod_{j=1}^D \mu_{jl'}^{x_{n,j}}\right) \right\}\right) -\tau \frac{\mu_{dl}^2}{2} + C\\
+&=-\frac{\lambda}{2}\left\{\sum_{n=1}^N \left( \mu_{dl}^{2x_{nd}}\prod_{d'\neq d} \mu_{d'l}^{2x_{nd'}} - 2 \mu_{dl}^{x_{nd}}\prod_{d' \neq d} \mu_{d'l}^{x_{nd'}}\left(y_n -\sum_{l'\neq l}\prod_{j=1}^D \mu_{jl'}^{x_{nd}}\right) \right)\right\} -\tau \frac{\mu_{dl}^2}{2} + C\\
+&=-\frac{\tau  + \lambda \sum_{n=1}^N x_{nd}\prod_{d' \neq d} \mu_{d'l}^{2x_{nd'}} }{2} \\
+&\quad \times \left(\mu_{dl}^{2}-2 \mu_{dl} \lambda \frac{\sum_{n=1}^N x_{nd}\prod_{d' \neq d} \mu_{d'l}^{x_{nd'}} \left[y_n -\sum_{l'\neq l}\prod_{j=1}^D \mu_{jl'}^{x_{nj}}  \right] }{\sum_{n=1}^N x_{nd}\prod_{d\neq d'} \mu_{d'l}^{2x_{nd'}} }\right) + C,
+\end{align*}
+where $C$ is constant term which not depends on $\mu_{dl}$.
+
+Using mean-field approximation, we get following variational posterior distribution; 
+\begin{align*}
+q(\mu_{dl})= \mathcal{N}(\hat \mu_{dl},\hat \sigma_{dl}), 
+\end{align*}
+where $\hat \mu_{dl}$ and $\hat \sigma_{dl}$ are defined by
+\begin{align*}
+\hat \mu_{dl} &=\frac{\sum_{n=1}^N x_{nd}\prod_{d' \neq d} \langle \mu_{d'l} \rangle ^{x_{nd'}} \left[y_n -\sum_{l'\neq l}\prod_{j=1}  \langle \mu_{jl'} \rangle ^{x_{nj}}  \right]}{\tau/\lambda + \left( \sum_{n=1}^N x_{nd}\prod_{d\neq d'} \langle \mu_{d'l}^{2} \rangle ^{x_{nd'}} \right)},\\
+\hat \sigma^2 &=\left(\tau + \lambda \left\{\sum_{n=1}^N x_{nd}\prod_{d' \neq d}  \langle \mu_{d'l}^2 \rangle ^{x_{nd'}}\right\} \right)^{-1},
+\end{align*}
+where $\langle x \rangle$ is expectation of $x$ under the variational posterior distribution.
+
+\section{Poisson distribution}
+\subsection{Estimation}
+
+Now, consider following data generating process; 
+\begin{align}
+y_n &\sim \mathcal{Po}\left(\sum_{l=1}^L \prod_{d=1}^D \lambda_{dl}^{x_{nd}}, \right) \label{geney}\\
+\lambda &\sim \mathcal{G}(a, b), \nonumber
+\end{align}
+where $\mathcal{Po}(\lambda)$ is Poisson distribution with mean $\lambda$ and $\mathcal{G}(a, b)$ is gamma distribution with shape $a$, and scale $b$. 
+
+\subsection{Variational inference}
+Equation \ref{geney} is equivalent to following:
+\begin{align}
+y_{n} &= \sum_{d=1}^{D} s_{n,d}+\sum_{l=1}^{L}u_{n,l},\nonumber \\
+u_{n,l} &\sim \mathcal{Po}\left(\tau_n \prod_{d=1}^{D}\lambda_{d,l}^{x_{n,d}} \right)
+\end{align}
+Using the mean field assumption (Jordan \textit{et al}., 1999), we introduce closed-form variational Bayes inference updates for the proposal model.
+Let $q(\lambda_{k,l})$ and $q(\boldsymbol{h}_{l})$ be the target approximate posterior distribution.
+
+The updates for $u_{n,l}$ are given by $E[u_{n,l}] = y_{n} p_{n,l}$ where $p_{n,l}$ is defined as 
+\begin{align}
+{p}_{n,l} =\frac{\exp( x_{n,d} E[\log w_{d,l}] )}{ \exp(\sum_{d=1}^{D}x_{n,d} E[\log w_{d,l}] )+  \sum_{l=1}^{L} \exp( x_{n,d} E[\log \lambda_{d,l}] )\exp( E[\log h_{l,k}] ) } 
+\end{align}
+
+The updates for $s_{n,k}$ are given by $E[s_{n,k}] = y_{n} r_{n,d}$ where $r_{n,d}$ is defined as 
+\begin{align}
+r_{n,d} =\frac{\exp(E[\log{w_d}])}{ \exp(\sum_{d=1}^{D}x_{n,d} E[\log w_{d,l}] )+  \sum_{l=1}^{L} \exp( x_{n,d} E[\log \lambda_{d,l}] )\exp( E[\log h_{l,k}] ) } 
+\end{align}
+
+The mean-field posterior $q(\lambda_{d,l})$ is gamma distribution with shape parameter $\hat a_{d,l}$ and rate parameter $\hat b_{d,l}$ where
+\begin{align}
+\hat a_{d, l} &= \sum_{n=1}^{N} \sum_{n=1}^{N}x_{n,d} u_{n,l} + a, \\
+\hat b_{d, l} &= \sum_{n=1}^{N} x_{n,d} \tau_n \left( \prod_{d'\neq d} \lambda_{d',l}^{x_{n,d'}} \right) + b.
+\end{align}
+%Thus, $E[\lambda_{k,l}] = \hat a_{k,l} / \hat b_{k,l}$ and $E[\lambda_{k,l}] = \psi (\hat a_{k,l}) - \log( \hat b_{k,l})$ where $\psi(\cdot)$ is digamma function.
+%Note that $\prod_{d'\neq d}\lambda_{n,d'}^{x_{n,d'}} = \exp(\sum_{d' \neq d} x_{n,d'} \log \lambda_{n,d'})$. The parameters $\boldsymbol{b}_{k} = (\hat b_{d,1}, \ldots, \hat b_{d,L})^\top$ are can be computed as 
+%\begin{align}
+%\boldsymbol{\hat b}_d = (x_{1:N,d} \circ  \boldsymbol{\tau})^\top  \exp(X_{-d} \log \Lambda_{-d}) +\beta
+%\end{align}
+%where $x_{1:N,d} = (x_{1,d}, \ldots, x_{N,d})^\top$, $X_{-k}=(x_{n,d'})$ ($d'\neq d$), $\Lambda_{-d} = (\lambda_{d',l})$ ($d'\neq d$) and $\circ$ is elementwise product.
+
+The mean-field posterior $q(w_{d})$ is gamma distribution with shape parameter $\hat a_{d}^{(w)}$ and rate parameter $\hat b_{d}^{(w)}$ where
+\begin{align}
+\hat a_{d}^{(w)} &= \sum_{n=1}^{N}  s_{n,d} + a, \\
+\hat b_{d}^{(w)} &= \sum_{n=1}^{N} \tau_n + b.
+\end{align}
+
+%The mean-field posterior $q(\lambda_{d,l})$ is gamma distribution with shape parameter $\hat a_{d,l}$ and rate parameter $\hat b_{d,l}$ where
+%\begin{align}
+%\hat a_{d, l} &= \sum_{n=1}^{N} \sum_{k=1}^{K}x_{n,d} s_{n,l,k} + a, \\
+%\hat b_{d, l} &= \sum_{n=1}^{N} x_{n,d} \tau_n \left( \prod_{d'\neq d} \lambda_{d',l}^{x_{n,d'}} \right) + b.
+%\end{align}
+%Thus, $E[\lambda_{k,l}] = \hat a_{k,l} / \hat b_{k,l}$ and $E[\lambda_{k,l}] = \psi (\hat a_{k,l}) - \log( \hat b_{k,l})$ where $\psi(\cdot)$ is digamma function.
+%Note that $\prod_{d'\neq d}\lambda_{n,d'}^{x_{n,d'}} = \exp(\sum_{d' \neq d} x_{n,d'} \log \lambda_{n,d'})$. The parameters $\boldsymbol{b}_{k} = (\hat b_{d,1}, \ldots, \hat b_{d,L})^\top$ are can be computed as 
+%\begin{align}
+%\boldsymbol{\hat b}_d = (x_{1:N,d} \circ  \boldsymbol{\tau})^\top  \exp(X_{-d} \log \Lambda_{-d}) +\beta
+%\end{align}
+%where $x_{1:N,d} = (x_{1,d}, \ldots, x_{N,d})^\top$, $X_{-k}=(x_{n,d'})$ ($d'\neq d$), $\Lambda_{-d} = (\lambda_{d',l})$ ($d'\neq d$) and $\circ$ is elementwise product.
+
+%In the implementation of variational inference, we can avoid explicitly computing $s_{n,l,k}$. Therefore, we can avoid storing the multidimensional array object.
+%We define the following matrices:
+%\begin{align*}
+%\boldsymbol{L}_\mu &=I_N \exp ( E[\log \mu])^\top , \quad
+%\boldsymbol{L}_\lambda =\exp ( X \langle  \log \Lambda \rangle), \quad
+%\boldsymbol{L}_h =(\exp (\langle  \log h_{l,k}\rangle))\\
+%\boldsymbol{S}^{(0)} &= \left( E[s_{n,k}^{(0)} \right), \quad 
+%\boldsymbol{S}_\lambda = \left(\sum_{k=1}^{K}\langle s_{n,l,k} \rangle \right), \quad
+%\boldsymbol{S}_h = \left(\sum_{n=1}^{N}\langle s_{n,l,k} \rangle \right),\\
+%\end{align*}
+%where $I_N$ is $N$-dimensional vector which has all elements is one.
+%From Eq. (\ref{Es}), we can write
+%\begin{align}
+%\sum_{k=1}^{K}&\langle s_{n,l,k} \rangle = \sum_{k=1}^{K}y_{n,k} p_{n,l,k} \\
+%&=\exp( x_{n,1:D} \langle \log \lambda_{1:D,l} \rangle) \\
+%& \quad \times \sum_{k=1}^{K} \frac{ y_{n,k}  \exp(\langle \log h_{l,k} \rangle )}{\exp(E[\log{\mu_k}]) + \sum_{l=1}^{L}\exp( x_{n,1:D} \langle \log \lambda_{1:D,l} \rangle) \rangle  \rangle + \langle \log h_{l,k}  \rangle )},
+%\end{align}
+%%where $\boldsymbol{\lambda}_l = (\lambda_{1,l}, \ldots, \lambda_{D,l})^\top$.
+%Thus, we get
+% \begin{align}
+% \boldsymbol{S}_w =\boldsymbol{ L}_w \circ ((\boldsymbol{Y}\oslash (\boldsymbol{L}_\mu + \boldsymbol{L}_w\boldsymbol{L}_h))\boldsymbol{ L}_h^{\top}).
+% \label{Sw}
+% \end{align}
+%Here, $\oslash$ denotes element-wise division.
+%In the same manner as above, we obtain
+% \begin{align}
+%\boldsymbol{S}_h = \boldsymbol{L}_h \circ ( \boldsymbol{L}_w^{\top} (\boldsymbol{Y} \oslash (\boldsymbol{L}_\mu +\boldsymbol{L}_w\boldsymbol{L}_h))),
+%  \label{Sh}
+% \end{align}
+% \begin{align}
+%\boldsymbol{S}^{(0)}= \boldsymbol{Y} \circ (\boldsymbol{L}_\mu  \oslash (\boldsymbol{L}_\mu +\boldsymbol{L}_w\boldsymbol{L}_h))),
+%  \label{S0}
+% \end{align}
+
+
+\subsection*{Lower bound on marginal likelihood}
+Lower bound on marginal likelihood (evidence lower bound; ELBO) $\mathcal{L}(q)$ is used for model selection (Corduneanu and Bishop, 2001).
+
+\begin{align}
+\mathcal{L}(q) &= \int q(\theta) \log \frac{p(\boldsymbol{y},\theta|X,a_w, b_w, a, b)}{q(\theta)} d\theta \\
+&=\int q(\theta) \log p(\boldsymbol{y},\theta|X,a_w, b_w, a, b) d\theta - \int q(\theta) \log q(\theta) d\theta \label{ELBO}.
+\end{align}
+where $\theta$ is all the variational parameters.
+
+\end{document}  
