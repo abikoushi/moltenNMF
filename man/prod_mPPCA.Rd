@@ -1,56 +1,44 @@
 \name{prod_mPPCA}
 \alias{prod_mPPCA}
+\alias{prod_mPPCA.default}
+\alias{prod_mPPCA.formula}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Product
+Matrix product
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+\eqn{\prod_{d=1}^D\mu_{dl}^{x_{nd}}}
 }
 \usage{
+prod_mPPCA.formula(formula,
+                   data = parent.frame(), mu)
+
+
+prod_mPPCA.default(X, mu)
+
+
 prod_mPPCA(...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{X}{
+  sparse design matrix
+}
+  \item{mu}{
+  matrix of parameter
+}
+  \item{formula}{
+  an object of class "formula": a symbolic description of the model to be fitted.
+}
+  \item{data}{	
+  an optional data frame, containing the variables in the formula.
+}
   \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
+  additional arguments to be passed to the low level fitting functions 
 }
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (...) 
-{
-    UseMethod("prod_mPPCA")
-  }
+### see vignette
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

@@ -13,55 +13,17 @@ sparse_model_matrix_b(object, data = environment(object), ...)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{object}{
-%%     ~~Describe \code{object} here~~
+  an object of class "formula": a symbolic description of the model to be fitted.
 }
   \item{data}{
-%%     ~~Describe \code{data} here~~
+  an optional data frame, containing the variables in the formula.
 }
   \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
+  additional arguments to be passed to \code{sparse.model.matrix}
 }
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
-}
-\value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
-}
-\author{
-%%  ~~who you are~~
-}
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (object, data = environment(object), ...) 
-{
-    X <- Matrix::sparse.model.matrix(object, data = data, ...)
-    m <- attr(X, "assign")
-    ind <- which(diff(m) != 0)
-    Y <- methods::as(X, "lgCMatrix")
-    attr(Y, "indices") <- c(0, ind, length(m))
-    return(Y)
-  }
+### see vignette
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

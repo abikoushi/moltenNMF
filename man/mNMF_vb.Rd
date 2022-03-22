@@ -1,31 +1,31 @@
-\name{mPPCA_vb}
-\alias{mPPCA_vb}
-\alias{mPPCA_vb.default}
-\alias{mPPCA_vb.formula}
+\name{mNMF_vb}
+\alias{mNMF_vb}
+\alias{mNMF_vb.default}
+\alias{mNMA_vb.formula}
 \title{
-Estimates the model of molten PPCA using variational Bayes
+Estimates the model of molten NMF using variational Bayes
 }
 \description{
-\code{mPPCA_vb} is used to fit molten PPCA.
+\code{mNMF_vb} is used to fit molten NMF.
 }
 \usage{
-mPPCA_vb(...)
+mNMF_vb.default(y,
+                X,
+                L,
+                iter=1000, 
+                a=1, 
+                b=1)
 
 
-mPPCA_vb.formula(formula,
-                 data = parent.frame(),
-                 L,
-                 iter=200,
-                 lambda=1,
-                 tau=1)
-                 
-                 
-mPPCA_vb.default(y, 
-                 X,
-                 L,
-                 iter=200,
-                 lambda=1,
-                 tau=1)
+mNMF_vb.formula(formula,
+                data = parent.frame(),
+                L,
+                iter=1000,
+                a=1,
+                b=1)
+
+
+mNMF_vb(x)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -47,28 +47,27 @@ mPPCA_vb.default(y,
   \item{iter}{
   number of iteration
 }
-  \item{lambda}{
-  precision parameter (inverse of variance)
+  \item{a}{
+  shape parameter of gamma prior distribution
 }
-  \item{tau}{
-  precision parameter of prior distribution
+  \item{a}{
+  rate parameter of gamma prior distribution
 }
   \item{\dots}{
   additional arguments to be passed to the low level fitting functions 
 }
 }
 \value{
- \item{mean }{mean of the variational posterior (normal distribution)}
- \item{sd }{standard deviation of the variational posterior (normal distribution)}
- \item{logloss }{log-probabilty evalueted by current model}
+ \item{shape }{shape of the variational posterior (gamma distribution)}
+ \item{rate }{rate of the variational posterior (gamma distribution)}
+ \item{ELBO }{evidence lower bound}
  \item{indices }{indices}
 }
 \author{
 Ko ABE
 }
-
 \seealso{
-\code{\link{mNMF_vb}}
+\code{\link{mPPCA_vb}}
 }
 \examples{
 ### see vignette

@@ -1,7 +1,5 @@
 library(tidyr)
 library(dplyr)
-library(Matrix)
-library(Rcpp)
 library(ggplot2)
 library(moltenPPCA)
 

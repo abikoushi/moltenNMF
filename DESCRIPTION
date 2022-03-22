@@ -1,6 +1,6 @@
 Package: moltenPPCA
 Type: Package
-Title: Probablistic PCA for molten data
+Title: Probabilistic principal component analysis with molten data format
 Version: 1.0
 Date: 2022-03-18
 Author: Ko ABE
@@ -9,3 +9,5 @@ Description: More about what it does (maybe more than one line)
 License: MIT
 Imports: Rcpp (>= 1.0.8.3), Matrix
 LinkingTo: Rcpp, RcppArmadillo
+Suggests: knitr, rmarkdown 
+VignetteBuilder: knitr

@@ -1,56 +1,75 @@
 \name{mPPCA_Gibbs}
 \alias{mPPCA_Gibbs}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\alias{mPPCA_Gibbs.default}
+\alias{mPPCA_Gibbs.formula}
 \title{
 Estimates the model of molten PPCA using Gibbs sampling
 }
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+\code{mPPCA_Gobbs} is used to realize posterior distribution of molten PPCA.
 }
 \usage{
+mPPCA_Gibbs.default(y, 
+                    X,
+                    L,
+                    iter=2000,
+                    lambda=1,
+                    tau=1)
+                    
+                    
+mPPCA_Gibbs.formula(formula,
+                    data = parent.frame(),
+                    L,
+                    iter=2000,
+                    lambda=1,
+                    tau=1)
+
+
 mPPCA_Gibbs(...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{y}{
+  response variable
+}
+  \item{X}{
+  sparse design matrix
+}
+  \item{formula}{
+  an object of class "formula": a symbolic description of the model to be fitted.
+}
+  \item{data}{	
+  an optional data frame, containing the variables in the formula.
+}
+  \item{X}{
+  number of componets
+}
+  \item{iter}{
+  number of iteration
+}
+  \item{lambda}{
+  precision parameter (inverse of variance)
+}
+  \item{tau}{
+  precision parameter of prior distribution
+}
   \item{\dots}{
-%%     ~~Describe \code{\dots} here~~
+  additional arguments to be passed to the low level fitting functions 
 }
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
-}
-\references{
-%% ~put references to the literature/web site here ~
+ \item{mu }{parameters of the model which drawn by Gibbs sampling (expected realizing the posterior distribution)}
+ \item{loglike }{log-likelihood evalueted by current model}
+ \item{indices }{indices}
 }
 \author{
-%%  ~~who you are~~
+Ko ABE
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{mPPCA_vb}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (...) 
-{
-    UseMethod("mPPCA_Gibbs")
-  }
+### see vignette
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

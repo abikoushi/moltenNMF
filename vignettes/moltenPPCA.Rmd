@@ -1,0 +1,103 @@
+---
+title: 'moltenPPCA'
+author: "Ko ABE"
+date: "3/22/2022"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{moltenPPCA}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE, fig.width = 14, fig.height = 7, fig.align = "center"}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Motivation
+
+Principal component analysis (PCA) is widely used in exploratory data analysis. 
+
+Commonly, PCA and probabilistic PCA (PPCA) find the matrix $Z$ and $W$ such that $Y \approx ZW$ with given data matrix $Y$.
+
+However, If the data contains some side-information (such as, time, age, sex, or treatment), matrix format will probably failed to represent data structure. 
+
+On the other hand, *tidy* data format are flexible. Now, we introduce *tidy* version of PPCA.
+
+## Model
+
+Now, We consider the probabilistic model for observed variable $y_n$ as following; 
+$$
+y_n \sim \mathcal{N}\left(\sum_{l=1}^L \prod_{d=1}^D\mu_{dl}^{x_{nd}}, \lambda^{-1}\right),
+$$
+where $\mathcal{N}(\mu,\sigma^2)$ is normal distribution with mean $\mu$ and variance $\sigma^2$. The precision $\lambda$ is user-chooning parameter.
+
+Next, we set normal prior distribution for unobserved variable $\mu_{dl}$;
+$$
+\mu_{dl} \sim \mathcal{N}(0,\tau^{-1}).
+$$
+
+### Example: matrix factorization
+
+We assume that we obtain multiple response from an experiment with the three subjects. Let $y_{nk}$ be the result of $k$-th response from subject $n$. This data-set $\mathcal{D}$ can be expressed as following:
+$$
+\mathcal{D} = \{ (\mbox{subject 1},y_{1k}), (\mbox{subject 2}, y_{2k}), (\mbox{subject 3},y_{3k}) \} 
+$$
+In this notation, the sample can be regarded as explanatory variable using the dummy variables as following:
+$$
+\boldsymbol{x}_1 = \{1,0,0\}, \quad \boldsymbol{x}_2 = \{0,1,0\}, \quad \boldsymbol{x}_3 = \{0,0,1\}
+$$
+Under the assumption of proposal model, $y_{nk}$ can be approximated as following:
+
+This equation is equivalent to the matrix factorization.
+
+
+### Example: missing data
+
+We consider the situation where there are subjects that are observed at the first time but not at the second time.
+If such data is held as a tensor, there will be a missing value at the second time point, so some special treatment is required for analysis.
+Our model can naturally treat such missing data. If the subjects does not exist at the second time point, there is no corresponding row in the data but there is no problem for applying the model.
+
+
+## Estimation
+
+Under the model assumption and using mean-field approximation, we get following variational approximated posterior distribution; 
+$$
+q(\mu_{dl})= \mathcal{N}(\hat \mu_{dl},\hat \sigma_{dl}), 
+$$
+where $\hat \mu_{dl}$ is defined by,
+$$
+\hat \mu_{dl} =\frac{\sum_{n=1}^N x_{nd}\prod_{d' \neq d} \langle \mu_{d'l} \rangle ^{x_{nd'}} \left[y_n -\sum_{l'\neq l}\prod_{j=1}  \langle \mu_{jl'} \rangle ^{x_{nj}}  \right]}{\tau/\lambda + \left( \sum_{n=1}^N x_{nd}\prod_{d\neq d'} \langle \mu_{d'l}^{2} \rangle ^{x_{nd'}} \right)},
+$$
+and $\hat \sigma_{dl}$ is
+$$
+{\hat{\sigma}}^2 =\left(\tau + \lambda \left\{\sum_{n=1}^N x_{nd}\prod_{d' \neq d}  \langle \mu_{d'l}^2 \rangle ^{x_{nd'}}\right\} \right)^{-1},
+$$
+where $\langle \mu_{dl} \rangle$ is expectation of $\mu_{dl}$ under the all of variational posterior distributions $q(\mu_{dl})$ except itself.
+
+
+## Workflow
+
+```{r run}
+library(moltenPPCA)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(moltenPPCA)
+iris_g <- mutate(iris, id=factor(row_number())) %>% 
+  gather(key,value,-id,-Species)
+
+set.seed(2222)
+out <- mPPCA_vb(value~id+key-1,data=iris_g,L=2, iter=200)
+qplot(1:200,out$logloss, geom = "line")+
+  labs(x="iter", y="log-loss")+
+  theme_minimal(16)
+```
+
+```{r plot}
+iii <- (out$indices[1]+1):out$indices[1+1]
+df <- data.frame(out$mean[iii,], species=iris$Species)
+
+ggplot(df, aes(X1,X2,colour=species))+
+  geom_point(alpha=0.7, size=2)+
+  theme_minimal(16)
+```

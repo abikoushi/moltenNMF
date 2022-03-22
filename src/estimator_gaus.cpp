@@ -1,59 +1,17 @@
 #include <RcppArmadillo.h>
 #include <math.h>
+#include "myproduct.h"
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::plugins(cpp11)]]
 
-static const double logsqrt2pi = log(2*M_PI)/2;
+static const double logsqrt2pi = 0.5*log(2*M_PI);
 
 arma::vec r_norm_vec(arma::vec mean, arma::vec sd) {
   int N = mean.n_rows;
   arma::vec epsilon(N);
   epsilon.randn();
   return mean + sd%epsilon;
-}
-
-arma::mat mysum_t(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
-  arma::mat out = arma::zeros<arma::mat>(n,lam.n_cols);
-  for(int i=0; i<xp.n_rows-1; i++){
-    for(int j=xp[i];j<xp[i+1];j++){
-      out.row(i) += lam.row(xi[j]); 
-    }
-  }
-  return out;
-}
-
-arma::mat mysum(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
-  arma::mat out = arma::zeros<arma::mat>(n,lam.n_cols);
-  for(int i=0; i<xp.n_rows-1; i++){
-    for(int j=xp[i];j<xp[i+1];j++){
-      out.row(xi[j]) += lam.row(i); 
-    }
-  }
-  return out;
-}
-
-// [[Rcpp::export]]
-arma::mat myprod(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
-  arma::mat out = arma::ones<arma::mat>(n,lam.n_cols);
-  for(int i=0; i<xp.n_rows-1; i++){
-    for(int j=xp[i];j<xp[i+1];j++){
-      out.row(xi[j]) %= lam.row(i); 
-    }
-  }
-  return out;
-}
-
-arma::mat myprod_skip(int n, arma::uvec xi, arma::uvec xp, arma::mat lam, int start, int end) {
-  arma::mat out = arma::ones<arma::mat>(n,lam.n_cols);
-  for(int i=0; i<xp.n_rows-1; i++){
-    if(i<start|i>end){
-      for(int j=xp[i];j<xp[i+1];j++){
-        out.row(xi[j]) %= lam.row(i);
-      } 
-    }
-  }
-  return out;
 }
 
 void sample_mu(arma::mat & mu, arma::vec y, int N, arma::uvec xi, arma::uvec xp, arma::uvec varind, int K, int L, double lambda, double tau){
@@ -101,7 +59,6 @@ List doGibbs(arma::vec y,
   arma::mat mu = arma::randn<arma::mat>(D,L);
   arma::mat loglik = arma::zeros<arma::mat>(N,iter);
   arma::cube mu_s(D,L,iter);
-  // musamp.fill(0);
   for(int i=0; i<iter; i++){
     sample_mu(mu, y, N, xi, xp, varind, K, L, lambda, tau);
     arma::vec tmp = pow(y - sum(myprod(N, xi, xp, mu),1),2)/2;

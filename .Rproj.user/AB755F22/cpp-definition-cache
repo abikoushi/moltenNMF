@@ -1,51 +1,15 @@
 [
     {
-        "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
-        "file_last_write": 1647927476.0,
+        "file": "/Users/koabe/projects/moltenPPCA/src/estimator_gaus.cpp",
+        "file_last_write": 1647949354.0,
         "definitions": [
             {
                 "usr": "c:@F@r_norm_vec#$@N@arma@S@Col>#d#S0_#",
                 "kind": 6,
                 "parent_name": "",
                 "name": "r_norm_vec(arma::vec, arma::vec)",
-                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
-                "line": 9,
-                "column": 11
-            },
-            {
-                "usr": "c:@F@mysum_t#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#",
-                "kind": 6,
-                "parent_name": "",
-                "name": "mysum_t(int, arma::uvec, arma::uvec, arma::mat)",
-                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
-                "line": 16,
-                "column": 11
-            },
-            {
-                "usr": "c:@F@mysum#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#",
-                "kind": 6,
-                "parent_name": "",
-                "name": "mysum(int, arma::uvec, arma::uvec, arma::mat)",
-                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
-                "line": 26,
-                "column": 11
-            },
-            {
-                "usr": "c:@F@myprod#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#",
-                "kind": 6,
-                "parent_name": "",
-                "name": "myprod(int, arma::uvec, arma::uvec, arma::mat)",
-                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
-                "line": 37,
-                "column": 11
-            },
-            {
-                "usr": "c:@F@myprod_skip#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#I#I#",
-                "kind": 6,
-                "parent_name": "",
-                "name": "myprod_skip(int, arma::uvec, arma::uvec, arma::mat, int, int)",
-                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
-                "line": 47,
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator_gaus.cpp",
+                "line": 10,
                 "column": 11
             },
             {
@@ -53,8 +17,8 @@
                 "kind": 6,
                 "parent_name": "",
                 "name": "sample_mu(arma::mat &, arma::vec, int, arma::uvec, arma::uvec, arma::uvec, int, int, double, double)",
-                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
-                "line": 59,
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator_gaus.cpp",
+                "line": 17,
                 "column": 6
             },
             {
@@ -62,8 +26,8 @@
                 "kind": 6,
                 "parent_name": "",
                 "name": "up_ms(arma::mat &, arma::mat &, arma::vec, int, arma::uvec, arma::uvec, arma::uvec, int, int, double, double)",
-                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
-                "line": 74,
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator_gaus.cpp",
+                "line": 32,
                 "column": 6
             },
             {
@@ -71,8 +35,8 @@
                 "kind": 6,
                 "parent_name": "",
                 "name": "doGibbs(arma::vec, arma::uvec, arma::uvec, arma::uvec, int, int, int, double, double)",
-                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
-                "line": 90,
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator_gaus.cpp",
+                "line": 48,
                 "column": 6
             },
             {
@@ -80,10 +44,108 @@
                 "kind": 6,
                 "parent_name": "",
                 "name": "doVB(arma::vec, arma::uvec, arma::uvec, arma::uvec, int, int, int, double, double)",
-                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
-                "line": 117,
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator_gaus.cpp",
+                "line": 74,
                 "column": 6
             }
         ]
+    },
+    {
+        "file": "/Users/koabe/projects/moltenPPCA/src/estimator_pois.cpp",
+        "file_last_write": 1647949364.0,
+        "definitions": [
+            {
+                "usr": "c:@F@sweep#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Col>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "sweep(int, arma::uvec, arma::uvec, arma::vec)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator_pois.cpp",
+                "line": 7,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@sweep2#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Col>#d#S1_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "sweep2(arma::uvec, arma::uvec, arma::vec, arma::vec)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator_pois.cpp",
+                "line": 18,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@mat_digamma#$@N@arma@S@Mat>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "mat_digamma(arma::mat)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator_pois.cpp",
+                "line": 30,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@vec_digamma#$@N@arma@S@Col>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "vec_digamma(arma::vec)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator_pois.cpp",
+                "line": 42,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@doVB_pois#$@N@arma@S@Col>#d#$@N@arma@S@Col>#i#S1_#S1_#I#I#I#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "doVB_pois(arma::vec, arma::uvec, arma::uvec, arma::uvec, int, int, int, double, double)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator_pois.cpp",
+                "line": 52,
+                "column": 6
+            }
+        ]
+    },
+    {
+        "file": "/Users/koabe/projects/moltenPPCA/src/myproduct.cpp",
+        "file_last_write": 1647949718.0,
+        "definitions": [
+            {
+                "usr": "c:@F@mysum_t#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "mysum_t(int, arma::uvec, arma::uvec, arma::mat)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/myproduct.cpp",
+                "line": 4,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@mysum#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "mysum(int, arma::uvec, arma::uvec, arma::mat)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/myproduct.cpp",
+                "line": 14,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@myprod#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "myprod(int, arma::uvec, arma::uvec, arma::mat)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/myproduct.cpp",
+                "line": 25,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@myprod_skip#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#I#I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "myprod_skip(int, arma::uvec, arma::uvec, arma::mat, int, int)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/myproduct.cpp",
+                "line": 35,
+                "column": 11
+            }
+        ]
+    },
+    {
+        "file": "/Users/koabe/projects/moltenPPCA/src/myproduct.h",
+        "file_last_write": 1647949470.0,
+        "definitions": []
     }
 ]
