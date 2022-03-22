@@ -1,0 +1,61 @@
+#include <RcppArmadillo.h>
+using namespace Rcpp;
+// [[Rcpp::depends(RcppArmadillo)]]
+// [[Rcpp::plugins(cpp11)]]
+
+// [[Rcpp::export]]
+double sp_prod(arma::uvec ind, arma::vec V){
+  double out = 0.0;
+  out = arma::as_scalar(sum(V.rows(ind)));
+  return out;
+}
+
+// [[Rcpp::export]]
+List find_nonzero(arma::sp_mat X) {
+  int D = X.n_cols;
+  List list_col(D);
+  for(int d=0; d<D; d++){
+    list_col[d] = arma::find(X.col(d));
+  }
+  return list_col;
+}
+
+// [[Rcpp::export]]
+List Gibbs_Gauss_exp(arma::vec y, arma::sp_mat X, arma::uvec varind, int L,double a=1, double b=1, double lambda=1e-8, int iter=1000){
+  int N = y.n_rows;
+  int K = varind.n_rows - 1;
+  int D = X.n_cols;
+  double ahat = N/2+a;
+  arma::sp_mat tX = arma::trans(X);
+  arma::mat mu(D,L);
+  arma::mat loglik = arma::zeros<arma::mat>(N,iter);
+  mu = arma::randn<arma::mat>(D,L);
+  arma::cube musamp(D,L,iter);
+  musamp.fill(0);
+  double s2 = 1;
+  arma::vec s2samp = arma::zeros<arma::vec>(iter);
+  for(int i=0; i<iter; i++){
+    for(int k=0; k<K; k++){
+      for(int l=0; l<L; l++){
+        arma::sp_mat tmpX = X;
+        arma::mat mu_d = mu;
+        arma::mat mu_l = mu;
+        tmpX.shed_cols(varind[k],varind[k+1]-1);
+        mu_d.shed_rows(varind[k],varind[k+1]-1);
+        mu_l.shed_col(l);
+        arma::vec den = tX.rows(varind[k],varind[k+1]-1)*exp(2.0*tmpX*log(mu_d.col(l)));
+        arma::vec tmp2 = exp(tmpX*log(mu_d.col(l)));
+        arma::vec tmp = y-sum(exp(X*log(mu_l)),1);
+        arma::vec muhat = (tX.rows(varind[k],varind[k+1]-1)*(tmp%tmp2) - lambda*s2)/den;
+        mu.col(l).rows(varind[k],varind[k+1]-1) = muhat;
+      }
+    }
+    arma::vec tmp = pow(y-sum(exp(X*log(mu)),1),2)/2;
+    loglik.col(i) = -tmp/s2-std::log(s2)/2;
+    double bhat = sum(tmp)+b;
+    s2 = 1/R::rgamma(ahat,1.0/bhat);
+    musamp.slice(i) = mu;
+    s2samp.row(i) = s2;
+  }
+  return List::create(Named("mu") =musamp, _["s2"]=s2samp, _["loglik"]=loglik);
+}

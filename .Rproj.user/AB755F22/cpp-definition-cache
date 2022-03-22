@@ -1,0 +1,89 @@
+[
+    {
+        "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
+        "file_last_write": 1647927476.0,
+        "definitions": [
+            {
+                "usr": "c:@F@r_norm_vec#$@N@arma@S@Col>#d#S0_#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "r_norm_vec(arma::vec, arma::vec)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
+                "line": 9,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@mysum_t#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "mysum_t(int, arma::uvec, arma::uvec, arma::mat)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
+                "line": 16,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@mysum#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "mysum(int, arma::uvec, arma::uvec, arma::mat)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
+                "line": 26,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@myprod#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "myprod(int, arma::uvec, arma::uvec, arma::mat)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
+                "line": 37,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@myprod_skip#I#$@N@arma@S@Col>#i#S0_#$@N@arma@S@Mat>#d#I#I#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "myprod_skip(int, arma::uvec, arma::uvec, arma::mat, int, int)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
+                "line": 47,
+                "column": 11
+            },
+            {
+                "usr": "c:@F@sample_mu#&$@N@arma@S@Mat>#d#$@N@arma@S@Col>#d#I#$@N@arma@S@Col>#i#S3_#S3_#I#I#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "sample_mu(arma::mat &, arma::vec, int, arma::uvec, arma::uvec, arma::uvec, int, int, double, double)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
+                "line": 59,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@up_ms#&$@N@arma@S@Mat>#d#S0_#$@N@arma@S@Col>#d#I#$@N@arma@S@Col>#i#S3_#S3_#I#I#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "up_ms(arma::mat &, arma::mat &, arma::vec, int, arma::uvec, arma::uvec, arma::uvec, int, int, double, double)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
+                "line": 74,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@doGibbs#$@N@arma@S@Col>#d#$@N@arma@S@Col>#i#S1_#S1_#I#I#I#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "doGibbs(arma::vec, arma::uvec, arma::uvec, arma::uvec, int, int, int, double, double)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
+                "line": 90,
+                "column": 6
+            },
+            {
+                "usr": "c:@F@doVB#$@N@arma@S@Col>#d#$@N@arma@S@Col>#i#S1_#S1_#I#I#I#d#d#",
+                "kind": 6,
+                "parent_name": "",
+                "name": "doVB(arma::vec, arma::uvec, arma::uvec, arma::uvec, int, int, int, double, double)",
+                "file": "/Users/koabe/projects/moltenPPCA/src/estimator.cpp",
+                "line": 117,
+                "column": 6
+            }
+        ]
+    }
+]
