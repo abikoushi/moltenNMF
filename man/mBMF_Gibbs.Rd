@@ -1,36 +1,38 @@
-\name{mPPCA_Gibbs}
-\alias{mPPCA_Gibbs}
-\alias{mPPCA_Gibbs.default}
-\alias{mPPCA_Gibbs.formula}
+\name{mBMF_Gibbs}
+\alias{mBMF_Gibbs}
+\alias{mBMF_Gibbs.default}
+\alias{mBMF_Gibbs.formula}
+%- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Estimate the model of molten PPCA using Gibbs sampling
+Estimate the model of molten binary matrix factorization using Gibbs sampling
 }
 \description{
-\code{mPPCA_Gobbs} is used to realize posterior distribution of molten PPCA.
+%%  ~~ A concise (1-5 lines) description of what the function does. ~~
 }
 \usage{
-mPPCA_Gibbs.default(y, 
-                    X,
-                    L,
-                    iter=2000,
-                    lambda=1,
-                    tau=1)
+mBMF_Gibbs.default(y, 
+                   X,
+                   L,
+                   iter=2000,
+                   lambda=1,
+                   tau=1)
                     
                     
-mPPCA_Gibbs.formula(formula,
-                    data = parent.frame(),
-                    L,
-                    iter=2000,
-                    lambda=1,
-                    tau=1)
+mBMF_Gibbs.formula(formula,
+                   data = parent.frame(),
+                   L,
+                   iter=2000,
+                   lambda=1,
+                   tau=1)
 
 
-mPPCA_Gibbs(...)
+mBMF_Gibbs(...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+\arguments{
   \item{y}{
-  response variable
+  response variable (0 or 1)
 }
   \item{X}{
   sparse design matrix
@@ -57,19 +59,22 @@ mPPCA_Gibbs(...)
   additional arguments to be passed to the low level fitting functions 
 }
 }
+\details{
+%%  ~~ If necessary, more details than the description above ~~
+}
 \value{
  \item{mu }{parameters of the model which drawn by Gibbs sampling (expected realizing the posterior distribution)}
  \item{loglike }{log-likelihood evalueted by current model}
  \item{indices }{indices}
 }
 \author{
-Ko ABE
+ko ABE
 }
 \seealso{
-\code{\link{mPPCA_vb}}
+\code{\link{mNMF_vb}}
 }
 \examples{
-### see vignette
+###
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

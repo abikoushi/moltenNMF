@@ -3,7 +3,7 @@
 \alias{mNMF_vb.default}
 \alias{mNMA_vb.formula}
 \title{
-Estimates the model of molten NMF using variational Bayes
+Estimate the model of molten NMF using variational Bayes
 }
 \description{
 \code{mNMF_vb} is used to fit molten NMF.
@@ -30,7 +30,7 @@ mNMF_vb(x)
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{y}{
-  response variable
+  response variable (nonnegative-integer)
 }
   \item{X}{
   sparse design matrix
@@ -41,7 +41,7 @@ mNMF_vb(x)
   \item{data}{	
   an optional data frame, containing the variables in the formula.
 }
-  \item{X}{
+  \item{L}{
   number of componets
 }
   \item{iter}{
