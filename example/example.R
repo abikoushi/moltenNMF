@@ -1,7 +1,9 @@
+#devtools::install_github("abikoushi/moltenPPCA", build_vignettes = TRUE)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(moltenPPCA)
+vignette("moltenPPCA")
 
 iris_g <- mutate(iris, id=factor(row_number())) %>% 
   gather(key,value,-id,-Species)
@@ -27,7 +29,6 @@ ggplot(df, aes(X1,X2,colour=species))+
   geom_point(alpha=0.7, size=2)+
   theme_minimal(16)
 
-#vignette
 #####
 
 # out <- mPPCA_Gibbs(y~id+key,data=iris_g,L=2, iter=2000)

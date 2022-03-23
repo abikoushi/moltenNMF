@@ -1,8 +1,16 @@
 # moltenPPCA
 
-`moltenPPCA` is an R package for probabilistic principal pomponent analysis with molten data format (in preparation)
+`moltenPPCA` is an R package for probabilistic principal component analysis with molten data format (in preparation)
 
 ## Installation
-~~~R
+
+```R
 devtools::install_github("abikoushi/moltenPPCA", build_vignettes = TRUE)
-~~~
+```
+
+## Example
+
+```R
+library(moltenPPCA)
+vignette("moltenPPCA")
+```
