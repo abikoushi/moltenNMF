@@ -61,26 +61,26 @@ List doVB_pois(arma::vec y,
   int N = y.n_rows;
   int K = varind.n_rows - 1;
   arma::mat lambda = arma::randg<arma::mat>(D,L);
-  arma::mat alpha(D,L);
-  arma::mat beta(D,L);
   arma::mat loglambda = log(lambda);
+  arma::mat alpha = arma::ones<arma::mat>(D, L);
+  arma::mat beta  = arma::ones<arma::mat>(D, L);
   arma::vec ll(iter);
-  arma::vec ybar(N);
   for (int i=0; i<iter; i++) {
-    arma::mat tmp1 =  myprod(N,xi,xp,exp(loglambda));
-    arma::vec den = sum(tmp1,1);
-    arma::mat U = tmp1.each_col() % (y/den);
+    arma::mat U =  myprod(N,xi,xp,exp(loglambda));
+    arma::vec den = sum(U,1);
+    U.each_col() %= (y/den);
     alpha = mysum_t(D,xi,xp,U) + a;
     for(int k=0; k<K; k++){
       arma::mat tmpXl = myprod_skip(N,xi,xp,lambda,varind[k],varind[k+1]);
-      beta.rows(varind[k],varind[k+1]-1) = mysum_t(varind[k+1]-varind[k],xi,xp.rows(varind[k],varind[k+1]),tmpXl) + b;
-      lambda.rows(varind[k],varind[k+1]-1) = alpha.rows(varind[k],varind[k+1])/beta.rows(varind[k],varind[k+1]);
+      arma::mat B = mysum_t(varind[k+1] - varind[k], xi, xp.rows(varind[k],varind[k+1]), tmpXl) + b;
+      beta.rows(varind[k],varind[k+1]-1) = B;
+      lambda.rows(varind[k],varind[k+1]-1) = alpha.rows(varind[k],varind[k+1]-1)/B;
     }
     loglambda = mat_digamma(alpha) - log(beta);
-    ybar = sum(myprod(N,xi,xp,lambda),1);
-    ll.row(i) = sum(y +y%log(den) - ybar - lgamma(y+1))+
-      + accu((a-1)*loglambda - b*lambda + a*log(beta) - std::lgamma(a)) +
-      - accu((alpha-1)%loglambda - beta%lambda + alpha%log(beta) - lgamma(alpha));
+    arma::vec ybar = sum(myprod(N,xi,xp,lambda),1);
+    ll.row(i) = mean(y +y%log(den) - ybar - lgamma(y+1))+
+      + accu((a-1)*loglambda - b*lambda + a*log(beta) - std::lgamma(a))/(D*L) +
+      - accu((alpha-1)%loglambda - beta%lambda + alpha%log(beta) - lgamma(alpha))/(D*L);
   }
   return List::create(Named("shape")=alpha,
                       Named("rate")=beta,
