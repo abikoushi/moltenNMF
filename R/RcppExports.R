@@ -13,6 +13,10 @@ doVB_pois <- function(y, xi, xp, varind, D, L, iter = 1000L, a = 0.5, b = 0.001)
     .Call(`_moltenPPCA_doVB_pois`, y, xi, xp, varind, D, L, iter, a, b)
 }
 
+doGibbs_probit <- function(y, xi, xp, varind, D, L, iter = 1000L, lambda = 1, tau = 1) {
+    .Call(`_moltenPPCA_doGibbs_probit`, y, xi, xp, varind, D, L, iter, lambda, tau)
+}
+
 myprod <- function(n, xi, xp, lam) {
     .Call(`_moltenPPCA_myprod`, n, xi, xp, lam)
 }

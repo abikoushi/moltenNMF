@@ -8,13 +8,6 @@ using namespace Rcpp;
 
 static const double logsqrt2pi = 0.5*log(2*M_PI);
 
-arma::vec r_norm_vec(arma::vec mean, arma::vec sd) {
-  int N = mean.n_rows;
-  arma::vec epsilon(N);
-  epsilon.randn();
-  return mean + sd%epsilon;
-}
-
 void up_ms(arma::mat & m, arma::mat & s2, arma::vec y, int N, arma::uvec xi, arma::uvec xp, arma::uvec varind, int K, int L, double lambda, double tau){
   for(int k=0; k<K; k++){
     for(int l=0; l<L; l++){

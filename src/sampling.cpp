@@ -1,5 +1,13 @@
 #include <RcppArmadillo.h>
 #include "sampling.h"
+#include "myproduct.h"
+
+arma::vec r_norm_vec(arma::vec mean, arma::vec sd) {
+  int N = mean.n_rows;
+  arma::vec epsilon(N);
+  epsilon.randn();
+  return mean + sd%epsilon;
+}
 
 void sample_mu(arma::mat & mu, arma::vec y, int N, arma::uvec xi, arma::uvec xp, arma::uvec varind, int K, int L, double lambda, double tau){
   for(int k=0; k<K; k++){
