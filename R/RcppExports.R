@@ -17,6 +17,10 @@ doGibbs_probit <- function(y, xi, xp, varind, D, L, iter = 1000L, lambda = 1, ta
     .Call(`_moltenPPCA_doGibbs_probit`, y, xi, xp, varind, D, L, iter, lambda, tau)
 }
 
+doMCVB_probit <- function(y, xi, xp, varind, D, L, iter = 1000L, lambda = 1, tau = 1) {
+    .Call(`_moltenPPCA_doMCVB_probit`, y, xi, xp, varind, D, L, iter, lambda, tau)
+}
+
 myprod <- function(n, xi, xp, lam) {
     .Call(`_moltenPPCA_myprod`, n, xi, xp, lam)
 }

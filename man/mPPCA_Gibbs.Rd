@@ -6,7 +6,7 @@
 Estimate the model of molten PPCA using Gibbs sampling
 }
 \description{
-\code{mPPCA_Gobbs} is used to realize posterior distribution of molten PPCA.
+\code{mPPCA_Gibbs} is used to realize posterior distribution of molten PPCA.
 }
 \usage{
 mPPCA_Gibbs.default(y, 
@@ -69,7 +69,7 @@ Ko ABE
 \code{\link{mPPCA_vb}}
 }
 \examples{
-### see vignette
+###
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

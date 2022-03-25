@@ -1,16 +1,15 @@
-\name{mBMF_Gibbs}
-\alias{mBMF_Gibbs}
-\alias{mBMF_Gibbs.default}
-\alias{mBMF_Gibbs.formula}
-%- Also NEED an '\alias' for EACH other topic documented here.
+\name{mBMF_mcvb}
+\alias{mBMF_mcvb}
+\alias{mBMF_mcvb.default}
+\alias{mBMF_mcvb.formula}
 \title{
-Estimate the model of molten binary matrix factorization using Gibbs sampling
+Estimate the model of molten binary matrix factorization using Monte-Carlo variation Bayes
 }
 \description{
-\code{mBMF_Gibbs} is used to realize posterior distribution of molten binary matrix factorization.
+\code{mBMF_mcvb} is used to fit molten binary matrix factorization.
 }
 \usage{
-mBMF_Gibbs.default(y, 
+mBMF_mcvb.default(y, 
                    X,
                    L,
                    iter=2000,
@@ -18,7 +17,7 @@ mBMF_Gibbs.default(y,
                    tau=1)
                     
                     
-mBMF_Gibbs.formula(formula,
+mBMF_mcvb.formula(formula,
                    data = parent.frame(),
                    L,
                    iter=2000,
@@ -26,7 +25,7 @@ mBMF_Gibbs.formula(formula,
                    tau=1)
 
 
-mBMF_Gibbs(...)
+mBMF_mcvb(...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -62,9 +61,10 @@ mBMF_Gibbs(...)
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
- \item{mu }{parameters of the model which drawn by Gibbs sampling (expected realizing the posterior distribution)}
- \item{loglike }{log-likelihood evalueted by current model}
- \item{indices }{indices}
+ \item{mean }{mean of the variational posterior (normal distribution)}
+ \item{sd }{standard deviation of the variational posterior (normal distribution)}
+ \item{logloss }{log-probabilty evalueted by current model}
+ \item{indices }{indices of variavles}
 }
 \author{
 ko ABE

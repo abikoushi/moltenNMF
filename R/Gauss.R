@@ -1,9 +1,12 @@
 #' @export mPPCA_Gibbs.default
 mPPCA_Gibbs.default <- function(y, X, L, iter=2000, lambda=1, tau=1){
+  stopifnot(class(X)=="lgCMatrix")
   out <- doGibbs(y, X@i, X@p, attr(X,"indices"), X@Dim[2],
                  L=L, iter=iter, lambda=lambda, tau=tau)
   rownames(out$mu) <- colnames(X)
-  out[["indices"]]=attr(X,"indices")
+  if(!is.null(attr(X,"indices"))){
+    out[["indices"]]=attr(X,"indices") 
+  }
   return(out)
 }
 
@@ -16,7 +19,11 @@ mPPCA_Gibbs.formula <- function(formula,
   out <- doGibbs(y, X@i, X@p, attr(X,"indices"), X@Dim[2],
                  L=L, iter=iter, lambda=lambda, tau=tau)
   rownames(out$mu) <- colnames(X)
-  out[["indices"]]=attr(X,"indices")
+  ind <- attr(X,"indices")
+  out[["indices"]] <- ind
+  fchar <- as.character(formula)
+  vname <- unlist(strsplit(fchar[length(fchar)]," [+] | [-] "))
+  out[["vargroup"]] <- vname[rep(1:(length(ind)-1), diff(ind))]
   return(out)
 }
 
@@ -27,11 +34,14 @@ mPPCA_Gibbs <- function(...){
 
 #' @export mPPCA_vb.default
 mPPCA_vb.default <- function(y, X, L, iter=200, lambda=1, tau=1){
+  stopifnot(class(X)=="lgCMatrix")
   out <- doVB(y, X@i, X@p, attr(X,"indices"), X@Dim[2],
                  L=L, iter=iter, lambda=lambda, tau=tau)
   rownames(out$mean) <- colnames(X)
   rownames(out$sd) <- colnames(X)
-  out[["indices"]]=attr(X,"indices")
+  if(!is.null(attr(X,"indices"))){
+    out[["indices"]]=attr(X,"indices") 
+  }
   return(out)
 }
 
@@ -45,7 +55,11 @@ mPPCA_vb.formula <- function(formula,
                  L=L, iter=iter, lambda=lambda, tau=tau)
   rownames(out$mean) <- colnames(X)
   rownames(out$sd) <- colnames(X)
-  out[["indices"]]=attr(X,"indices")
+  ind <- attr(X,"indices")
+  out[["indices"]] <- ind
+  fchar <- as.character(formula)
+  vname <- unlist(strsplit(fchar[length(fchar)]," [+] | [-] "))
+  out[["vargroup"]] <- vname[rep(1:(length(ind)-1), diff(ind))]
   return(out)
 }
 

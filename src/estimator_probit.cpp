@@ -67,12 +67,41 @@ List doGibbs_probit(arma::ivec y,
   arma::mat loglik = arma::zeros<arma::mat>(N,iter);
   arma::cube mu_s(D,L,iter);
   arma::vec f =  sum(myprod(N, xi, xp, mu),1);
+  arma::vec Lam(N);
+  Lam.fill(lambda);
   for(int i=0; i<iter; i++){
-  	arma::vec z =  rhalf_norm_vec(f, arma::ones(N));
+  	arma::vec z =  rhalf_norm_vec(f, Lam);
     sample_mu(mu, z, N, xi, xp, varind, K, L, lambda, tau);
     f =  sum(myprod(N, xi, xp, mu),1);
     loglik.col(i) = y% log(normcdf(f)) + (1-y)%log(normcdf(-f));
     mu_s.slice(i) = mu;
   }
   return List::create(Named("mu") = mu_s, Named("loglik") = loglik);
+}
+
+// [[Rcpp::export]]
+List doMCVB_probit(arma::ivec y,
+                    arma::uvec xi,
+                    arma::uvec xp,
+                    arma::uvec varind,
+                    int D,
+                    int L,
+                    int iter=1000,
+                    double lambda=1,
+                    double tau=1){
+  int N = y.n_rows;
+  int K = varind.n_rows - 1;
+  arma::mat m = arma::randn<arma::mat>(D,L);
+  arma::mat s2 = arma::ones<arma::mat>(D,L);
+  arma::vec loglik = arma::zeros<arma::vec>(iter);
+  arma::vec f =  sum(myprod(N, xi, xp, m),1);
+  arma::vec Lam(N);
+  Lam.fill(lambda);
+  for(int i=0; i<iter; i++){
+    arma::vec z =  rhalf_norm_vec(f, Lam);
+    up_ms(m, s2, z, N, xi, xp, varind, K, L, lambda, tau);
+    f =  sum(myprod(N, xi, xp, m),1);
+    loglik.row(i) = mean(y% log(normcdf(f)) + (1-y)%log(normcdf(-f)));
+  }
+  return List::create(Named("mean") = m, Named("sd") = sqrt(s2), Named("loglik") = loglik);
 }
