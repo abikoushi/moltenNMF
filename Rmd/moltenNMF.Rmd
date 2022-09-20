@@ -1,0 +1,138 @@
+---
+title: 'molten NMF'
+author: "Ko ABE"
+date: "9/9/2022"
+output: rmarkdown::github_document
+---
+
+```{r setup, include=FALSE, fig.width = 14, fig.height = 10, fig.align = "center"}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Motivation
+
+Non-negative matrix factorization (NMF) is widely used in exploratory data analysis. 
+
+Commonly, NMF find the matrix $Z$ and $W$ such that $Y \approx ZW$ with given data as a matrix $Y$.
+
+However, If the data contains some side-information (such as, time, age, sex, or treatment), this matrix format will probably failed to represent data structure. 
+
+On the other hand, *tidy* data format are flexible. Now, we introduce *tidy* version of PPCA.
+
+## Model (NMF)
+
+Now, We consider the probabilistic model for observed variable $y_n$ as following; 
+$$
+y_n \sim \mathrm{Poisson}\left(\sum_{l=1}^L \prod_{d=1}^Dv_{dl}^{x_{nd}}\right),
+$$
+where $\mathrm{Poisson}(\lambda)$ is Poisson distribution with mean  and variance $\lambda$. 
+
+This model is equivalent to following data generating process;
+$$
+y_n = \sum_{l=1}^L u_{nl}, \quad u_{nl} \sim \mathrm{Poisson}\left(\prod_{d=1}^Dv_{dl}^{x_{nd}}\right),
+$$
+
+We set gamma prior distribution with shape parameter $a$, and rate $b$ for unobserved variable $v_{dl}$;
+$$
+v_{dl} \sim \mathrm{Gamma}(a,b).
+$$
+The mean-field posterior $q(v_{dl})$ is gamma distribution with shape parameter,
+$$
+\hat a_{dl} = \sum_{n=1}^{N} x_{nd} \langle u_{nl}\rangle + a
+$$
+and rate parameter,
+$$
+\hat b_{dl} = \sum_{n=1}^{N} x_{n,d} \left( \prod_{d'\neq d} \langle \lambda_{d'l} \rangle^{x_{nd'}} \right) + b.
+$$
+The updates for $\langle u_{nl} \rangle$ are given by $\langle u_{nl} \rangle = y_{n} r_{nl}$ where $r_{nl}$ is defined as, 
+$$
+r_{nl} = \frac{\exp( x_{nd} \langle \log v_{dl} \rangle)}{\sum_{l=1}^{L} \exp( x_{nd} \langle \log v_{dl} \rangle)}.
+$$
+
+
+### Example: matrix factorization
+
+We assume that we obtain two response from an experiment with the two subjects. Let matrix $Y=(y_{nk})$ be the result of this experiment and its $(n,k)$-element be $k$-th response from subject $n$. This data-set $\mathcal{D}$ can be expressed as following:
+$$
+\mathcal{D} = \{ (1, 1, y_{1}), (2, 1, y_{2}), (1, 2, y_{3}), (2,2, y_{4})\},
+$$
+where $i$ of triple $(i,j,h)$ represent subject, and $j$ is item dummy variable. 
+In this notation, the indices of the $y_{nk}$ can be regarded as explanatory variables as following:
+$$
+\boldsymbol{x}_{1j} = \{1,0\}, \quad \boldsymbol{x}_{2j} = \{0,1\}
+$$
+Under the assumption of proposal model, $y_{nk}$ can be approximated as:
+$$
+y_h ~ (\, =y_{nk}) \approx \sum_{l=1}^L \prod_{d=1}^D v_{dl}^{x_{hd}}.
+$$
+
+This equation is equivalent to the matrix factorization:
+$$
+y_{nk} = y_{h} \approx \sum_{l=1}^L z_{nl}w_{lk}.
+$$
+The proposed model contains matrix factorization as special case.
+
+### Missing and duplicate observation
+
+We consider the situation where there are subjects that are observed at the first time but not at the second time.
+If such data is held as a three-dimensional array, there will be a missing value at the second time point.
+
+The proposed model can naturally treat such missing data. If the subjects does not exist at the second time point, there is no corresponding row in the data but there is no problem for estimation procedure.
+
+Similarly, if you have duplicate observation from same condition, you may not to remake the array which contains the data but the corresponding rows be added.
+
+
+## Workflow (Titanic)
+
+Run `mNMF_vb`;
+```{r titanic}
+Titanicdf <- as.data.frame(Titanic) %>% 
+  mutate(Class=factor(Class,levels=c("3rd","2nd","1st","Crew")))
+
+set.seed(794)
+out2 <- mNMF_vb(Freq~Survived+Class+Sex+Age-1, data=Titanicdf, L=2, iter=500)
+```
+
+To check convergence:
+```{r titanic2}
+qplot(1:length(out2$ELBO),out2$ELBO, geom = "line")+
+  labs(x="iter",y="ELBO")+
+  theme_minimal(16)
+```
+
+
+The goodness-of-fit:
+```{r titanic3}
+V <- out2$shape/out2$rate
+yhat <- rowSums(prod_mNMF(~Survived+Class+Sex+Age-1, data=Titanicdf,V))
+qplot(yhat, Titanicdf$Freq, alpha=I(0.5),size=I(3))+
+  labs(x="fit",y="obs")+
+  geom_abline(intercept=0,slope=1,linetype=2)+
+  theme_minimal(16)
+```
+
+To show parameters $v_{dl}$:
+```{r titanic4}
+Vdf <- data.frame(V,variable=rownames(V),
+                  facet_dummy=out2$vargroup) %>% 
+  pivot_longer(!(variable|facet_dummy), names_to = "component", 
+               names_transform = list(component = readr::parse_number)) %>% 
+  mutate(component=factor(component))
+
+p1 <- ggplot(Vdf, aes(y=variable, x=value, fill=component))+
+  geom_col(colour="gray20")+
+  facet_grid(facet_dummy~.,scales="free_y",space = "free")+
+  theme_classic(16)
+
+p2 <- ggplot(Vdf, aes(y=variable, x=value, fill=component))+
+  geom_col(colour="gray20", position = "fill")+
+  facet_grid(facet_dummy~.,scales="free_y",space = "free")+
+  scale_x_continuous(labels=scales::percent)+
+  theme_classic(16)
+
+print(p1)
+print(p2)
+```
+
+These plot show co-occurrence relationships between variables. 
+You can see that many of survivors of Titanic are women, because of `SurvivalYes`  and `SexFemale` have large proportion `component 1`.

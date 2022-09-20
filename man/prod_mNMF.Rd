@@ -1,7 +1,7 @@
-\name{prod_mPPCA}
-\alias{prod_mPPCA}
-\alias{prod_mPPCA.default}
-\alias{prod_mPPCA.formula}
+\name{prod_mNMF}
+\alias{prod_mNMF}
+\alias{prod_mNMF.default}
+\alias{prod_mNMF.formula}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Matrix product
@@ -10,14 +10,13 @@ Matrix product
 \eqn{\prod_{d=1}^D\mu_{dl}^{x_{nd}}}
 }
 \usage{
-prod_mPPCA.formula(formula,
-                   data = parent.frame(), mu)
+prod_mNMF.formula(formula, data = parent.frame(), mu)
 
 
-prod_mPPCA.default(X, mu)
+prod_mNMF.default(X, mu)
 
 
-prod_mPPCA(...)
+prod_mNMF(...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

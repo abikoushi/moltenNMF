@@ -2,6 +2,9 @@
 \alias{mNMF_vb}
 \alias{mNMF_vb.default}
 \alias{mNMA_vb.formula}
+\alias{mrNMF_vb}
+\alias{mrNMF_vb.default}
+\alias{mrNMA_vb.formula}
 \title{
 Estimate the model of molten NMF using variational Bayes
 }

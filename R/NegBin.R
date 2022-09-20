@@ -1,7 +1,7 @@
-#' @export mNMF_vb.default
-mNMF_vb.default <- function(y, X, L, iter=1000,  a=1,  b=1){
+#' @export mrNMF_vb.default
+mrNMF_vb.default <- function(y, X, L, iter=1000,  a=1,  b=1){
   stopifnot(class(X)=="lgCMatrix")
-  out <- doVB_pois(y, X@i, X@p, attr(X,"indices"), X@Dim[2],
+  out <- doVB_negbin(y, X@i, X@p, attr(X,"indices"), X@Dim[2],
                  L=L, iter=iter, a=a, b=b)
   rownames(out$shape) <- colnames(X)
   rownames(out$rate) <- colnames(X)
@@ -11,13 +11,13 @@ mNMF_vb.default <- function(y, X, L, iter=1000,  a=1,  b=1){
   return(out)
 }
 
-#' @export mNMF_vb.formula
-mNMF_vb.formula <- function(formula,
+#' @export mrNMF_vb.formula
+mrNMF_vb.formula <- function(formula,
                             data = parent.frame(),
                             L, iter=1000, a=1, b=1){
   X <- sparse_model_matrix_b(formula, data=data)
   y <- model.response(model.frame(formula, data=data))
-  out <- doVB_pois(y, X@i, X@p, attr(X,"indices"), X@Dim[2],
+  out <- doVB_negbin(y, X@i, X@p, attr(X,"indices"), X@Dim[2],
                  L=L, iter=iter, a=a, b=b)
   rownames(out$shape) <- colnames(X)
   rownames(out$rate) <- colnames(X)
@@ -34,6 +34,6 @@ mNMF_vb.formula <- function(formula,
 }
 
 #' @export
-mNMF_vb <- function(...){
-  UseMethod("mNMF_vb")
+mrNMF_vb <- function(...){
+  UseMethod("mrNMF_vb")
 }

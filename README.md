@@ -1,6 +1,6 @@
 # moltenPPCA
 
-`moltenPPCA` is an R package for probabilistic principal component analysis with molten data format (in preparation)
+`moltenNMF` is an R package for probabilistic principal component analysis with molten data format (in preparation)
 
 ## Installation
 
@@ -10,7 +10,3 @@ devtools::install_github("abikoushi/moltenPPCA", build_vignettes = TRUE)
 
 ## Example
 
-```R
-library(moltenPPCA)
-vignette("moltenPPCA")
-```

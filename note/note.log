@@ -1,4 +1,4 @@
-This is e-pTeX, Version 3.14159265-p3.8.3-191112-2.6 (utf8.euc) (TeX Live 2020) (preloaded format=platex 2020.5.19)  22 MAR 2022 21:15
+This is e-pTeX, Version 3.14159265-p3.8.3-191112-2.6 (utf8.euc) (TeX Live 2020) (preloaded format=platex 2020.5.19)  18 SEP 2022 14:55
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -201,34 +201,33 @@ File: l3backend-dvips.def 2020-05-05 L3 backend support: dvips
 \g__pdf_backend_annotation_int=\count190
 \g__pdf_backend_link_int=\count191
 \g__pdf_backend_link_sf_int=\count192
-)
-No file note.aux.
+) (./note.aux)
 \openout1 = `note.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for JY1/mc/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Checking defaults for JT1/mc/m/n on input line 15.
-LaTeX Font Info:    ... okay on input line 15.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 15.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for JY1/mc/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Checking defaults for JT1/mc/m/n on input line 18.
+LaTeX Font Info:    ... okay on input line 18.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 18.
 
-(/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
+ (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 15.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 18.
 
 
 (/usr/local/texlive/2018/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -269,44 +268,25 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
 LaTeX Font Info:    Font shape `JT1/mc/b/n' in size <12> not available
-(Font)              Font shape `JT1/mc/bx/n' tried instead on input line 16.
+(Font)              Font shape `JT1/mc/bx/n' tried instead on input line 19.
 LaTeX Font Info:    Font shape `JT1/mc/bx/n' in size <12> not available
-(Font)              Font shape `JT1/gt/m/n' tried instead on input line 16.
+(Font)              Font shape `JT1/gt/m/n' tried instead on input line 19.
 LaTeX Font Info:    Font shape `JY1/mc/b/n' in size <12> not available
-(Font)              Font shape `JY1/mc/bx/n' tried instead on input line 16.
+(Font)              Font shape `JY1/mc/bx/n' tried instead on input line 19.
 LaTeX Font Info:    Font shape `JY1/mc/bx/n' in size <12> not available
-(Font)              Font shape `JY1/gt/m/n' tried instead on input line 16.
+(Font)              Font shape `JY1/gt/m/n' tried instead on input line 19.
 LaTeX Font Info:    Kanji font shape `JY1/mc/m/sc' undefined
-(Font)              No change on input line 18.
-
-Overfull \hbox (6.52222pt too wide) detected at line 37
-[]
- []
-
-[1]
-LaTeX Font Info:    Kanji font shape `JY1/mc/m/sc' undefined
-(Font)              No change on input line 51.
-
-
-LaTeX Warning: Reference `geney' on page 2 undefined on input line 62.
-
+(Font)              No change on input line 21.
 LaTeX Font Info:    Kanji font shape `JY1/mc/m/it' undefined
-(Font)              No change on input line 67.
-[2] [3] (./note.aux)
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
- ) 
+(Font)              No change on input line 37.
+[1] [2] (./note.aux) ) 
 Here is how much of TeX's memory you used:
- 3313 strings out of 480987
- 44075 string characters out of 5912924
- 303055 words of memory out of 5000000
- 19302 multiletter control sequences out of 15000+600000
+ 3317 strings out of 480987
+ 44107 string characters out of 5912924
+ 300107 words of memory out of 5000000
+ 19304 multiletter control sequences out of 15000+600000
  546732 words of font info for 81 fonts, out of 8000000 for 9000
  1090 hyphenation exceptions out of 8191
- 38i,13n,33p,341b,287s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 38i,13n,33p,341b,279s stack positions out of 5000i,500n,10000p,200000b,80000s
 
-Output written on note.dvi (3 pages, 11588 bytes).
+Output written on note.dvi (2 pages, 5288 bytes).

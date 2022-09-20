@@ -1,5 +1,7 @@
 ^.*\.Rproj$
+^.*\.Rhistory$
 ^\.Rproj\.user$
+^Rmd$
 ^note$
 ^example$
 ^doc$
