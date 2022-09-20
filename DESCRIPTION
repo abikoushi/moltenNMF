@@ -1,13 +1,11 @@
 Package: moltenNMF
 Type: Package
-Title: Probabilistic NMF analysis with molten data format
+Title: Non-negative matrix factorization for the molten format data
 Version: 1.0
 Date: 2022-09-09
 Author: Ko ABE
-Maintainer: Ko ABE <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
+Maintainer: Ko ABE <koabecontact@gmail.com>
+Description: Non-negative matrix factorization for the 'molten' format data
 License: MIT
 Imports: Rcpp (>= 1.0.8.3), Matrix
 LinkingTo: Rcpp, RcppArmadillo
-Suggests: knitr, rmarkdown 
-VignetteBuilder: knitr

@@ -1,15 +1,15 @@
-\name{mNMF_vb}
-\alias{mNMF_vb}
-\alias{mNMF_vb.default}
-\alias{mNMA_vb.formula}
+\name{mrNMF_vb}
+\alias{mrNMF_vb}
+\alias{mrNMF_vb.default}
+\alias{mrNMA_vb.formula}
 \title{
-Estimate the model of molten NMF using variational Bayes
+Estimate the model of molten NMF with random effect using variational Bayes
 }
 \description{
-\code{mNMF_vb} is used to fit molten NMF.
+\code{mrNMF_vb} is used to fit molten NMF. Use when \code{mNMF_vb} is overdispersed.
 }
 \usage{
-mNMF_vb.default(y,
+mrNMF_vb.default(y,
                 X,
                 L,
                 iter=1000, 
@@ -17,7 +17,7 @@ mNMF_vb.default(y,
                 b=1)
 
 
-mNMF_vb.formula(formula,
+mrNMF_vb.formula(formula,
                 data = parent.frame(),
                 L,
                 iter=1000,
@@ -25,7 +25,7 @@ mNMF_vb.formula(formula,
                 b=1)
 
 
-mNMF_vb(x)
+mrNMF_vb(x)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -60,11 +60,12 @@ mNMF_vb(x)
 \value{
  \item{shape }{shape of the variational posterior (gamma distribution)}
  \item{rate }{rate of the variational posterior (gamma distribution)}
+ \item{precision }{the parameter of prior distribution (gamma distribution)}
  \item{ELBO }{evidence lower bound}
  \item{indices }{indices}
 }
 \seealso{
-\code{\link{mrNMF_vb}}
+\code{\link{mNMF_vb}}
 }
 \examples{
 ### see vignette
