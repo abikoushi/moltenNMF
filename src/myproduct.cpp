@@ -32,6 +32,17 @@ arma::mat myprod(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
   return out;
 }
 
+// [[Rcpp::export]]
+arma::vec summyprod(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
+  arma::mat out = arma::ones<arma::mat>(n, lam.n_cols);
+  for(int i=0; i<xp.n_rows-1; i++){
+    for(int j=xp[i];j<xp[i+1];j++){
+      out.row(xi[j]) %= lam.row(i); 
+    }
+  }
+  return sum(out,1);
+}
+
 arma::mat myprod_skip(int n, arma::uvec xi, arma::uvec xp, arma::mat lam, int start, int end) {
   arma::mat out = arma::ones<arma::mat>(n,lam.n_cols);
   for(int i=0; i<xp.n_rows-1; i++){

@@ -1,8 +1,9 @@
-#devtools::install_github("abikoushi/moltenNMF", build_vignettes = TRUE)
+#devtools::install_github("abikoushi/moltenNMF")
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 library(moltenNMF)
+library(Matrix)
 
 Titanicdf <- as.data.frame(Titanic) %>% 
   mutate(Class=factor(Class,levels=c("3rd","2nd","1st","Crew")))
@@ -23,21 +24,42 @@ ggplot(Titanicdf, aes(x=Class, y=Freq, fill=Survived))+
 
 #ggsave("Titanic2.png")
 
-set.seed(1987)
-out <- mrNMF_vb(Freq~Class+Sex+Age+Survived-1, data=Titanicdf, L=2, iter=1000, a=0.5, b=0.1)
+set.seed(1999)
+f <- Freq ~ Survived + Class+Sex+Age-1
+out <- mNMF_vb(f, data=Titanicdf, L=2, iter=1000, a=0.5, b=0.1)
 
 qplot(1:length(out$ELBO),out$ELBO, geom = "line")+
   labs(x="iter",y="ELBO")+
   theme_minimal(16)
 
 V <- out$shape/out$rate
-yhat <- rowSums(prod_mNMF(~Class+Sex+Age+Survived-1, data=Titanicdf, V))
-zhat <- (Titanicdf$Freq+out$precision)/(yhat+out$precision)
+yhat <- product_m(f, data=Titanicdf, V)
+X <- sparse_model_matrix_b(f,Titanicdf)
+#ytilde <- rpredictor_mrNMF(X, 2000, out$shape, out$rate, out$precision)
+ytilde <- rpredictor_mNMF(X, 2000, out$shape, out$rate)
+#zhat <- (Titanicdf$Freq+out$precision)/(yhat+out$precision)
+ybar <- apply(ytilde, 1, mean)
+yq <- apply(ytilde, 1, quantile, prob=c(0.025, 0.975))
+fitdf <- data.frame(rownumber = 1:length(Titanicdf$Freq),
+                    fit = ybar,
+                    obs = Titanicdf$Freq,
+                    lower = yq[1,], upper = yq[2,])
 
-qplot(yhat*zhat, Titanicdf$Freq, alpha=I(0.5), size=I(3))+
-  labs(x="fit",y="obs")+
-  geom_abline(intercept=0,slope=1,linetype=2)+
-  theme_minimal(16)
+ggplot(fitdf,aes(x=rownumber, y=obs-fit, ymin=obs-upper, ymax = obs-lower))+
+  geom_hline(yintercept=0, linetype=2)+
+  geom_linerange()+
+  geom_point()+
+  theme_classic(16)
+
+
+
+ggplot(fitdf,aes(x=obs-fit))+
+  geom_histogram(bins = 20, alpha=0.1, colour="grey20")+
+  theme_classic(16)
+
+# ggplot(fitdf,aes(x=obs-fit))+
+#   stat_ecdf()+
+#   theme_classic(16)
 
 Vdf <- data.frame(V,variable=rownames(V),
                   facet_dummy=out$vargroup) %>% 
@@ -54,6 +76,15 @@ ggplot(Vdf, aes(y=variable, x=value, fill=component))+
         legend.position = "bottom")
 ggsave("TitanicV1.png")
 
+ggplot(Vdf, aes(y=variable, x=value, fill=component))+
+  geom_col(colour="gray20")+
+  facet_wrap(facet_dummy~.,scales="free")+
+  theme_classic(16)+
+  theme(strip.text.y = element_text(angle=360),
+        strip.background = element_blank(),
+        legend.position = "bottom")
+ggsave("TitanicV2.png")
+
 ggplot(Vdf, aes(y=variable, x=log(value), fill=component))+
   geom_col(colour="gray20")+
   geom_vline(xintercept = 0)+
@@ -62,14 +93,13 @@ ggplot(Vdf, aes(y=variable, x=log(value), fill=component))+
   theme(strip.text.y = element_text(angle=360),
         strip.background = element_blank(),
         legend.position = "bottom")
-ggsave("TitanicV2.png")
+ggsave("TitanicV3.png")
 
 ggplot(Vdf, aes(y=variable, x=value, fill=component))+
-  #geom_vline(xintercept = 0.5, linetype=2)+
   geom_col(colour="gray20", position = "fill")+
   facet_grid(facet_dummy~.,scales="free_y",space = "free")+
   scale_x_continuous(labels=scales::percent)+
   theme_classic(16)+
   theme(strip.text.y = element_text(angle=360),
         strip.background = element_blank())
-ggsave("TitanicV3.png")
+ggsave("TitanicV4.png")

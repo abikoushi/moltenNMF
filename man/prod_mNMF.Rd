@@ -1,29 +1,34 @@
-\name{prod_mNMF}
-\alias{prod_mNMF}
-\alias{prod_mNMF.default}
-\alias{prod_mNMF.formula}
+\name{product_m}
+\alias{product_m}
+\alias{product_m.default}
+\alias{product_m.formula}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Matrix product
 }
 \description{
-\eqn{\prod_{d=1}^D\mu_{dl}^{x_{nd}}}
+calculate \eqn{f_{nl} = \prod_{d=1}^Dv_{dl}^{x_{nd}}}. If `aggregate = TRUE`, return \eqn{\sum_{l=1}^L f_{nl}}.
 }
 \usage{
-prod_mNMF.formula(formula, data = parent.frame(), mu)
+product_m.formula(formula,
+  data = parent.frame(),
+  V,
+  aggregate = TRUE)
 
 
-prod_mNMF.default(X, mu)
+product_m.default(X,
+  V,
+  aggregate = TRUE)
 
 
-prod_mNMF(...)
+product_mNMF(...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{X}{
   sparse design matrix
 }
-  \item{mu}{
+  \item{V}{
   matrix of parameter
 }
   \item{formula}{
@@ -31,6 +36,9 @@ prod_mNMF(...)
 }
   \item{data}{	
   an optional data frame, containing the variables in the formula.
+}
+  \item{aggregate}{	
+  If `TRUE`, return sum of the values of components. 
 }
   \item{\dots}{
   additional arguments to be passed to the low level fitting functions 

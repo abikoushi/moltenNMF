@@ -13,3 +13,15 @@ myprod <- function(n, xi, xp, lam) {
     .Call(`_moltenNMF_myprod`, n, xi, xp, lam)
 }
 
+summyprod <- function(n, xi, xp, lam) {
+    .Call(`_moltenNMF_summyprod`, n, xi, xp, lam)
+}
+
+PoissonGamma_rng <- function(N, np, xi, xp, alpha, beta) {
+    .Call(`_moltenNMF_PoissonGamma_rng`, N, np, xi, xp, alpha, beta)
+}
+
+NegbinGamma_rng <- function(N, np, xi, xp, alpha, beta, tau) {
+    .Call(`_moltenNMF_NegbinGamma_rng`, N, np, xi, xp, alpha, beta, tau)
+}
+

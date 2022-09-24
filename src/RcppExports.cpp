@@ -63,11 +63,61 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// summyprod
+arma::vec summyprod(int n, arma::uvec xi, arma::uvec xp, arma::mat lam);
+RcppExport SEXP _moltenNMF_summyprod(SEXP nSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP lamSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type xi(xiSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type xp(xpSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type lam(lamSEXP);
+    rcpp_result_gen = Rcpp::wrap(summyprod(n, xi, xp, lam));
+    return rcpp_result_gen;
+END_RCPP
+}
+// PoissonGamma_rng
+arma::mat PoissonGamma_rng(int N, int np, arma::uvec xi, arma::uvec xp, arma::mat alpha, arma::mat beta);
+RcppExport SEXP _moltenNMF_PoissonGamma_rng(SEXP NSEXP, SEXP npSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP alphaSEXP, SEXP betaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< int >::type np(npSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type xi(xiSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type xp(xpSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type beta(betaSEXP);
+    rcpp_result_gen = Rcpp::wrap(PoissonGamma_rng(N, np, xi, xp, alpha, beta));
+    return rcpp_result_gen;
+END_RCPP
+}
+// NegbinGamma_rng
+arma::mat NegbinGamma_rng(int N, int np, arma::uvec xi, arma::uvec xp, arma::mat alpha, arma::mat beta, double tau);
+RcppExport SEXP _moltenNMF_NegbinGamma_rng(SEXP NSEXP, SEXP npSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP tauSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< int >::type np(npSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type xi(xiSEXP);
+    Rcpp::traits::input_parameter< arma::uvec >::type xp(xpSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type tau(tauSEXP);
+    rcpp_result_gen = Rcpp::wrap(NegbinGamma_rng(N, np, xi, xp, alpha, beta, tau));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_doVB_negbin", (DL_FUNC) &_moltenNMF_doVB_negbin, 9},
     {"_moltenNMF_doVB_pois", (DL_FUNC) &_moltenNMF_doVB_pois, 9},
     {"_moltenNMF_myprod", (DL_FUNC) &_moltenNMF_myprod, 4},
+    {"_moltenNMF_summyprod", (DL_FUNC) &_moltenNMF_summyprod, 4},
+    {"_moltenNMF_PoissonGamma_rng", (DL_FUNC) &_moltenNMF_PoissonGamma_rng, 6},
+    {"_moltenNMF_NegbinGamma_rng", (DL_FUNC) &_moltenNMF_NegbinGamma_rng, 7},
     {NULL, NULL, 0}
 };
 
