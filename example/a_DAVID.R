@@ -52,14 +52,12 @@ f1 <- abundance ~ species+Day_Donor-1
 outfix <- mNMF_vb(f1, data = dat_abund_g, L=9, iter=1000, a=0.5, b=0.1)
 plot(outfix$ELBO, type = "l")
 
-
-
+X <- sparse_model_matrix_b(f1,data = dat_abund_g)
 #ytilde <- rpredictor_mrNMF(X, 2000, out$shape, out$rate, out$precision)
-ytilde <- rpredictor_mNMF(X, 2000, out$shape, out$rate)
+ytilde <- rpredictor_mNMF(X, 2000, outfix$shape, outfix$rate)
 
 ybar <- rowMeans(ytilde)
-yq <- apply(ytilde, 1, quantile, prob=c(0.05,0.995))
-
+yq <- apply(ytilde, 1, quantile, prob = c(0.05, 0.995))
 head(t(yq))
 
 dffit <- data.frame(obs=dat_abund_g$abundance,
@@ -67,15 +65,16 @@ dffit <- data.frame(obs=dat_abund_g$abundance,
            ymin=yq[1,],
            ymax=yq[2,])
 head(dffit)
-ggplot(dffit,aes(x=obs,y=fit))+
+
+ggplot(dffit, aes(x=obs, y=fit))+
   geom_point(alpha=0.1)+
-  geom_ribbon(aes(ymin=ymin,ymax=ymax), colour="royalblue", alpha=0.1)+
+  #geom_ribbon(aes(ymin=ymin, ymax=ymax), colour="royalblue", alpha=0.1)+
   geom_abline(intercept=0, slope=1, linetype=2) +
   theme_minimal(16)
 
-#ggsave("goodnessoffit_david.png")
+ggsave("goodnessoffit_david.png")
 
-Vdf <- data.frame(V,variable=rownames(V),
+Vdf <- data.frame(outfix$shape/outfix$rate,variable=rownames(outfix$shape),
                   facet_dummy=outfix$vargroup) %>% 
   pivot_longer(!(variable|facet_dummy), names_to = "component", 
                names_transform = list(component = readr::parse_number)) %>% 
@@ -93,14 +92,14 @@ ggplot(Daydf, aes(x=Day, y=value,  colour=component))+
   facet_grid(Donor~.)+
   theme_classic(16)+
   theme(strip.background = element_blank())
-ggsave("david_day_line.png")
+ggsave("david_day_line.pdf")
 
 ggplot(Daydf, aes(x=Day, y=value, fill=component))+
   stat_summary_bin(geom="col", fun = mean, binwidth = 10, position = "fill")+
   facet_grid(Donor~.)+
   theme_classic(16)+
   theme(strip.background = element_blank())
-ggsave("david_day_bar.png")
+ggsave("david_day_bar.pdf")
 
 genusdf <- dplyr::filter(Vdf, "species"==facet_dummy) %>% 
   dplyr::mutate(variable=sub("species","",variable)) %>% 
@@ -113,9 +112,10 @@ ggplot(genusdf,aes(y=reorder_within(species,value,component), x=value))+
   geom_point()+
   geom_linerange(aes(xmin=0, xmax=value))+
   facet_wrap(component~., scales = "free")+
+  scale_x_continuous(n.breaks = 3)+
   scale_y_reordered()+
   labs(y="")+
   theme_classic()+
   theme(axis.text.y = element_text(colour = "black", size=12))
 
-ggsave("david_genus.png")
+ggsave("david_genus.pdf")

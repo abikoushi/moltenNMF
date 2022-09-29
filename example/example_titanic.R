@@ -4,7 +4,7 @@ library(tidyr)
 library(ggplot2)
 library(moltenNMF)
 library(Matrix)
-
+?sparse.model.matrix
 Titanicdf <- as.data.frame(Titanic) %>% 
   mutate(Class=factor(Class,levels=c("3rd","2nd","1st","Crew")))
 
@@ -35,6 +35,21 @@ qplot(1:length(out$ELBO),out$ELBO, geom = "line")+
 V <- out$shape/out$rate
 yhat <- product_m(f, data=Titanicdf, V)
 X <- sparse_model_matrix_b(f,Titanicdf)
+str(X)
+dfx <- as.data.frame(which(X, arr.ind = TRUE))
+lab <- rep(c("Survived","Class","Sex","Age"),diff(attr(X,"indices")))
+lab <- factor(lab, levels = c("Survived","Class","Sex","Age"))
+dfx <- mutate(dfx, name=lab[col])
+ggplot(dfx,aes(y=row,x=col))+
+  geom_tile(fill="cornflowerblue", colour="white", size=1)+
+  facet_grid(~name, space = "free", scales = "free")+
+  scale_y_reverse()+
+  theme(panel.grid = element_blank(),
+        panel.background = element_blank(),
+        text = element_text(size = 16),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_blank())
+ggsave("DesMat.png")
 #ytilde <- rpredictor_mrNMF(X, 2000, out$shape, out$rate, out$precision)
 ytilde <- rpredictor_mNMF(X, 2000, out$shape, out$rate)
 #zhat <- (Titanicdf$Freq+out$precision)/(yhat+out$precision)

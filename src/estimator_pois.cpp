@@ -4,7 +4,6 @@
 // [[Rcpp::plugins(cpp11)]]
 using namespace Rcpp;
 
-
 // [[Rcpp::export]]
 List doVB_pois(arma::vec y,
                  arma::uvec xi,
@@ -33,8 +32,8 @@ List doVB_pois(arma::vec y,
       lambda.rows(varind[k], varind[k+1]-1) = alpha.rows(varind[k],varind[k+1]-1)/B;
     }
     loglambda = mat_digamma(alpha) - log(beta);
-    arma::vec ybar = summyprod(N,xi,xp,lambda);
-    ll.row(i) = sum(y +y%log(den) - ybar - lgamma(y+1))+
+    arma::vec ybar = summyprod(N, xi, xp, lambda);
+    ll.row(i) = sum(-ybar + y%log(den) - lgamma(y+1)) +
       + accu((a-1)*loglambda - b*lambda + a*log(beta) - std::lgamma(a)) +
       - accu((alpha-1)%loglambda - beta%lambda + alpha%log(beta) - lgamma(alpha));
   }
