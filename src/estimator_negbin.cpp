@@ -36,13 +36,13 @@ List doVB_negbin(arma::vec y,
       lambda.rows(varind[k],varind[k+1]-1) = alpha.rows(varind[k],varind[k+1]-1)/B;
     }
     loglambda = mat_digamma(alpha) - log(beta);
-    arma::vec ybar = sum(myprod(N,xi,xp,lambda),1);
+    arma::vec ybar = summyprod(N,xi,xp,lambda);
     arma::vec ahat = (y+tau);
     arma::vec bhat = (ybar+tau);
     arma::vec logz = vec_digamma(ahat) - log(bhat);
     z = ahat/bhat;
     tau += sum(logz - z + log(tau) + 1 - R::digamma(tau))/(N*(1/tau - R::trigamma(tau)));
-    ll.row(i) = sum(y +y%log(den) - ybar%z - lgamma(y+1))+
+    ll.row(i) = sum(-den +y%log(den) + y%logz - lgamma(y+1))+
       + accu((a-1)*loglambda - b*lambda + a*log(beta) - std::lgamma(a)) +
       - accu((alpha-1)%loglambda - beta%lambda + alpha%log(beta) - lgamma(alpha))+
       + sum(z%bhat - z*a - ahat%log(bhat) + a*log(a)+lgamma(ahat)-lgamma(a));

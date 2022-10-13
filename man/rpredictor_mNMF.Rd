@@ -9,9 +9,9 @@ Sampler for predictive distribution of mNMF.
 Get sample frrom posterior predictive distribution from the fitted model of mNMF using random number.
 }
 \usage{
-rpredictor_mNMF(X, np, alpha, beta)
+rpredictor_mNMF(X, np, shape, rate)
 
-rpredictor_mrNMF(X, np, alpha, beta, tau)
+rpredictor_mrNMF(X, np, shape, rate, precision)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,12 +21,12 @@ rpredictor_mrNMF(X, np, alpha, beta, tau)
   \item{np}{
   size of the sample (Natural number)
 }
-  \item{alpha}{
+  \item{shape}{
   shape of the variational posterior (gamma distribution)
 }
-  \item{beta}{rate of the variational posterior (gamma distribution)}
+  \item{rate}{rate of the variational posterior (gamma distribution)}
  
- \item{tau}{the parameter of prior distribution (gamma distribution)}
+ \item{precision}{the parameter of prior distribution (gamma distribution)}
 }
 
 \seealso{

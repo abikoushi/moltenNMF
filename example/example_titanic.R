@@ -4,9 +4,9 @@ library(tidyr)
 library(ggplot2)
 library(moltenNMF)
 library(Matrix)
-?sparse.model.matrix
-Titanicdf <- as.data.frame(Titanic) %>% 
-  mutate(Class=factor(Class,levels=c("3rd","2nd","1st","Crew")))
+
+Titanicdf <- mutate(as.data.frame(Titanic), 
+                    Class=factor(Class,levels=c("3rd","2nd","1st","Crew")))
 
 head(Titanicdf)
 

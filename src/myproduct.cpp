@@ -14,12 +14,13 @@ arma::mat mysum_t(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
 arma::mat mysum(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
   arma::mat out = arma::zeros<arma::mat>(n, lam.n_cols);
   for(int i=0; i<xp.n_rows-1; i++){
-    for(int j=xp[i];j<xp[i+1];j++){
+    for(int j=xp[i]; j<xp[i+1]; j++){
       out.row(xi[j]) += lam.row(i); 
     }
   }
   return out;
 }
+
 
 // [[Rcpp::export]]
 arma::mat myprod(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
@@ -34,17 +35,11 @@ arma::mat myprod(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
 
 // [[Rcpp::export]]
 arma::vec summyprod(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
-  arma::mat out = arma::ones<arma::mat>(n, lam.n_cols);
-  for(int i=0; i<xp.n_rows-1; i++){
-    for(int j=xp[i];j<xp[i+1];j++){
-      out.row(xi[j]) %= lam.row(i); 
-    }
-  }
-  return sum(out,1);
+  return sum(myprod(n, xi, xp, lam), 1);
 }
 
 arma::mat myprod_skip(int n, arma::uvec xi, arma::uvec xp, arma::mat lam, int start, int end) {
-  arma::mat out = arma::ones<arma::mat>(n,lam.n_cols);
+  arma::mat out = arma::ones<arma::mat>(n, lam.n_cols);
   for(int i=0; i<start; i++){
       for(int j=xp[i];j<xp[i+1];j++){
         out.row(xi[j]) %= lam.row(i);

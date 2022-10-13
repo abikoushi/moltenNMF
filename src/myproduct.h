@@ -6,6 +6,10 @@ arma::mat myprod(int n, arma::uvec xi, arma::uvec xp, arma::mat lam);
 
 arma::vec summyprod(int n, arma::uvec xi, arma::uvec xp, arma::mat lam);
 
+arma::mat myprod2(int n, arma::uvec xi, arma::uvec xp, arma::mat lam, arma::vec xx);
+
+arma::vec summyprod2(int n, arma::uvec xi, arma::uvec xp, arma::mat lam, arma::vec xx);
+
 arma::mat myprod_skip(int n, arma::uvec xi, arma::uvec xp, arma::mat lam, int start, int end);
 
 arma::mat sweep(int N, arma::uvec xi, arma::uvec xp, arma::vec W);

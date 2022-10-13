@@ -5,15 +5,15 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List doVB_pois(arma::vec y,
-                 arma::uvec xi,
-                 arma::uvec xp,
-                 arma::uvec varind,
-                 int D,
-                 int L,
-                 int iter=1000,
-                 double a=0.5,
-                 double b=0.001){
+List doVB_pois(const arma::vec & y,
+               const arma::uvec & xi,
+               const arma::uvec & xp,
+               const arma::uvec & varind,
+               const int & D,
+               const int & L,
+               const int & iter,
+               const double & a,
+               const double & b){
   int N = y.n_rows;
   int K = varind.n_rows - 1;
   arma::mat lambda = arma::randg<arma::mat>(D,L);
@@ -32,8 +32,8 @@ List doVB_pois(arma::vec y,
       lambda.rows(varind[k], varind[k+1]-1) = alpha.rows(varind[k],varind[k+1]-1)/B;
     }
     loglambda = mat_digamma(alpha) - log(beta);
-    arma::vec ybar = summyprod(N, xi, xp, lambda);
-    ll.row(i) = sum(-ybar + y%log(den) - lgamma(y+1)) +
+    //arma::vec ybar = summyprod(N, xi, xp, lambda);
+    ll.row(i) = sum(-den + y%log(den) - lgamma(y+1)) +
       + accu((a-1)*loglambda - b*lambda + a*log(beta) - std::lgamma(a)) +
       - accu((alpha-1)%loglambda - beta%lambda + alpha%log(beta) - lgamma(alpha));
   }

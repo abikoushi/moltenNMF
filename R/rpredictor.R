@@ -1,9 +1,9 @@
 #' @export rpredictor_mNMF
-rpredictor_mNMF <- function(X, np, alpha, beta){
-  return(return(PoissonGamma_rng(X@Dim[1], np, X@i, X@p, alpha, 1/beta)))
+rpredictor_mNMF <- function(X, np, shape, rate){
+  return(return(PoissonGamma_rng(X@Dim[1], np, X@i, X@p, shape, 1/rate)))
 }
 
 #' @export rpredictor_mrNMF
-rpredictor_mrNMF <- function(X, np, alpha, beta, tau){
-  return(return(NegbinGamma_rng(X@Dim[1], np, X@i, X@p, alpha, 1/beta, tau)))
+rpredictor_mrNMF <- function(X, np, alpha, shape, rate, precision){
+  return(return(NegbinGamma_rng(X@Dim[1], np, X@i, X@p, shape, 1/rate, precision)))
 }

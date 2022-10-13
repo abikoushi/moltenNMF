@@ -29,7 +29,7 @@ product_mNMF(...)
   sparse design matrix
 }
   \item{V}{
-  matrix of parameter
+  matrix of parameters
 }
   \item{formula}{
   an object of class "formula": a symbolic description of the model to be fitted.

@@ -5,8 +5,12 @@ doVB_negbin <- function(y, xi, xp, varind, D, L, iter = 1000L, a = 0.5, b = 0.00
     .Call(`_moltenNMF_doVB_negbin`, y, xi, xp, varind, D, L, iter, a, b)
 }
 
-doVB_pois <- function(y, xi, xp, varind, D, L, iter = 1000L, a = 0.5, b = 0.001) {
+doVB_pois <- function(y, xi, xp, varind, D, L, iter, a, b) {
     .Call(`_moltenNMF_doVB_pois`, y, xi, xp, varind, D, L, iter, a, b)
+}
+
+doVB_pois_missing <- function(y, xi, xp, miss_row, miss_col, sumx, varind, dropK, D, L, iter, a, b, eta) {
+    .Call(`_moltenNMF_doVB_pois_missing`, y, xi, xp, miss_row, miss_col, sumx, varind, dropK, D, L, iter, a, b, eta)
 }
 
 myprod <- function(n, xi, xp, lam) {
