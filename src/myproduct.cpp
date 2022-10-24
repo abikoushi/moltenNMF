@@ -1,17 +1,39 @@
 #include <RcppArmadillo.h>
 #include "myproduct.h"
 
-arma::mat mysum_t(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
-  arma::mat out = arma::zeros<arma::mat>(n, lam.n_cols);
+arma::mat mysum_t(const int & N, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam) {
+  arma::mat out = arma::zeros<arma::mat>(N, lam.n_cols);
   for(int i=0; i<xp.n_rows-1; i++){
-    for(int j=xp[i];j<xp[i+1];j++){
+    for(int j=xp[i]; j<xp[i+1]; j++){
       out.row(i) += lam.row(xi[j]); 
     }
   }
   return out;
 }
 
-arma::mat mysum(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
+arma::mat mysum(const int & N, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam) {
+  arma::mat out = arma::zeros<arma::mat>(N, lam.n_cols);
+  for(int i=0; i<xp.n_rows-1; i++){
+    for(int j=xp[i]; j<xp[i+1]; j++){
+      out.row(xi[j]) += lam.row(i); 
+    }
+  }
+  return out;
+}
+
+// [[Rcpp::export]]
+arma::mat myprod(const int & N, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam) {
+  arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
+  for(int i=0; i<xp.n_rows-1; i++){
+    for(int j=xp[i];j<xp[i+1];j++){
+      out.row(xi[j]) %= lam.row(i); 
+    }
+  }
+  return out;
+}
+
+
+arma::mat mysum2(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
   arma::mat out = arma::zeros<arma::mat>(n, lam.n_cols);
   for(int i=0; i<xp.n_rows-1; i++){
     for(int j=xp[i]; j<xp[i+1]; j++){
@@ -21,25 +43,24 @@ arma::mat mysum(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
   return out;
 }
 
-
-// [[Rcpp::export]]
-arma::mat myprod(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
+arma::mat myprod2(int n, arma::uvec mi, arma::uvec xp, arma::mat lam, arma::vec p) {
   arma::mat out = arma::ones<arma::mat>(n, lam.n_cols);
   for(int i=0; i<xp.n_rows-1; i++){
     for(int j=xp[i];j<xp[i+1];j++){
-      out.row(xi[j]) %= lam.row(i); 
+      out.row(mi[j]) %= arma::pow(lam.row(i), p[i]);
     }
   }
   return out;
 }
 
-// [[Rcpp::export]]
-arma::vec summyprod(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
-  return sum(myprod(n, xi, xp, lam), 1);
-}
 
-arma::mat myprod_skip(int n, arma::uvec xi, arma::uvec xp, arma::mat lam, int start, int end) {
-  arma::mat out = arma::ones<arma::mat>(n, lam.n_cols);
+arma::mat myprod_skip(const int & N,
+                      const arma::uvec & xi,
+                      const arma::uvec & xp,
+                      const arma::mat & lam,
+                      const int & start,
+                      const int & end) {
+  arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
   for(int i=0; i<start; i++){
       for(int j=xp[i];j<xp[i+1];j++){
         out.row(xi[j]) %= lam.row(i);

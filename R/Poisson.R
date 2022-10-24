@@ -1,16 +1,15 @@
 #' @export mNMF_vb.default
-mNMF_vb.default <- function(y, X, L, pos_missing = NULL, iter=1000,  a=1,  b=1, eta=1){
+mNMF_vb.default <- function(y, X, L, pos_missing = NULL, iter=1000, a=1,　b=1,　eta=1){
   stopifnot(class(X)=="lgCMatrix")
   if(!is.null(pos_missing)){
     sumx <- Matrix::colSums(X)
-    sum1mx <- Matrix::colSums(1-X)
+    # sumk <- sapply(1:max(attr(X,"assign")), function(i){nrow(X)-sum(sumx[attr(X,"assign")==i])-
+    #     sum(pos_missing[,2]==i)*sum(attr(X,"assign")==i)})
     out <- doVB_pois_missing(y, X@i, X@p,
-                             miss_row = pos_missing[,1],
-                             miss_col = pos_missing[,2],
+                             miss_row = pos_missing[,1]-1L,
+                             miss_col = pos_missing[,2]-1L,
                              sumx = sumx,
-                             #sum1mx = sum1mx,
                              varind = attr(X,"indices"),
-                             dropK = attr(X,"dropK"),
                              D = X@Dim[2],
                              L = L, iter=iter, a=a, b=b, eta=eta)
   }else{
@@ -35,18 +34,16 @@ mNMF_vb.formula <- function(formula,
                             data = parent.frame(),
                             L, iter=1000, a=1, b=1){
   dat <- model.frame(formula, data=data)
-  X <- sparse_model_matrix_b(formula, data=data)
+  X <- sparse_onehot(formula, data=data)
   y <- model.response(dat)
   M <- is.na(dat)
   if(any(M)){
-    posM <-  which(M, arr.ind = TRUE)-1L
+    posM <-  which(M, arr.ind = TRUE)
     out <- doVB_pois_missing(y, X@i, X@p,
-                             miss_row = posM[,1],
-                             miss_col = posM[,2],
-                             sumx = colSums(X),
-                             #sum1mx = colSums(1-X),
+                             miss_row = posM[,1]-1L,
+                             miss_col = posM[,2]-1L,
+                             sumx = Matrix::colSums(X),
                              varind = attr(X,"indices"),
-                             dropK = attr(X,"dropK"),
                              D = X@Dim[2],
                              L=L, iter=iter, a=a, b=b)
   }else{

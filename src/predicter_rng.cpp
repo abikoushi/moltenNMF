@@ -21,7 +21,7 @@ arma::mat PoissonGamma_rng(int N,
         V(i,j) = arma::randg(arma::distr_param(alpha.at(i,j), beta.at(i,j)));
       }
     }
-    arma::vec lam = summyprod(N, xi, xp, V);
+    arma::vec lam = sum(myprod(N,xi,xp,V),1);
     for(int i=0;i<N;i++){
       NumericVector S = Rcpp::rpois(1, arma::as_scalar(lam(i)));
       out(i,k) = S[0];
@@ -50,7 +50,7 @@ arma::mat NegbinGamma_rng(int N,
          V(i,j) = arma::randg(arma::distr_param(alpha.at(i,j), beta.at(i,j)));
        }
      }
-     arma::vec lam = summyprod(N, xi, xp, V);
+     arma::vec lam = sum(myprod(N, xi, xp, V),1);
      for(int i=0;i<N;i++){
        double r = arma::randg(arma::distr_param(tau, invtau));;
        NumericVector S = Rcpp::rpois(1, r*arma::as_scalar(lam(i)));

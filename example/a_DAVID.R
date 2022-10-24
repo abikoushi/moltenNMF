@@ -33,6 +33,14 @@ datall <- data.frame(t(dat_abund)) %>%
 
 head(datall$Donor)
 datB <- dplyr::filter(datall, Donor=="2202:DonorB")
+B2 <- group_by(datB, Day) %>% 
+  top_n(2,abundance)
+
+ggplot(B2, aes(x=Day, y=abundance, fill=species))+
+  stat_summary_bin(geom="col", fun = mean, binwidth = 10,position = "fill")+
+  scale_fill_viridis_d()+
+  theme_classic()
+  theme(legend.position = "none")
 
 set.seed(1111)
 f1 <- abundance ~ species+factor(Day)-1

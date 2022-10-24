@@ -1,18 +1,20 @@
 library(ggplot2)
 library(parallel)
 library(moltenNMF)
-#library(Matrix)
+library(Matrix)
+library(tidyr)
 #library(Rcpp)
 
-simfunc <- function(seed,V,L,varind,perm_L){
+simfunc <- function(seed,V,L,perm_L){
   set.seed(seed)
   Y <- rpois(N, lambda)
-  out <- mNMF_vb.default(Y, X, L = L, a = 0.5, b=1, iter=10000)
+  out <- mNMF_vb.default(Y, X, L = L, a = 0.5, b=1, iter=1000)
   Vhat <- out$shape/out$rate
+  varind <- attr(X,"indices")
   #3 is number of variables
   cmat <- sapply(1:3,function(j){
-    apply(perm_L,1,function(ivec)cor(log(as.vector(Vhat[varind==j,ivec])),
-                                   log(as.vector(V[varind==j,]))))
+    apply(perm_L,1,function(ivec)cor(log(as.vector(Vhat[,ivec][(varind[j]+1):varind[j+1],])),
+                                     log(as.vector(V[(varind[j]+1):varind[j+1],]))))
     })
   cv <- rowMeans(cmat)
   wch <- which.max(cv)
@@ -24,36 +26,42 @@ perm_L <- gtools::permutations(L,L)
 df <- as.data.frame(expand.grid(row=factor(1:10),
                                 col=factor(1:10),
                                 depth=factor(1:10)))
-X <- sparse_model_matrix_b(~ . -1, data=df)
+#X <- sparse_model_matrix_b(~ . -1, data=df)
+# N <- nrow(X)
+# D <- ncol(X)
+X <- sparse_onehot(~ ., data=df)
+colnames(X)
 N <- nrow(X)
 D <- ncol(X)
-set.seed(1111);V <- matrix(rgamma(L*D, 1, 0.01),D,L)
+set.seed(1111);V <- matrix(rgamma(L*D, 0.8, 0.01),D,L)
+set.seed(1111);V <- matrix(rgamma(L*D, 1.5, 0.01),D,L)
 lambda <- product_m.default(X,V)
 #3 is number of variables
-varind <- rep(1:3,diff(attr(X, "indices")))
 ## plot(out$ELBO, type = "l")
 system.time({
-  simout <- mclapply(1:100, function(i)simfunc(i,V,L,varind,perm_L), mc.cores = detectCores())  
+  simout <- mclapply(1:100, function(i)simfunc(i,V,L,perm_L), mc.cores = detectCores())  
 })
 
-save(simout,V,X,file = "./example/sim_poisson.Rdata")
-
+#save(simout,V,X,file = "./example/sim_poisson.Rdata")
+simout[[1]]
 Vmean <- apply(simplify2array(lapply(simout,function(x)x$Vhat)),1:2,mean)
 Vsd <- apply(simplify2array(lapply(simout,function(x)x$Vhat)),1:2,sd)
-length(simout)
-dfV <- data.frame(true=as.vector(V),
-                  mean=as.vector(Vmean),
-                  se=as.vector(Vsd),
+dim(Vmean)
+dim(V)
+dfV <- data.frame(true = as.vector(V),
+                  vbar = as.vector(Vmean),
+                  se = as.vector(Vsd),
                   component=rep(1:L, each=nrow(V)),
-                  variable=rep(varind,L))
+                  varname = rep(colnames(X), L)) %>% 
+  separate(varname,c("variable","id"), sep="_")
 
-p1 <- ggplot(dfV,aes(x=true,y=mean,ymin=mean-se,ymax=mean+se))+
-  stat_smooth(method = lm,formula=y ~ x - 1, linetype=2, se=FALSE, colour="lightgrey")+
+
+p1 <- ggplot(dfV,aes(x=true,y=vbar,ymin=vbar-se,ymax=vbar+se, group=paste(variable,component)))+
+  stat_smooth(method = lm, formula=y ~ x - 1, se=FALSE, colour="lightgrey")+
   geom_pointrange(shape=1)+
-  scale_x_continuous(n.breaks = 4)+
-  facet_wrap(variable~component, scales = "free", labeller = label_both, ncol=5)+
+  scale_x_continuous(n.breaks = 3)+
+  facet_wrap(~paste(variable,component), scales = "free", ncol=5)+
   xlab("true value")+ylab("esitmates")+
-  theme_classic(14) +theme(strip.background = element_rect(colour = NA, fill="grey95"))
+  theme_classic(14)+theme(strip.background = element_blank())
 print(p1)
-#ggsave(p1, filename = "simV.pdf")
-
+ggsave(p1, filename = "simV.png")
