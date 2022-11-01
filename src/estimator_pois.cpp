@@ -95,18 +95,19 @@ void up_x(arma::mat & Xprob,
           const arma::mat & lambda,
           const int & D,
           const int & L,
+          arma::vec & logw,
           arma::vec & etahat,
           const double & eta){
   Xprob.fill(0);
   arma::mat et0 = myprod(y.n_rows, xi, xp, lambda);
   arma::mat t0 = mysum(y.n_rows, xi, xp, loglambda);
   double den = R::digamma(sum(etahat));
-  arma::vec logw = vec_digamma(etahat) - den;
+  logw = vec_digamma(etahat) - den;
   for(int i=0; i<miss_row.n_rows; i++){
     //Rprintf("%d: ", i);
     arma::mat vt = lambda.rows(varind[miss_col[i]], varind[miss_col[i]+1]-1);
     arma::mat lvt = loglambda.rows(varind[miss_col[i]], varind[miss_col[i]+1]-1);
-    double den = 0;
+    //double den = 0;
     int Jmax = varind[miss_col[i]+1]-varind[miss_col[i]]-1;
     arma::rowvec lp = arma::zeros<arma::rowvec>(Jmax+1); 
     for(int j=0; j<Jmax; j++){
@@ -236,15 +237,18 @@ List doVB_pois_missing(const arma::vec & y,
   arma::mat alpha = arma::ones<arma::mat>(D, L);
   arma::mat beta  = arma::ones<arma::mat>(D, L);
   arma::vec R = arma::zeros<arma::vec>(N);
+  arma::vec logw = arma::ones<arma::vec>(D);
+  logw /= sum(logw);
+  logw = log(logw);
   arma::vec ll(iter);
   for (int i=0; i<iter; i++) {
-    up_x(Xprob, y, xi, xp, sumx, miss_row, miss_col, varind, loglambda, lambda, D, L, etahat, eta);
+    up_x(Xprob, y, xi, xp, sumx, miss_row, miss_col, varind, loglambda, lambda, D, L, logw, etahat, eta);
     arma::mat r =  myprod(N, xi, xp, exp(loglambda));
     r.rows(miss_row) %=  exp(Xprob*loglambda);
     R = sum(r, 1);
     alpha = mysum_t(D, xi, xp, r.each_col()%(y/R)) + a;
     up_B(N, beta, lambda, loglambda, alpha, xi, xp, varind, b);
-    ll.row(i) = lowerbound_logML(alpha, beta, lambda, loglambda, R, y, a, b);
+    ll.row(i) = lowerbound_logML(alpha, beta, lambda, loglambda, R, y, a, b);// + sum(Xprob,0)%logw;
   }
   return List::create(Named("shape")=alpha,
                       Named("rate")=beta,

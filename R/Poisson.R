@@ -1,5 +1,5 @@
 #' @export mNMF_vb.default
-mNMF_vb.default <- function(y, X, L, pos_missing = NULL, iter=1000, a=1,　b=1,　eta=1){
+mNMF_vb.default <- function(y, X, L, pos_missing = NULL, iter=1000, a=0.5,　b=0.01,　eta=1){
   stopifnot(class(X)=="lgCMatrix")
   if(!is.null(pos_missing)){
     sumx <- Matrix::colSums(X)
@@ -32,7 +32,7 @@ mNMF_vb.default <- function(y, X, L, pos_missing = NULL, iter=1000, a=1,　b=1,�
 #' @export mNMF_vb.formula
 mNMF_vb.formula <- function(formula,
                             data = parent.frame(),
-                            L, iter=1000, a=1, b=1){
+                            L, iter=1000, a=0.5, b=0.01){
   dat <- model.frame(formula, data=data)
   X <- sparse_onehot(formula, data=data)
   y <- model.response(dat)

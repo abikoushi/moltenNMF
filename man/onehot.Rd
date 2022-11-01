@@ -13,7 +13,7 @@ sparse_onehot(object,
               xlev = NULL,
               sep = "_",
               na.action='na.pass',
-              to = "l")
+              fill = TRUE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -22,6 +22,18 @@ sparse_onehot(object,
 }
   \item{data}{
   an optional data frame, containing the variables in the formula.
+}
+\item{xlev}{
+a named list of character vectors giving the full set of levels to be assumed for each factor.
+}
+\item{sep}{
+character of separator within \code{colnames}
+}
+\item{na.action}{
+how \code{NA}s are treated (\link{\code{model.frame}})
+}
+\item{fill}{
+values to fill in one-hot design matrix
 }
 }
 \details{

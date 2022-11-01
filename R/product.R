@@ -1,6 +1,6 @@
 #' @export product_m.formula
 product_m.formula <- function(formula, data = parent.frame(), V, aggregate = TRUE){
-  X <- sparse_model_matrix_b(formula, data=data)
+  X <- sparse_onehot(formula, data=data)
   if(aggregate){
     res <- as.vector(rowSums(myprod(nrow(X), X@i, X@p, V)))
   }else{
