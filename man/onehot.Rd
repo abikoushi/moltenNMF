@@ -30,7 +30,7 @@ a named list of character vectors giving the full set of levels to be assumed fo
 character of separator within \code{colnames}
 }
 \item{na.action}{
-how \code{NA}s are treated (\link{\code{model.frame}})
+how \code{NA}s are treated (see \link{stats::model.frame})
 }
 \item{fill}{
 values to fill in one-hot design matrix
@@ -46,7 +46,10 @@ make sparse one-hot encoding (design matrix)
 %% ~~objects to See Also as \code{\link{help}}, ~~~
 }
 \examples{
-##see vignette
+set.seed(1234)
+df <- data.frame(x1 = sample(letters[1:3], 10, replace = TRUE),
+                 x2 = sample(LETTERS[1:3], 10, replace = TRUE))
+sparse_onehot(~x1+x2, data=df)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

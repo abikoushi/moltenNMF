@@ -120,7 +120,7 @@ void up_x(arma::mat & Xprob,
   etahat = sumx + sum(Xprob, 0).t() + eta;
 }
 
-double lowerbound_logML(const arma::mat & alpha,
+double lowerbound_logML_pois(const arma::mat & alpha,
                         const arma::mat & beta,
                         const arma::mat & lambda,
                         const arma::mat & loglambda,
@@ -131,6 +131,17 @@ double lowerbound_logML(const arma::mat & alpha,
   return sum(-R + y%log(R) - lgamma(y+1)) +
     + accu((a-1)*loglambda - b*lambda + a*log(beta) - std::lgamma(a)) +
     - accu((alpha-1)%loglambda - beta%lambda + alpha%log(beta) - lgamma(alpha));
+}
+
+double lowerbound_logML_mult(const arma::vec & logW,
+                             const arma::vec & sumx,
+                             const arma::mat & Xprob,
+                             const arma::vec & etahat,
+                             const double & eta){
+  return sum((sumx+arma::trans(sum(Xprob,0)))%logW) + sum(logW*eta) -
+    (lgamma(logW.n_cols*eta) - logW.n_cols*lgamma(eta) +
+    - lgamma(sum(etahat)) + sum(lgamma(etahat)) +
+    sum((eta - etahat)%logW));
 }
 
 double lowerbound_logML2(const arma::vec & z,
@@ -176,7 +187,7 @@ List doVB_pois(const arma::vec & y,
   for (int i=0; i<iter; i++) {
     up_A(alpha, U, R, logV, y, xi,xp,a);
     up_B(N, beta, V, logV, alpha, xi, xp, varind, b);
-    ll.row(i) = lowerbound_logML(alpha, beta, V, logV, R, y, a, b);
+    ll.row(i) = lowerbound_logML_pois(alpha, beta, V, logV, R, y, a, b);
   }
   return List::create(Named("shape")=alpha,
                       Named("rate")=beta,
@@ -241,6 +252,7 @@ List doVB_pois_missing(const arma::vec & y,
   logw /= sum(logw);
   logw = log(logw);
   arma::vec ll(iter);
+  arma::vec ll2(iter);
   for (int i=0; i<iter; i++) {
     up_x(Xprob, y, xi, xp, sumx, miss_row, miss_col, varind, loglambda, lambda, D, L, logw, etahat, eta);
     arma::mat r =  myprod(N, xi, xp, exp(loglambda));
@@ -248,11 +260,12 @@ List doVB_pois_missing(const arma::vec & y,
     R = sum(r, 1);
     alpha = mysum_t(D, xi, xp, r.each_col()%(y/R)) + a;
     up_B(N, beta, lambda, loglambda, alpha, xi, xp, varind, b);
-    ll.row(i) = lowerbound_logML(alpha, beta, lambda, loglambda, R, y, a, b);// + sum(Xprob,0)%logw;
+    ll.row(i) = lowerbound_logML_pois(alpha, beta, lambda, loglambda, R, y, a, b);
+    ll2.row(i) = lowerbound_logML_mult(logw, sumx, Xprob, etahat, eta);
   }
   return List::create(Named("shape")=alpha,
                       Named("rate")=beta,
                       Named("Xprob")=Xprob,
                       Named("shape_x")=etahat,
-                      Named("ELBO")=ll);
+                      Named("ELBO")=ll, Named("ELBO2")=ll2);
 }

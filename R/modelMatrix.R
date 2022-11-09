@@ -7,7 +7,7 @@ sparse_cate <- function(x, fill){
   xp <- seq(0L,length(x))
   m <- Matrix::sparseMatrix(i = xi, p = xp, x = rep(fill, length(x)))
   rownames(m) <- levels(x)
-  return(m)  
+  return(m)
 }
 
 #' @export
@@ -20,14 +20,17 @@ sparse_onehot <- function(object,
   data <- model.frame(object, data, xlev=xlev, na.action=na.action)
   t <- if(missing(data)) terms(object) else terms(object, data=data)
   labs <- attr(t, "term.labels")
-  lx <- lapply(data[labs], sparse_cate, fill = TRUE)
+  lx <- vector("list", length = length(labs))
+  for(i in 1:length(labs)){
+    lx[[i]] <- sparse_cate(data[[labs[i]]], fill = fill)
+  }
   X <- do.call("rbind", lx)
   X <- t(X)
   clabs <- sapply(lx, rownames)
   len <- sapply(lx, nrow)
-  colnames(X) <- paste(rep(names(lx), len), unlist(clabs), sep=sep)
+  colnames(X) <- paste(rep(labs, len), unlist(clabs), sep=sep)
   attr(X, "indices") <- c(0L, cumsum(len))
-  attr(X, "term.labels") <- attr(t, "term.labels")
+  attr(X, "term.labels") <- labs
   attr(X, "assign") <- rep(1:length(lx), len)
   return(X)
 }
