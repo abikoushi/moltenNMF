@@ -1,11 +1,14 @@
-sparse_cate <- function(x, fill){
+sparse_cate <- function(x){
   if(!is.factor(x)){
     x <- factor(x)
     warning("auto-converted to factor")
   }
   xi <- as.integer(x)
-  xp <- seq(0L,length(x))
-  m <- Matrix::sparseMatrix(i = xi, p = xp, x = rep(fill, length(x)))
+  xi <- xi[!is.na(x)]
+  xp <- seq(1,length(x))
+  xp <- xp[!is.na(x)]
+  val <- rep(TRUE, length(xi))
+  m <- Matrix::sparseMatrix(i = xi, j = xp, x = val)
   rownames(m) <- levels(x)
   return(m)
 }
@@ -13,22 +16,29 @@ sparse_cate <- function(x, fill){
 #' @export
 sparse_onehot <- function(object,
                           data = environment(object),
+                          dummy_m = 0L,
                           xlev = NULL,
                           sep = "_",
-                          na.action='na.pass',
-                          fill = TRUE){
+                          na.action='na.pass'){
   data <- model.frame(object, data, xlev=xlev, na.action=na.action)
   t <- if(missing(data)) terms(object) else terms(object, data=data)
   labs <- attr(t, "term.labels")
-  lx <- vector("list", length = length(labs))
+  lx <- vector("list", length = length(labs)) 
   for(i in 1:length(labs)){
-    lx[[i]] <- sparse_cate(data[[labs[i]]], fill = fill)
+    lx[[i]] <- sparse_cate(data[[labs[i]]])
+  }
+  if(dummy_m>=1L){
+    m <- matrix(FALSE, dummy_m, nrow(data))
+    m <- as(m, "lMatrix")
+    rownames(m) <- 1:dummy_m
+    lx[[length(labs)+1]] <- m
+    labs <- c(labs, "dummy")
   }
   X <- do.call("rbind", lx)
   X <- t(X)
-  clabs <- sapply(lx, rownames)
-  len <- sapply(lx, nrow)
-  colnames(X) <- paste(rep(labs, len), unlist(clabs), sep=sep)
+  clabs <- unlist(sapply(lx, rownames))
+  len <- unlist(sapply(lx, nrow))
+  colnames(X) <- paste(rep(labs, len), clabs, sep=sep)
   attr(X, "indices") <- c(0L, cumsum(len))
   attr(X, "term.labels") <- labs
   attr(X, "assign") <- rep(1:length(lx), len)

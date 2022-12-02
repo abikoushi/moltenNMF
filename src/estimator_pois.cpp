@@ -1,5 +1,8 @@
 #include <RcppArmadillo.h>
 #include "myproduct.h"
+#include <progress.hpp>
+#include <progress_bar.hpp>
+// [[Rcpp::depends(RcppProgress)]]
 // [[Rcpp::depends(RcppArmadillo)]]
 // [[Rcpp::plugins(cpp11)]]
 using namespace Rcpp;
@@ -16,17 +19,15 @@ arma::rowvec softmax(const arma::rowvec & x){
 }
 
 void up_A(arma::mat & alpha,
-          arma::mat & U,
          arma::vec & R,
          const arma::mat & loglambda,
          const arma::vec & y,
          const arma::uvec & xi,
          const arma::uvec & xp,
          const double & a){
-  arma::mat r =  myprod(y.n_rows, xi, xp, exp(loglambda));
+  arma::mat r =  myprod(y.n_rows, xi, xp, exp(loglambda)); //N,L
   R = sum(r, 1);
-  U = (r.each_col()%(y/R));
-  alpha = mysum_t(alpha.n_rows, xi, xp, U) + a;
+  alpha = mysum_t(alpha.n_rows, xi, xp, r.each_col()%(y/R)) + a; //D,L
 }
 
 void up_B(const int & N,
@@ -175,19 +176,22 @@ List doVB_pois(const arma::vec & y,
                const int & L,
                const int & iter,
                const double & a,
-               const double & b){
+               const double & b,
+               const bool & display_progress){
   int N = y.n_rows;
   arma::mat V = arma::randg<arma::mat>(D,L);
   arma::mat logV = log(V);
   arma::mat alpha = arma::ones<arma::mat>(D, L);
   arma::mat beta  = arma::ones<arma::mat>(D, L);
   arma::vec R = arma::zeros<arma::vec>(N);
-  arma::mat U = arma::zeros<arma::mat>(N,L);
+  //arma::mat U = arma::zeros<arma::mat>(N,L);
   arma::vec ll(iter);
+  Progress pb(iter, display_progress);
   for (int i=0; i<iter; i++) {
-    up_A(alpha, U, R, logV, y, xi,xp,a);
+    up_A(alpha, R, logV, y, xi, xp, a);
     up_B(N, beta, V, logV, alpha, xi, xp, varind, b);
     ll.row(i) = lowerbound_logML_pois(alpha, beta, V, logV, R, y, a, b);
+    pb.increment();
   }
   return List::create(Named("shape")=alpha,
                       Named("rate")=beta,
@@ -210,12 +214,12 @@ List doVB_negbin(arma::vec y,
   arma::mat alpha = arma::ones<arma::mat>(D, L);
   arma::mat beta  = arma::ones<arma::mat>(D, L);
   arma::vec R = arma::zeros<arma::vec>(N);
-  arma::mat U = arma::zeros<arma::mat>(N,L);
+  //arma::mat U = arma::zeros<arma::mat>(N,L);
   arma::vec z = arma::ones<arma::vec>(N);
   arma::vec ll(iter);
   double tau = 1.0;
   for (int i=0; i<iter; i++) {
-    up_A(alpha, U, R, logV, y, xi,xp,a);
+    up_A(alpha, R, logV, y, xi, xp, a);
     up_B2(N, beta, V, logV, z, alpha, xi, xp, varind, b);
     up_tau(tau, z, y, V, xi,xp);
     ll.row(i) = lowerbound_logML2(z, alpha, beta, tau, V, logV, R, y, xi, xp, a, b);

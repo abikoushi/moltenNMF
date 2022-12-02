@@ -13,16 +13,16 @@ mrNMF_vb.default(y,
                 X,
                 L,
                 iter=1000, 
-                a=1, 
-                b=1)
+                a=0.5, 
+                b=0.01)
 
 
 mrNMF_vb.formula(formula,
                 data = parent.frame(),
                 L,
                 iter=1000,
-                a=1,
-                b=1)
+                a=0.5,
+                b=0.01)
 
 
 mrNMF_vb(x)
@@ -50,7 +50,7 @@ mrNMF_vb(x)
   \item{a}{
   shape parameter of gamma prior distribution
 }
-  \item{a}{
+  \item{b}{
   rate parameter of gamma prior distribution
 }
   \item{\dots}{

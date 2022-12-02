@@ -14,7 +14,9 @@ mNMF_vb.default(y,
                 L,
                 iter=1000, 
                 a=1, 
-                b=1)
+                b=0.01,
+                display_progress=TRUE,
+                indices=NULL)
 
 
 mNMF_vb.formula(formula,
@@ -22,7 +24,8 @@ mNMF_vb.formula(formula,
                 L,
                 iter=1000,
                 a=1,
-                b=1)
+                b=0.01,
+                display_progress=TRUE)
 
 
 mNMF_vb(x)
@@ -50,18 +53,23 @@ mNMF_vb(x)
   \item{a}{
   shape parameter of gamma prior distribution
 }
-  \item{a}{
+  \item{b}{
   rate parameter of gamma prior distribution
 }
+  \item{display_progress}{
+  if \code{TRUE} show progress bar
+}
+ \item{indices}{
+ The variables group indices. If design matrix \code{X} is made by \code{\link{sparse oneshot}}, keep default value.
+ }
   \item{\dots}{
-  additional arguments to be passed to the low level fitting functions 
+  additional arguments to be passed to the low level fitting functions
 }
 }
 \value{
  \item{shape }{shape of the variational posterior (gamma distribution)}
  \item{rate }{rate of the variational posterior (gamma distribution)}
  \item{ELBO }{evidence lower bound}
- \item{indices }{indices}
 }
 \seealso{
 \code{\link{mrNMF_vb}}

@@ -1,4 +1,5 @@
 \name{rpredictor_mNMF}
+\alias{dpredictor_mNMF}
 \alias{rpredictor_mNMF}
 \alias{rpredictor_mrNMF}
 %- Also NEED an '\alias' for EACH other topic documented here.
@@ -12,9 +13,16 @@ Get sample frrom posterior predictive distribution from the fitted model of mNMF
 rpredictor_mNMF(X, np, shape, rate)
 
 rpredictor_mrNMF(X, np, shape, rate, precision)
+
+dpredictor_mNMF(y, X, np, shape, rate)
+
+dpredictor_mrNMF(y, X, np, shape, rate, precision)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
+  \item{y}{
+  response variable (nonnegative-integer)
+}
   \item{X}{
   sparse design matrix
 }
@@ -30,7 +38,7 @@ rpredictor_mrNMF(X, np, shape, rate, precision)
 }
 
 \seealso{
-\code{\link{sparse_model_matrix_b}}
+\code{\link{sparse_onehot}}
 }
 \examples{
 ### see vignette

@@ -12,8 +12,8 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // doVB_pois
-List doVB_pois(const arma::vec& y, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const int& iter, const double& a, const double& b);
-RcppExport SEXP _moltenNMF_doVB_pois(SEXP ySEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP) {
+List doVB_pois(const arma::vec& y, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const int& iter, const double& a, const double& b, const bool& display_progress);
+RcppExport SEXP _moltenNMF_doVB_pois(SEXP ySEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -26,7 +26,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int& >::type iter(iterSEXP);
     Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
     Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
-    rcpp_result_gen = Rcpp::wrap(doVB_pois(y, xi, xp, varind, D, L, iter, a, b));
+    Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(doVB_pois(y, xi, xp, varind, D, L, iter, a, b, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -86,6 +87,39 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// NegBin_lp
+arma::mat NegBin_lp(const arma::vec& y, const int& np, const arma::uvec& xi, const arma::uvec& xp, const arma::mat& alpha, const arma::mat& beta, const double& tau);
+RcppExport SEXP _moltenNMF_NegBin_lp(SEXP ySEXP, SEXP npSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP alphaSEXP, SEXP betaSEXP, SEXP tauSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int& >::type np(npSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type xi(xiSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type xp(xpSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< const double& >::type tau(tauSEXP);
+    rcpp_result_gen = Rcpp::wrap(NegBin_lp(y, np, xi, xp, alpha, beta, tau));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Poisson_lp
+arma::mat Poisson_lp(const arma::vec& y, const int& np, const arma::uvec& xi, const arma::uvec& xp, const arma::mat& alpha, const arma::mat& beta);
+RcppExport SEXP _moltenNMF_Poisson_lp(SEXP ySEXP, SEXP npSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP alphaSEXP, SEXP betaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const int& >::type np(npSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type xi(xiSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type xp(xpSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type beta(betaSEXP);
+    rcpp_result_gen = Rcpp::wrap(Poisson_lp(y, np, xi, xp, alpha, beta));
+    return rcpp_result_gen;
+END_RCPP
+}
 // PoissonGamma_rng
 arma::mat PoissonGamma_rng(int N, int np, arma::uvec xi, arma::uvec xp, arma::mat alpha, arma::mat beta);
 RcppExport SEXP _moltenNMF_PoissonGamma_rng(SEXP NSEXP, SEXP npSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP alphaSEXP, SEXP betaSEXP) {
@@ -121,10 +155,12 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_moltenNMF_doVB_pois", (DL_FUNC) &_moltenNMF_doVB_pois, 9},
+    {"_moltenNMF_doVB_pois", (DL_FUNC) &_moltenNMF_doVB_pois, 10},
     {"_moltenNMF_doVB_negbin", (DL_FUNC) &_moltenNMF_doVB_negbin, 9},
     {"_moltenNMF_doVB_pois_missing", (DL_FUNC) &_moltenNMF_doVB_pois_missing, 13},
     {"_moltenNMF_myprod", (DL_FUNC) &_moltenNMF_myprod, 4},
+    {"_moltenNMF_NegBin_lp", (DL_FUNC) &_moltenNMF_NegBin_lp, 7},
+    {"_moltenNMF_Poisson_lp", (DL_FUNC) &_moltenNMF_Poisson_lp, 6},
     {"_moltenNMF_PoissonGamma_rng", (DL_FUNC) &_moltenNMF_PoissonGamma_rng, 6},
     {"_moltenNMF_NegbinGamma_rng", (DL_FUNC) &_moltenNMF_NegbinGamma_rng, 7},
     {NULL, NULL, 0}

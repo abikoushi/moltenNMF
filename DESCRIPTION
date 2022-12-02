@@ -8,4 +8,4 @@ Maintainer: Ko ABE <koabecontact@gmail.com>
 Description: Non-negative matrix factorization for the 'molten' format data
 License: MIT
 Imports: Rcpp (>= 1.0.8.3), Matrix
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp, RcppArmadillo, RcppProgress
