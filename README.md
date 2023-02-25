@@ -1,4 +1,4 @@
-# moltenPPCA
+# moltenNMF
 
 `moltenNMF` is an R package for Nonnegative Matrix Factorization for tidy data format.
 
