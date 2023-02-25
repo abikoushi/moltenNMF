@@ -25,13 +25,44 @@ arma::mat mysum(const int & N, const arma::uvec & xi, const arma::uvec & xp, con
 arma::mat myprod(const int & N, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam) {
   arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
   for(int i=0; i<xp.n_rows-1; i++){
-    for(int j=xp[i];j<xp[i+1];j++){
+    for(int j=xp[i]; j<xp[i+1]; j++){
       out.row(xi[j]) %= lam.row(i); 
     }
   }
   return out;
 }
 
+// [[Rcpp::export]]
+arma::mat myprod_r(const int & N, const arma::uvec & xj, const arma::uvec & xp, const arma::mat & lam) {
+  arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
+  for(int i=0; i<xp.n_rows-1; i++){
+    for(int j=xp[i]; j<xp[i+1]; j++){
+      out.row(i) %= lam.row(xj[j]); 
+    }
+  }
+  return out;
+}
+
+// [[Rcpp::export]]
+arma::mat myprod_r_i(const int & N, const arma::uvec & xj, const arma::uvec & xp, const arma::uvec id, const arma::mat & lam) {
+  arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
+  for(int i=0; i<id.n_rows-1; i++){
+    for(int j=xp[id[i]]; j<xp[id[i]+1]; j++){
+      out.row(id[i]) %= lam.row(xj[j]); 
+    }
+  }
+  return out;
+}
+
+arma::mat mysum_t_r(const int & N, const arma::uvec & xj, const arma::uvec & xp, const arma::mat & lam) {
+  arma::mat out = arma::zeros<arma::mat>(N, lam.n_cols);
+  for(int i=0; i<xp.n_rows-1; i++){
+    for(int j=xp[i]; j<xp[i+1]; j++){
+      out.row(xj[j]) += lam.row(i); 
+    }
+  }
+  return out;
+}
 
 arma::mat mysum2(int n, arma::uvec xi, arma::uvec xp, arma::mat lam) {
   arma::mat out = arma::zeros<arma::mat>(n, lam.n_cols);
@@ -69,6 +100,26 @@ arma::mat myprod_skip(const int & N,
   for(int i=end; i<xp.n_rows-1; i++){
     for(int j=xp[i];j<xp[i+1];j++){
       out.row(xi[j]) %= lam.row(i);
+    }
+  }
+  return out;
+}
+
+arma::mat myprod_skip_r(const int & N,
+                      const arma::uvec & xj,
+                      const arma::uvec & xp,
+                      const arma::mat & lam,
+                      const int & start,
+                      const int & end) {
+  arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
+  for(int i=0; i<start; i++){
+    for(int j=xp[i];j<xp[i+1];j++){
+      out.row(i) %= lam.row(xj[j]);
+    }
+  }
+  for(int i=end; i<xp.n_rows-1; i++){
+    for(int j=xp[i];j<xp[i+1];j++){
+      out.row(i) %= lam.row(xj[j]);
     }
   }
   return out;

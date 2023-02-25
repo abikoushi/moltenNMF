@@ -9,12 +9,16 @@ doVB_negbin <- function(y, xi, xp, varind, D, L, iter, a, b) {
     .Call(`_moltenNMF_doVB_negbin`, y, xi, xp, varind, D, L, iter, a, b)
 }
 
-doVB_pois_missing <- function(y, xi, xp, miss_row, miss_col, sumx, varind, D, L, iter, a, b, eta) {
-    .Call(`_moltenNMF_doVB_pois_missing`, y, xi, xp, miss_row, miss_col, sumx, varind, D, L, iter, a, b, eta)
-}
-
 myprod <- function(N, xi, xp, lam) {
     .Call(`_moltenNMF_myprod`, N, xi, xp, lam)
+}
+
+myprod_r <- function(N, xj, xp, lam) {
+    .Call(`_moltenNMF_myprod_r`, N, xj, xp, lam)
+}
+
+myprod_r_i <- function(N, xj, xp, id, lam) {
+    .Call(`_moltenNMF_myprod_r_i`, N, xj, xp, id, lam)
 }
 
 NegBin_lp <- function(y, np, xi, xp, alpha, beta, tau) {

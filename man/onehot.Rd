@@ -36,11 +36,6 @@ how \code{NA}s are treated (see \code{\link{model.frame}})
 make sparse one-hot encoding (design matrix)
 }
 
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
-\seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
-}
 \examples{
 set.seed(1234)
 df <- data.frame(x1 = sample(letters[1:3], 10, replace = TRUE),

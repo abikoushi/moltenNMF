@@ -1,4 +1,4 @@
-sparse_cate <- function(x){
+sparse_cate <- function(x,repr="C"){
   if(!is.factor(x)){
     x <- factor(x)
     warning("auto-converted to factor")
@@ -8,7 +8,7 @@ sparse_cate <- function(x){
   xp <- seq(1,length(x))
   xp <- xp[!is.na(x)]
   val <- rep(TRUE, length(xi))
-  m <- Matrix::sparseMatrix(i = xi, j = xp, x = val)
+  m <- Matrix::sparseMatrix(i = xi, j = xp, x = val,repr=repr)
   rownames(m) <- levels(x)
   return(m)
 }
@@ -19,13 +19,14 @@ sparse_onehot <- function(object,
                           dummy_m = 0L,
                           xlev = NULL,
                           sep = "_",
-                          na.action='na.pass'){
+                          na.action='na.pass',
+                          repr = "C"){
   data <- model.frame(object, data, xlev=xlev, na.action=na.action)
   t <- if(missing(data)) terms(object) else terms(object, data=data)
   labs <- attr(t, "term.labels")
   lx <- vector("list", length = length(labs)) 
   for(i in 1:length(labs)){
-    lx[[i]] <- sparse_cate(data[[labs[i]]])
+    lx[[i]] <- sparse_cate(data[[labs[i]]], repr = repr)
   }
   if(dummy_m>=1L){
     m <- matrix(FALSE, dummy_m, nrow(data))
