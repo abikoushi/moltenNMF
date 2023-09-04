@@ -32,6 +32,44 @@ arma::mat myprod(const int & N, const arma::uvec & xi, const arma::uvec & xp, co
   return out;
 }
 
+arma::vec myprodvec(const int & n, const arma::uvec & xi, const arma::uvec & xp, const arma::vec & lam) {
+  arma::vec out = arma::ones<arma::vec>(n);
+  for(int i=0; i<xp.n_rows-1; i++){
+    for(int j=xp[i];j<xp[i+1];j++){
+      out.row(xi[j]) *= lam(i);
+    }
+  }
+  return out;
+}
+
+arma::vec myprodvec_sub(const int & n, const arma::uvec & xi, const arma::uvec & xp,
+                        const int & start, const int & end, const arma::vec & lam) {
+  arma::vec out = arma::ones<arma::vec>(n);
+  for(int i=start; i<end; i++){
+    for(int j=xp[i];j<xp[i+1];j++){
+      out.row(xi[j]) *= lam(i);
+    }
+  }
+  return out;
+}
+
+
+// [[Rcpp::export]]
+arma::vec summyprod(const int & n, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam) {
+  arma::vec out = arma::zeros<arma::vec>(n);
+  //n_cols=L
+  for(int l=0; l<lam.n_cols; l++){
+    arma::vec pv = arma::ones<arma::vec>(n);
+    for(int i=0; i<xp.n_rows-1; i++){
+      for(int j=xp[i];j<xp[i+1];j++){
+        pv.row(xi[j]) *= lam(i,l); 
+      }
+    }
+    out += pv;
+  }
+  return out;
+}
+
 // [[Rcpp::export]]
 arma::mat myprod_r(const int & N, const arma::uvec & xj, const arma::uvec & xp, const arma::mat & lam) {
   arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
@@ -98,6 +136,21 @@ arma::mat myprod_skip(const int & N,
       }
   }
   for(int i=end; i<xp.n_rows-1; i++){
+    for(int j=xp[i];j<xp[i+1];j++){
+      out.row(xi[j]) %= lam.row(i);
+    }
+  }
+  return out;
+}
+
+arma::mat myprod_one(const int & N,
+                      const arma::uvec & xi,
+                      const arma::uvec & xp,
+                      const arma::mat & lam,
+                      const int & start,
+                      const int & end) {
+  arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
+  for(int i=start; i<end-1; i++){
     for(int j=xp[i];j<xp[i+1];j++){
       out.row(xi[j]) %= lam.row(i);
     }

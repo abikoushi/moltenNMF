@@ -1,7 +1,7 @@
 #include <RcppArmadillo.h>
 #include "myproduct.h"
 // [[Rcpp::depends(RcppArmadillo)]]
-// [[Rcpp::plugins(cpp11)]]
+
 using namespace Rcpp;
 
 double logsumexp(const arma::vec & x){
@@ -23,7 +23,7 @@ arma::vec sample_intensity(const int & N,
       V(i,j) = arma::randg(arma::distr_param(alpha.at(i,j), 1/beta.at(i,j)));
     }
   }
-  return sum(myprod(N, xi, xp, V),1);
+  return summyprod(N, xi, xp, V);
 }
 
 // [[Rcpp::export]]

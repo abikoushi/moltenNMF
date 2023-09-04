@@ -4,7 +4,7 @@
 #include <progress_bar.hpp>
 // [[Rcpp::depends(RcppProgress)]]
 // [[Rcpp::depends(RcppArmadillo)]]
-// [[Rcpp::plugins(cpp11)]]
+
 using namespace Rcpp;
 
 double logsumexp(const arma::rowvec & x){
@@ -16,6 +16,58 @@ arma::rowvec softmax(const arma::rowvec & x){
   double maxx = max(x);
   arma::rowvec u = x-maxx;
   return exp(u)/sum(exp(u));
+}
+
+void up_A_r(arma::mat & alpha,
+            arma::vec & R,
+            const arma::mat & loglambda,
+            const arma::vec & y,
+            const arma::uvec & xj,
+            const arma::uvec & xp,
+            const double & a){
+  arma::mat r =  myprod_r(y.n_rows, xj, xp, exp(loglambda)); //N,L
+  R = sum(r, 1);
+  alpha = mysum_t_r(alpha.n_rows, xj, xp, r.each_col()%(y/R)) + a; //D,L
+}
+
+void up_B_r(const int & N,
+            arma::mat & beta,
+            arma::mat & V,
+            arma::mat & logV,
+            const arma::mat & alpha,
+            const arma::uvec & xj,
+            const arma::uvec & xp,
+            const arma::uvec & varind,
+            const double & b){
+  int K = varind.n_rows - 1;
+  for(int k=0; k<K; k++){
+    arma::mat tmpXl = myprod_skip(N, xj, xp, V, varind[k], varind[k+1]);
+    arma::mat B = mysum_t_r(varind[k+1]-varind[k], xj, xp.rows(varind[k], varind[k+1]), tmpXl) + b;
+    beta.rows(varind[k], varind[k+1]-1) = B;
+    V.rows(varind[k], varind[k+1]-1) = alpha.rows(varind[k],varind[k+1]-1)/B;
+  }
+  logV = mat_digamma(alpha) - log(beta); 
+}
+
+void up_B2(const int & N,
+           arma::mat & beta,
+           arma::mat & V,
+           arma::mat & logV,
+           arma::vec & z,
+           const arma::mat & alpha,
+           const arma::uvec & xi,
+           const arma::uvec & xp,
+           const arma::uvec & varind,
+           const double & b){
+  int K = varind.n_rows - 1;
+  for(int k=0; k<K; k++){
+    arma::mat tmpXl = myprod_skip(N, xi, xp, V, varind[k], varind[k+1]);
+    tmpXl.each_col() %= z;
+    arma::mat B = mysum_t(varind[k+1]-varind[k], xi, xp.rows(varind[k], varind[k+1]), tmpXl) + b;
+    beta.rows(varind[k], varind[k+1]-1) = B;
+    V.rows(varind[k], varind[k+1]-1) = alpha.rows(varind[k],varind[k+1]-1)/B;
+  }
+  logV = mat_digamma(alpha) - log(beta); 
 }
 
 //shape parameters
@@ -31,18 +83,6 @@ void up_A(arma::mat & alpha,
   alpha = mysum_t(alpha.n_rows, xi, xp, r.each_col()%(y/R)) + a; //D,L
 }
 
-void up_A_r(arma::mat & alpha,
-          arma::vec & R,
-          const arma::mat & loglambda,
-          const arma::vec & y,
-          const arma::uvec & xj,
-          const arma::uvec & xp,
-          const double & a){
-  arma::mat r =  myprod_r(y.n_rows, xj, xp, exp(loglambda)); //N,L
-  R = sum(r, 1);
-  alpha = mysum_t_r(alpha.n_rows, xj, xp, r.each_col()%(y/R)) + a; //D,L
-}
-
 //rate parameters
 void up_B(const int & N,
           arma::mat & beta,
@@ -54,53 +94,18 @@ void up_B(const int & N,
           const arma::uvec & varind,
           const double & b){
   int K = varind.n_rows - 1;
-  for(int k=0; k<K; k++){
-    arma::mat tmpXl = myprod_skip(N, xi, xp, V, varind[k], varind[k+1]);
-    arma::mat B = mysum_t(varind[k+1]-varind[k], xi, xp.rows(varind[k], varind[k+1]), tmpXl) + b;
-    beta.rows(varind[k], varind[k+1]-1) = B;
-    V.rows(varind[k], varind[k+1]-1) = alpha.rows(varind[k],varind[k+1]-1)/B;
+  int L = V.n_cols;
+  for(int l=0;l<L;l++){
+    arma::vec vl = myprodvec(N, xi, xp, V.col(l));
+    for(int k=0; k<K; k++){
+      vl /= myprodvec_sub(N, xi, xp, varind[k], varind[k+1], V.col(l));
+      arma::vec B = mysum_t(varind[k+1]-varind[k], xi, xp.rows(varind[k], varind[k+1]), vl) + b;
+      beta.col(l).rows(varind[k], varind[k+1]-1) = B;
+      V.col(l).rows(varind[k], varind[k+1]-1) = alpha.col(l).rows(varind[k],varind[k+1]-1)/B;
+      vl %= myprodvec_sub(N, xi, xp, varind[k], varind[k+1], V.col(l));
+    }
+    logV = mat_digamma(alpha) - log(beta);
   }
-  logV = mat_digamma(alpha) - log(beta); 
-}
-
-void up_B_r(const int & N,
-          arma::mat & beta,
-          arma::mat & V,
-          arma::mat & logV,
-          const arma::mat & alpha,
-          const arma::uvec & xj,
-          const arma::uvec & xp,
-          const arma::uvec & varind,
-          const double & b){
-  int K = varind.n_rows - 1;
-  for(int k=0; k<K; k++){
-    arma::mat tmpXl = myprod_skip(N, xj, xp, V, varind[k], varind[k+1]);
-    arma::mat B = mysum_t_r(varind[k+1]-varind[k], xj, xp.rows(varind[k], varind[k+1]), tmpXl) + b;
-    beta.rows(varind[k], varind[k+1]-1) = B;
-    V.rows(varind[k], varind[k+1]-1) = alpha.rows(varind[k],varind[k+1]-1)/B;
-  }
-  logV = mat_digamma(alpha) - log(beta); 
-}
-
-void up_B2(const int & N,
-           arma::mat & beta,
-          arma::mat & V,
-          arma::mat & logV,
-          arma::vec & z,
-          const arma::mat & alpha,
-          const arma::uvec & xi,
-          const arma::uvec & xp,
-          const arma::uvec & varind,
-          const double & b){
-  int K = varind.n_rows - 1;
-  for(int k=0; k<K; k++){
-    arma::mat tmpXl = myprod_skip(N, xi, xp, V, varind[k], varind[k+1]);
-    tmpXl.each_col() %= z;
-    arma::mat B = mysum_t(varind[k+1]-varind[k], xi, xp.rows(varind[k], varind[k+1]), tmpXl) + b;
-    beta.rows(varind[k], varind[k+1]-1) = B;
-    V.rows(varind[k], varind[k+1]-1) = alpha.rows(varind[k],varind[k+1]-1)/B;
-  }
-  logV = mat_digamma(alpha) - log(beta); 
 }
 
 //precision parameter

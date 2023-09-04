@@ -67,9 +67,9 @@ mNMF_vb(x)
 }
 }
 \value{
- \item{shape }{shape of the variational posterior (gamma distribution)}
- \item{rate }{rate of the variational posterior (gamma distribution)}
- \item{ELBO }{evidence lower bound}
+ \item{shape}{shape of the variational posterior (gamma distribution)}
+ \item{rate}{rate of the variational posterior (gamma distribution)}
+ \item{ELBO}{evidence lower bound}
 }
 \seealso{
 \code{\link{mrNMF_vb}}

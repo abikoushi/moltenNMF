@@ -13,6 +13,10 @@ myprod <- function(N, xi, xp, lam) {
     .Call(`_moltenNMF_myprod`, N, xi, xp, lam)
 }
 
+summyprod <- function(n, xi, xp, lam) {
+    .Call(`_moltenNMF_summyprod`, n, xi, xp, lam)
+}
+
 myprod_r <- function(N, xj, xp, lam) {
     .Call(`_moltenNMF_myprod_r`, N, xj, xp, lam)
 }
