@@ -18,6 +18,7 @@ arma::rowvec softmax(const arma::rowvec & x){
   return exp(u)/sum(exp(u));
 }
 
+///
 void up_A_r(arma::mat & alpha,
             arma::vec & R,
             const arma::mat & loglambda,
@@ -48,6 +49,7 @@ void up_B_r(const int & N,
   }
   logV = mat_digamma(alpha) - log(beta); 
 }
+///
 
 void up_B2(const int & N,
            arma::mat & beta,
@@ -268,45 +270,47 @@ List doVB_negbin(arma::vec y,
                       Named("ELBO")=ll);
 }
 
-// List doVB_pois_missing(const arma::vec & y,
-//                        const arma::uvec & xi,
-//                        const arma::uvec & xp,
-//                        const arma::uvec & miss_row,
-//                        const arma::uvec & miss_col,
-//                        const arma::vec & sumx,
-//                        const arma::uvec & varind,
-//                        const int & D,
-//                        const int & L,
-//                        const int & iter,
-//                        const double & a,
-//                        const double & b,
-//                        const double & eta){
-//   int N = y.n_rows;
-//   arma::mat lambda = arma::randg<arma::mat>(D,L);
-//   arma::vec etahat = sumx+eta;
-//   arma::mat Xprob = arma::zeros<arma::mat>(miss_row.n_rows, D);
-//   arma::mat loglambda = log(lambda);
-//   arma::mat alpha = arma::ones<arma::mat>(D, L);
-//   arma::mat beta  = arma::ones<arma::mat>(D, L);
-//   arma::vec R = arma::zeros<arma::vec>(N);
-//   arma::vec logw = arma::ones<arma::vec>(D);
-//   logw /= sum(logw);
-//   logw = log(logw);
-//   arma::vec ll(iter);
-//   arma::vec ll2(iter);
-//   for (int i=0; i<iter; i++) {
-//     up_x(Xprob, y, xi, xp, sumx, miss_row, miss_col, varind, loglambda, lambda, D, L, logw, etahat, eta);
-//     arma::mat r =  myprod(N, xi, xp, exp(loglambda));
-//     r.rows(miss_row) %=  exp(Xprob*loglambda);
-//     R = sum(r, 1);
-//     alpha = mysum_t(D, xi, xp, r.each_col()%(y/R)) + a;
-//     up_B(N, beta, lambda, loglambda, alpha, xi, xp, varind, b);
-//     ll.row(i) = lowerbound_logML_pois(alpha, beta, lambda, loglambda, R, y, a, b);
-//     ll2.row(i) = lowerbound_logML_mult(logw, sumx, Xprob, etahat, eta);
-//   }
-//   return List::create(Named("shape")=alpha,
-//                       Named("rate")=beta,
-//                       Named("Xprob")=Xprob,
-//                       Named("shape_x")=etahat,
-//                       Named("ELBO")=ll, Named("ELBO2")=ll2);
-// }
+/*
+List doVB_pois_missing(const arma::vec & y,
+                       const arma::uvec & xi,
+                       const arma::uvec & xp,
+                       const arma::uvec & miss_row,
+                       const arma::uvec & miss_col,
+                       const arma::vec & sumx,
+                       const arma::uvec & varind,
+                       const int & D,
+                       const int & L,
+                       const int & iter,
+                       const double & a,
+                       const double & b,
+                       const double & eta){
+  int N = y.n_rows;
+  arma::mat lambda = arma::randg<arma::mat>(D,L);
+  arma::vec etahat = sumx+eta;
+  arma::mat Xprob = arma::zeros<arma::mat>(miss_row.n_rows, D);
+  arma::mat loglambda = log(lambda);
+  arma::mat alpha = arma::ones<arma::mat>(D, L);
+  arma::mat beta  = arma::ones<arma::mat>(D, L);
+  arma::vec R = arma::zeros<arma::vec>(N);
+  arma::vec logw = arma::ones<arma::vec>(D);
+  logw /= sum(logw);
+  logw = log(logw);
+  arma::vec ll(iter);
+  arma::vec ll2(iter);
+  for (int i=0; i<iter; i++) {
+    up_x(Xprob, y, xi, xp, sumx, miss_row, miss_col, varind, loglambda, lambda, D, L, logw, etahat, eta);
+    arma::mat r =  myprod(N, xi, xp, exp(loglambda));
+    r.rows(miss_row) %=  exp(Xprob*loglambda);
+    R = sum(r, 1);
+    alpha = mysum_t(D, xi, xp, r.each_col()%(y/R)) + a;
+    up_B(N, beta, lambda, loglambda, alpha, xi, xp, varind, b);
+    ll.row(i) = lowerbound_logML_pois(alpha, beta, lambda, loglambda, R, y, a, b);
+    ll2.row(i) = lowerbound_logML_mult(logw, sumx, Xprob, etahat, eta);
+  }
+  return List::create(Named("shape")=alpha,
+                      Named("rate")=beta,
+                      Named("Xprob")=Xprob,
+                      Named("shape_x")=etahat,
+                      Named("ELBO")=ll, Named("ELBO2")=ll2);
+}
+*/

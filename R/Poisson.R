@@ -1,15 +1,15 @@
-#' @export mNMF_vb.default
+
 mNMF_vb.default <- function(y, X, L,
                             iter=1000, a=0.5, b=0.01,
                             display_progress=TRUE,
                             indices=NULL){
   stopifnot(class(X)=="lgCMatrix")
   if(is.null(indices)){
-        indices <- attr(X,"indices")
+    indices <- attr(X,"indices")
   }
   out <- doVB_pois(y, X@i, X@p, indices, X@Dim[2],
-                     L=L, iter=iter, a=a, b=b,
-                     display_progress=display_progress)
+                   L=L, iter=iter, a=a, b=b,
+                   display_progress=display_progress)
   rownames(out$shape) <- colnames(X)
   rownames(out$rate) <- colnames(X)
   if(!is.null(attr(X, "term.labels"))){
@@ -23,7 +23,6 @@ mNMF_vb.default <- function(y, X, L,
   return(out)
 }
 
-#' @export mNMF_vb.formula
 mNMF_vb.formula <- function(formula,
                             data = parent.frame(),
                             L, iter=1000, a=0.5, b=0.01,
@@ -47,7 +46,6 @@ mNMF_vb.formula <- function(formula,
   return(out)
 }
 
-#' @export
 mNMF_vb <- function(...){
   UseMethod("mNMF_vb")
 }
