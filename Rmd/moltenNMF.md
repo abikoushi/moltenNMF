@@ -3,31 +3,6 @@ A simple example of moltenNMF
 Ko ABE
 9/13/2023
 
-## Model and its estimation procedure
-
-Consider the probabilistic model for observed variable $y_n$ as
-following; $$
-y_n \sim \mathrm{Poisson}\left(\sum_{l=1}^L \prod_{d=1}^Dv_{dl}^{x_{nd}}\right),
-$$ where $\mathrm{Poisson}(\lambda)$ is Poisson distribution with mean
-and variance $\lambda$.
-
-This model is equivalent to following data generating process; $$
-y_n = \sum_{l=1}^L u_{nl}, \quad u_{nl} \sim \mathrm{Poisson}\left(\prod_{d=1}^Dv_{dl}^{x_{nd}}\right),
-$$
-
-We set gamma prior distribution with shape parameter $a$, and rate $b$
-for unobserved variable $v_{dl}$; $$
-v_{dl} \sim \mathrm{Gamma}(a,b).
-$$ The mean-field posterior $q(v_{dl})$ is gamma distribution with shape
-parameter, $$
-\hat a_{dl} = \sum_{n=1}^{N} x_{nd} \langle u_{nl}\rangle + a
-$$ and rate parameter, $$
-\hat b_{dl} = \sum_{n=1}^{N} x_{n,d} \left( \prod_{d'\neq d} \langle \lambda_{d'l} \rangle^{x_{nd'}} \right) + b.
-$$ The updates for $\langle u_{nl} \rangle$ are given by
-$\langle u_{nl} \rangle = y_{n} r_{nl}$ where $r_{nl}$ is defined as, $$
-r_{nl} = \frac{\exp( x_{nd} \langle \log v_{dl} \rangle)}{\sum_{l=1}^{L} \exp( x_{nd} \langle \log v_{dl} \rangle)}.
-$$
-
 ## Workflow (Titanic data)
 
 Load packages:
