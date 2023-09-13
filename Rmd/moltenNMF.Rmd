@@ -33,9 +33,7 @@ out2 <- mNMF_vb(Freq~Survived+Class+Sex+Age, data=Titanicdf, L=2, iter=500)
 
 Check convergence:
 ```{r titanic2}
-quickplot(1:length(out2$ELBO),out2$ELBO, geom = "line")+
-  labs(x="iter",y="ELBO")+
-  theme_minimal(16)
+plot(out2$ELBO, type = "l", xlab="iter", ylab="ELBO")
 ```
 
 
@@ -43,10 +41,8 @@ Check goodness-of-fit:
 ```{r titanic3}
 V <- out2$shape/out2$rate
 yhat <- product_m(~Survived+Class+Sex+Age, data=Titanicdf,V)
-qplot(yhat, Titanicdf$Freq, alpha=I(0.5),size=I(3))+
-  labs(x="fit",y="obs")+
-  geom_abline(intercept=0,slope=1,linetype=2)+
-  theme_minimal(16)
+plot(Titanicdf$Freq, yhat, ylab = "fit", xlab = "obs")
+abline(0, 1, lty=2)
 ```
 
 Show parameters $v_{dl}$:

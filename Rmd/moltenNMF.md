@@ -44,15 +44,8 @@ out2 <- mNMF_vb(Freq~Survived+Class+Sex+Age, data=Titanicdf, L=2, iter=500)
 Check convergence:
 
 ``` r
-quickplot(1:length(out2$ELBO),out2$ELBO, geom = "line")+
-  labs(x="iter",y="ELBO")+
-  theme_minimal(16)
+plot(out2$ELBO, type = "l", xlab="iter", ylab="ELBO")
 ```
-
-    ## Warning: `qplot()` was deprecated in ggplot2 3.4.0.
-    ## This warning is displayed once every 8 hours.
-    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-    ## generated.
 
 ![](moltenNMF_files/figure-gfm/titanic2-1.png)<!-- -->
 
@@ -61,10 +54,8 @@ Check goodness-of-fit:
 ``` r
 V <- out2$shape/out2$rate
 yhat <- product_m(~Survived+Class+Sex+Age, data=Titanicdf,V)
-qplot(yhat, Titanicdf$Freq, alpha=I(0.5),size=I(3))+
-  labs(x="fit",y="obs")+
-  geom_abline(intercept=0,slope=1,linetype=2)+
-  theme_minimal(16)
+plot(Titanicdf$Freq, yhat, ylab = "fit", xlab = "obs")
+abline(0, 1, lty=2)
 ```
 
 ![](moltenNMF_files/figure-gfm/titanic3-1.png)<!-- -->
