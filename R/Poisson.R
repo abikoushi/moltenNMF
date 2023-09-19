@@ -8,9 +8,9 @@ mNMF_vb.default <- function(y, X, L,
                             V=NULL,
                             display_progress=TRUE,
                             indices=NULL){
-  stopifnot(class(X)=="lgCMatrix")
+  stopifnot(grepl(".gCMatrix",class(X)))
   if(is.null(indices)){
-    indices <- attr(X,"indices")
+    indices <- attr(X, "indices")
   }
   if(is.null(V)){
     V <- rinitV(ncol(X),L)
@@ -69,7 +69,7 @@ mrNMF_vb.default <- function(y, X, L,
                              V=NULL,
                              indices=NULL,
                              display_progress=TRUE){
-  stopifnot(class(X)=="lgCMatrix")
+  stopifnot(grepl(".gCMatrix",class(X)))
   if(is.null(indices)){
     indices <- attr(X,"indices")
   }
