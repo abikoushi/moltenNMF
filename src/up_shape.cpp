@@ -2,6 +2,7 @@
 #include "myproduct.h"
 #include "up_shape.h"
 using namespace Rcpp;
+
 //shape parameters
 void up_A(arma::mat & alpha,
           arma::vec & R,
