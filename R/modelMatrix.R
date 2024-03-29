@@ -13,12 +13,13 @@ sparse_cate <- function(x,repr="C"){
   return(m)
 }
 
-#' @export
+
 sparse_onehot <- function(object,
                           data = environment(object),
                           dummy_m = 0L,
                           xlev = NULL,
                           sep = "_",
+                          interaction_operator = ":",
                           na.action='na.pass',
                           repr = "C"){
   data <- model.frame(object, data, xlev=xlev, na.action=na.action)
@@ -26,7 +27,14 @@ sparse_onehot <- function(object,
   labs <- attr(t, "term.labels")
   lx <- vector("list", length = length(labs)) 
   for(i in 1:length(labs)){
-    lx[[i]] <- sparse_cate(data[[labs[i]]], repr = repr)
+    if(any(grepl(interaction_operator, labs[i]))){
+      lab2 <- unlist(strsplit(labs[i], interaction_operator))
+      cmat <- sapply(lab2, function(x)as.character(data[[x]]))
+      ct <- apply(cmat, 1, paste, collapse=":")
+      lx[[i]] <- sparse_cate(ct, repr = repr)
+    }else{
+      lx[[i]] <- sparse_cate(data[[labs[i]]], repr = repr)      
+    }
   }
   if(dummy_m>=1L){
     m <- matrix(FALSE, dummy_m, nrow(data))

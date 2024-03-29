@@ -1,10 +1,10 @@
 Package: moltenNMF
 Type: Package
 Title: Non-negative matrix factorization for the molten format data
-Version: 1.0
+Version: 1.1
 Date: 2022-09-09
 Author: Ko ABE
-Maintainer: Ko ABE <koabecontact@gmail.com>
+Maintainer: Ko ABE <abe.csb@tmd.ac.jp>
 Description: Non-negative matrix factorization for the 'molten' format data
 License: MIT
 Imports: Rcpp (>= 1.0.8.3), Matrix
