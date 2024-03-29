@@ -2,39 +2,13 @@
 #include "myproduct.h"
 #include "logexpfuns.h"
 #include "up_shape.h"
+#include "up_rate.h"
 #include <progress.hpp>
 #include <progress_bar.hpp>
 // [[Rcpp::depends(RcppProgress)]]
 // [[Rcpp::depends(RcppArmadillo)]]
 
 using namespace Rcpp;
-
-// for negbin
-void up_B2(const int & N,
-           arma::mat & beta,
-           arma::mat & V,
-           arma::mat & logV,
-           arma::vec & z,
-           const arma::mat & alpha,
-           const arma::uvec & xi,
-           const arma::uvec & xp,
-           const arma::uvec & varind,
-           const double & b){
-  int K = varind.n_rows - 1;
-  int L = V.n_cols;
-  for(int l=0;l<L;l++){
-    arma::vec vl = myprodvec(N, xi, xp, V.col(l));
-    for(int k=0; k<K; k++){
-      vl /= myprodvec_sub(N, xi, xp, varind[k], varind[k+1], V.col(l));
-      vl.each_col() %= z;
-      arma::vec B = mysum_t(varind[k+1]-varind[k], xi, xp.rows(varind[k], varind[k+1]), vl) + b;
-      beta.col(l).rows(varind[k], varind[k+1]-1) = B;
-      V.col(l).rows(varind[k], varind[k+1]-1) = alpha.col(l).rows(varind[k],varind[k+1]-1)/B;
-      vl %= myprodvec_sub(N, xi, xp, varind[k], varind[k+1], V.col(l));
-    }
-    logV = mat_digamma(alpha) - log(beta);
-  }
-}
 
 //precision parameter
 void up_tau(double & tau,
@@ -50,8 +24,6 @@ void up_tau(double & tau,
   z = ahat/bhat;
   tau += sum(logz - z + log(tau) + 1 - R::digamma(tau))/(y.n_rows*(1/tau - R::trigamma(tau)));
 }
-
-
 
 double lowerbound_logML2(const arma::vec & z,
                          const arma::mat & alpha,
@@ -72,7 +44,7 @@ double lowerbound_logML2(const arma::vec & z,
   return sum(-R + y%log(R) - lgamma(y+1) + y%logz) +
     + accu((a-1)*loglambda - b*lambda + a*log(beta) - std::lgamma(a)) +
     - accu((alpha-1)%loglambda - beta%lambda + alpha%log(beta) - lgamma(alpha))+
-    + sum(z%bhat - z*a - ahat%log(bhat) + a*log(a)+lgamma(ahat)-lgamma(a));;
+    + sum(z%bhat - z*a - ahat%log(bhat) + a*log(a)+lgamma(ahat)-lgamma(a));
 }
 
 // [[Rcpp::export]]

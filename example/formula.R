@@ -1,2 +1,5 @@
+library(moltenNMF)
 d <- as.data.frame(Titanic)
-str(sparse_onehot(Freq ~ Class+Sex:Age,data=d))
+X <- sparse_onehot(Freq ~ Class+Sex:Age,data=d)
+str(X)
+colnames(X)
