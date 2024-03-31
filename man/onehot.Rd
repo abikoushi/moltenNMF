@@ -12,7 +12,9 @@ sparse_onehot(object,
               data = environment(object),
               xlev = NULL,
               sep = "_",
-              na.action='na.pass')
+              interaction_operator = ":",
+              na.action='na.pass',
+              repr = "C")
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -28,8 +30,14 @@ a named list of character vectors giving the full set of levels to be assumed fo
 \item{sep}{
 character of separator within \code{colnames}
 }
+\item{interaction_operator}{
+character that specifying the cross-term in the formula
+}
 \item{na.action}{
 how \code{NA}s are treated (see \code{\link{model.frame}})
+}
+\item{repr}{
+character string, one of "C", "T", or "R", specifying the sparse representation to be used for the result, i.e., one from the super classes \code{\link{CsparseMatrix}}, \code{\link{TsparseMatrix}}, or \code{\link{RsparseMatrix}}.
 }
 }
 \details{

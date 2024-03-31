@@ -13,8 +13,10 @@ mNMF_vb.default(y,
                 X,
                 L,
                 iter=1000, 
-                a=1, 
+                a=0.5, 
                 b=0.01,
+                V=NULL,
+                offset = NULL,
                 display_progress=TRUE,
                 indices=NULL)
 
@@ -23,8 +25,10 @@ mNMF_vb.formula(formula,
                 data = parent.frame(),
                 L,
                 iter=1000,
-                a=1,
+                a=0.5,
                 b=0.01,
+                V=NULL,
+                offset = NULL,
                 display_progress=TRUE)
 
 
@@ -56,6 +60,12 @@ mNMF_vb(x)
   \item{b}{
   rate parameter of gamma prior distribution
 }
+  \item{V}{
+  initial values of latent variable V. If \code{NULL} it choosed randomly. 
+}
+  \item{offset}{
+  The vector of offset factor which scale output. \code{NULL} is equivalent to the vector of 1s.
+  }
   \item{display_progress}{
   if \code{TRUE} show progress bar
 }
