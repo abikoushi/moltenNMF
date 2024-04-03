@@ -35,7 +35,7 @@ List doVB_pois_offset(const arma::vec & y,
   for (int i=0; i<iter; i++) {
     up_A(alpha, R, logV, y, xi, xp, a);
     up_B2(N, beta, V, logV, tau, alpha, xi, xp, varind, b);
-    ll.row(i) = lowerbound_logML_pois(alpha, beta, V, logV, R, y, a, b) + sum(y%log(tau));
+    ll.row(i) = lowerbound_logML_pois(alpha, beta, V, logV, R, y, a, b);
     pb.increment();
   }
   return List::create(Named("shape")=alpha,

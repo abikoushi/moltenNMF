@@ -18,9 +18,10 @@ void up_B2(const int & N,
   int L = V.n_cols;
   for(int l=0;l<L;l++){
     arma::vec vl = myprodvec(N, xi, xp, V.col(l));
+    vl %= z;
     for(int k=0; k<K; k++){
       vl /= myprodvec_sub(N, xi, xp, varind[k], varind[k+1], V.col(l));
-      vl.each_col() %= z;
+      //vl.each_col() %= z;
       arma::vec B = mysum_t(varind[k+1]-varind[k], xi, xp.rows(varind[k], varind[k+1]), vl) + b;
       beta.col(l).rows(varind[k], varind[k+1]-1) = B;
       V.col(l).rows(varind[k], varind[k+1]-1) = alpha.col(l).rows(varind[k],varind[k+1]-1)/B;

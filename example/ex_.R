@@ -19,12 +19,10 @@ tail(xall)
 
 sX <- moltenNMF::sparse_onehot(~row+col+rgb, data=xall)
 
-
-tail(sX@i)
-out <- mNMF_vb.default(1000*Y, sX, L=10, iter=200)
+out <- mNMF_vb.default(1000*Y, sX, L=10, offset = rep(1000, length(Y)),  iter=200)
 plot(out$ELBO[-1], type="l")
 
-fit <- product_m(~row+col+rgb, data=xall, out$shape/out$rate)/1000
+fit <- product_m(~row+col+rgb, data=xall, out$shape/out$rate)
 plot(fit,Y,pch=".")
 fit[fit>1] <- 1
 fit[fit<0] <- 0
