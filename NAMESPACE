@@ -24,3 +24,5 @@ export("rpredictor_mNMF")
 export("rpredictor_mrNMF")
 
 export("matbarplot")
+
+# export("uriboimage")

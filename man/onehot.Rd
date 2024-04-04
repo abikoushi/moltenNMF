@@ -48,9 +48,10 @@ make sparse one-hot encoding (design matrix)
 set.seed(1234)
 df <- data.frame(x1 = sample(letters[1:3], 10, replace = TRUE),
                  x2 = sample(LETTERS[1:3], 10, replace = TRUE))
+                 
 sparse_onehot(~x1+x2, data=df)
 
-sparse_onehot(~x1+x2, data=df, dummy_m=2)
+sparse_onehot(~x1+x1:x2, data=df)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory (show via RShowDoc("KEYWORDS")):

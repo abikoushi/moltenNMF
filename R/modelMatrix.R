@@ -8,7 +8,7 @@ sparse_cate <- function(x,repr="C"){
   xp <- seq(1,length(x))
   xp <- xp[!is.na(x)]
   val <- rep(TRUE, length(xi))
-  m <- Matrix::sparseMatrix(i = xi, j = xp, x = val,repr=repr)
+  m <- Matrix::sparseMatrix(i = xi, j = xp, x = val, repr=repr)
   rownames(m) <- levels(x)
   return(m)
 }

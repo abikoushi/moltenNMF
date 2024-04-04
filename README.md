@@ -11,6 +11,9 @@ Ko ABE and Teppei SHIMAMURA (2023) UNMF: A unified non-negative matrix factoriza
 ```R
 devtools::install_github("abikoushi/moltenNMF")
 ```
+
 ## Example
 
 [A simple example of 'moltenNMF'](https://github.com/abikoushi/moltenNMF/blob/main/Rmd/moltenNMF.md)
+
+[missing data imputation](https://github.com/abikoushi/moltenNMF/blob/main/Rmd/gehag.md)
