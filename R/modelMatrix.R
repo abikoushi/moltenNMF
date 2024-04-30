@@ -16,7 +16,7 @@ sparse_cate <- function(x,repr="C"){
 
 sparse_onehot <- function(object,
                           data = environment(object),
-                          dummy_m = 0L,
+                          #dummy_m = 0L,
                           xlev = NULL,
                           sep = "_",
                           interaction_operator = ":",
@@ -36,13 +36,13 @@ sparse_onehot <- function(object,
       lx[[i]] <- sparse_cate(data[[labs[i]]], repr = repr)      
     }
   }
-  if(dummy_m>=1L){
-    m <- matrix(FALSE, dummy_m, nrow(data))
-    m <- as(m, "lMatrix")
-    rownames(m) <- 1:dummy_m
-    lx[[length(labs)+1]] <- m
-    labs <- c(labs, "dummy")
-  }
+  #if(dummy_m>=1L){
+  #  m <- matrix(FALSE, dummy_m, nrow(data))
+  #  m <- as(m, "lMatrix")
+  #  rownames(m) <- 1:dummy_m
+  #  lx[[length(labs)+1]] <- m
+  #  labs <- c(labs, "dummy")
+  #}
   X <- do.call("rbind", lx)
   X <- t(X)
   clabs <- unlist(sapply(lx, rownames))
@@ -50,6 +50,7 @@ sparse_onehot <- function(object,
   colnames(X) <- paste(rep(labs, len), clabs, sep=sep)
   attr(X, "indices") <- c(0L, cumsum(len))
   attr(X, "term.labels") <- labs
+  attr(X, "value.labels") <- clabs
   attr(X, "assign") <- rep(1:length(lx), len)
   return(X)
 }
