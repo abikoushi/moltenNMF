@@ -54,8 +54,8 @@ Check goodness-of-fit:
 ``` r
 V <- out2$shape/out2$rate
 yhat <- product_m(~Survived+Class+Sex+Age, data=Titanicdf,V)
-plot(Titanicdf$Freq, yhat, ylab = "fit", xlab = "obs")
-abline(0, 1, lty=2)
+plot(log1p(yhat), log1p(Titanicdf$Freq), ylab = "fit", xlab = "obs", xlim = c(-0.5,7), ylim=c(-0.5,7))
+abline(0, 1, lty=2, col="steelblue")
 ```
 
 ![](moltenNMF_files/figure-gfm/titanic3-1.png)<!-- -->
@@ -81,6 +81,12 @@ p2 <- ggplot(Vdf, aes(y=variable, x=value, fill=component))+
   scale_x_continuous(labels=scales::percent)+
   theme_classic(16)+theme(strip.text.y = element_text(angle=0))
 
+p3 <- ggplot(Vdf, aes(y=variable, x=component, fill=log(value)))+
+  geom_tile()+
+  facet_grid(facet_dummy~.,scales="free_y",space = "free")+
+  scale_fill_gradient2(low="royalblue", high="orange", mid="white", midpoint=0)+
+  theme_classic(16)+theme(strip.text.y = element_text(angle=0))
+
 print(p1)
 ```
 
@@ -91,6 +97,12 @@ print(p2)
 ```
 
 ![](moltenNMF_files/figure-gfm/titanic4-2.png)<!-- -->
+
+``` r
+print(p3)
+```
+
+![](moltenNMF_files/figure-gfm/titanic4-3.png)<!-- -->
 
 These plot show co-occurrence relationships between variables. You can
 see that many of survivors of Titanic are women, because of
