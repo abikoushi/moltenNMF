@@ -7,8 +7,11 @@ sparse_cate <- function(x,repr="C"){
   xi <- xi[!is.na(x)]
   xp <- seq(1,length(x))
   xp <- xp[!is.na(x)]
-  val <- rep(TRUE, length(xi))
-  m <- Matrix::sparseMatrix(i = xi, j = xp, x = val, repr=repr)
+  #val <- rep(TRUE, length(xi))
+  m <- Matrix::sparseMatrix(i = xi, j = xp,
+                            #x = val,
+                            dims = c(length(levels(x)), length(x)),
+                            repr=repr)
   rownames(m) <- levels(x)
   return(m)
 }
@@ -29,8 +32,10 @@ sparse_onehot <- function(object,
   for(i in 1:length(labs)){
     if(any(grepl(interaction_operator, labs[i]))){
       lab2 <- unlist(strsplit(labs[i], interaction_operator))
-      cmat <- sapply(lab2, function(x)as.character(data[[x]]))
-      ct <- apply(cmat, 1, paste, collapse=":")
+      cmat <- sapply(lab2, function(x){
+        ifelse(is.na(data[[x]]),NA_character_,as.character(data[[x]]))
+        })
+      ct <- ifelse(apply(is.na(cmat),1,any), NA_character_, apply(cmat, 1, paste, collapse=":"))
       lx[[i]] <- sparse_cate(ct, repr = repr)
     }else{
       lx[[i]] <- sparse_cate(data[[labs[i]]], repr = repr)      
