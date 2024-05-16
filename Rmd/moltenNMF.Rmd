@@ -45,6 +45,7 @@ plot(log1p(yhat), log1p(Titanicdf$Freq), ylab = "fit", xlab = "obs", xlim = c(-0
 abline(0, 1, lty=2, col="steelblue")
 ```
 
+
 Show parameters $v_{dl}$:
 ```{r titanic4}
 Vdf <- data.frame(V,
