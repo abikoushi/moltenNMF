@@ -1,9 +1,9 @@
 grepV <- function(V, x,
                   normalize = FALSE,
                   simplifynames = FALSE){
-  out <- V[grep(x,rownames(V)),]
+  out <- V[grep(x,rownames(V)),,drop=FALSE]
   if(normalize){
-    out <- sweep(out,2,rowSums(out),"/")
+    out <- sweep(out, 1, rowSums(out),"/")
   }
   if(simplifynames){
     row.names(out) <- gsub(x,"",row.names(out))

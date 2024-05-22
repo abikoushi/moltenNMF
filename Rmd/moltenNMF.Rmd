@@ -79,3 +79,10 @@ print(p3)
 
 These plot show co-occurrence relationships between variables. 
 You can see that many of survivors of Titanic are women, because of `Survived_Yes`  and `Sex_Female` have large proportion `component 1`.
+
+
+```{r sim}
+simmilar_top_n(log(V),ref = log(grepV(V,"Survived_No",normalize = FALSE)))
+
+simmilar_top_n(log(V/rowSums(V)),ref = log(grepV(V,"Survived_No",normalize = TRUE)))
+```

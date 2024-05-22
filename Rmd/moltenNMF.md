@@ -107,3 +107,35 @@ print(p3)
 These plot show co-occurrence relationships between variables. You can
 see that many of survivors of Titanic are women, because of
 `Survived_Yes` and `Sex_Female` have large proportion `component 1`.
+
+``` r
+simmilar_top_n(log(V),ref = log(grepV(V,"Survived_No",normalize = FALSE)))
+```
+
+    ##                      X1         X2       dist
+    ## Survived_No   2.4968956  5.0979919   0.000000
+    ## Survived_Yes  3.4813868  3.5754540   3.287344
+    ## Class_3rd     1.9808004  1.4289654  13.728110
+    ## Class_Crew   -0.1446455  2.0367264  16.349085
+    ## Class_2nd     1.3371932  0.3570788  23.821167
+    ## Class_1st     1.7168385  0.2358003  24.249396
+    ## Age_Adult     1.3125283 -0.1323644  28.759353
+    ## Sex_Male     -3.4187368 -0.4709240  66.007531
+    ## Age_Child    -0.6392318 -3.8621590  90.119598
+    ## Sex_Female   -1.9534643 -7.7022485 183.651856
+
+``` r
+simmilar_top_n(log(V/rowSums(V)),ref = log(grepV(V,"Survived_No",normalize = TRUE)))
+```
+
+    ##                        X1          X2       dist
+    ## Survived_No  -2.672665203 -0.07156894  0.0000000
+    ## Sex_Male     -2.998937683 -0.05112487  0.1068717
+    ## Class_Crew   -2.288329085 -0.10695714  0.1489666
+    ## Survived_Yes -0.741286459 -0.64721925  4.0615971
+    ## Class_3rd    -0.454821515 -1.00665650  5.7932194
+    ## Class_2nd    -0.318648738 -1.29876315  7.0473992
+    ## Age_Adult    -0.211695365 -1.65658809  8.5686582
+    ## Class_1st    -0.204899313 -1.68593752  8.6960544
+    ## Age_Child    -0.039065193 -3.26199244 17.1146511
+    ## Sex_Female   -0.003181586 -5.75196580 39.3930513
