@@ -31,12 +31,16 @@ library(ggplot2)
 library(tidyr)
 ```
 
-Run `mNMF_vb`:
+Setup data,
 
 ``` r
 Titanicdf <- as.data.frame(Titanic) %>% 
   mutate(Class=factor(Class,levels=c("3rd","2nd","1st","Crew")))
+```
 
+Run `mNMF_vb`,
+
+``` r
 set.seed(794)
 out2 <- mNMF_vb(Freq~Survived+Class+Sex+Age, data=Titanicdf, L=2, iter=500)
 ```
@@ -109,7 +113,8 @@ see that many of survivors of Titanic are women, because of
 `Survived_Yes` and `Sex_Female` have large proportion `component 1`.
 
 ``` r
-simmilar_top_n(log(V),ref = log(grepV(V,"Survived_No",normalize = FALSE)))
+V <- out2$shape/out2$rate
+simmilar_top_n(log(V),ref = log(grepV(V,"Survived_No")))
 ```
 
     ##                      X1         X2       dist
@@ -125,7 +130,8 @@ simmilar_top_n(log(V),ref = log(grepV(V,"Survived_No",normalize = FALSE)))
     ## Sex_Female   -1.9534643 -7.7022485 183.651856
 
 ``` r
-simmilar_top_n(log(V/rowSums(V)),ref = log(grepV(V,"Survived_No",normalize = TRUE)))
+V <- V/rowSums(V)
+simmilar_top_n(log(V),ref = log(grepV(V,"Survived_No")))
 ```
 
     ##                        X1          X2       dist
