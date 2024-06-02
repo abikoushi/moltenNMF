@@ -18,10 +18,18 @@ mNMF_vb.default <- function(y, X, L,
     V <- rinitV(ncol(X),L)
   }
   if(is.null(offset)){
-    out <- doVB_pois(y, X@i, X@p, indices, X@Dim[2],
-                     L=L, iter=iter, a=a, b=b,
-                     V=V,
-                     display_progress=display_progress)
+    if(class(y) == "dsparseVector"){
+      out <- doVB_pois_sp(y@x, y@i-1L, y@length,
+                          X@i, X@p, indices, X@Dim[2],
+                          L=L, iter=iter, a=a, b=b,
+                          V=V,
+                          display_progress=display_progress)
+    }else{
+      out <- doVB_pois(y, X@i, X@p, indices, X@Dim[2],
+                       L=L, iter=iter, a=a, b=b,
+                       V=V,
+                       display_progress=display_progress) 
+    }
   }else{
     out <- doVB_pois_offset(y, X@i, X@p, indices, X@Dim[2],
                      L=L, tau = offset,
@@ -56,10 +64,18 @@ mNMF_vb.formula <- function(formula,
     V <- rinitV(ncol(X),L)
   }
   if(is.null(offset)){
-    out <- doVB_pois(y, X@i, X@p, indices, X@Dim[2],
-                     L=L, iter=iter, a=a, b=b,
-                     V=V,
-                     display_progress=display_progress)
+    if(class(y) == "dsparseVector"){
+      out <- doVB_pois_sp(y@x, y@i-1L, y@length,
+                          X@i, X@p, indices, X@Dim[2],
+                          L=L, iter=iter, a=a, b=b,
+                          V=V,
+                          display_progress=display_progress)
+    }else{
+      out <- doVB_pois(y, X@i, X@p, indices, X@Dim[2],
+                       L=L, iter=iter, a=a, b=b,
+                       V=V,
+                       display_progress=display_progress) 
+    }
   }else{
     out <- doVB_pois_offset(y, X@i, X@p, indices, X@Dim[2],
                             L=L, tau = offset,

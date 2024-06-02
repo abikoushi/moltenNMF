@@ -22,7 +22,10 @@ arma::mat mysum(const int & N, const arma::uvec & xi, const arma::uvec & xp, con
 }
 
 // [[Rcpp::export]]
-arma::mat myprod(const int & N, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam) {
+arma::mat myprod(const int & N,
+                 const arma::uvec & xi,
+                 const arma::uvec & xp,
+                 const arma::mat & lam) {
   arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
   for(int i=0; i<xp.n_rows-1; i++){
     for(int j=xp[i]; j<xp[i+1]; j++){
