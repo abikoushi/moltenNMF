@@ -3,7 +3,6 @@
 #include "logexpfuns.h"
 #include "up_shape.h"
 #include "up_rate.h"
-#include "up_shape_sp.h"
 #include "ELBO.h"
 #include <progress.hpp>
 #include <progress_bar.hpp>
