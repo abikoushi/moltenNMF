@@ -24,7 +24,6 @@ export("rpredictor_mNMF")
 export("rpredictor_mrNMF")
 
 export("matbarplot")
-
 export("grepV")
 export("simmilar_top_n")
 

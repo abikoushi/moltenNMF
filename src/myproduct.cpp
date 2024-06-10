@@ -1,11 +1,14 @@
 #include <RcppArmadillo.h>
 #include "myproduct.h"
 
-arma::mat mysum_t(const int & N, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam) {
+arma::mat mysum_t(const int & N,
+                  const arma::uvec & xi,
+                  const arma::uvec & xp,
+                  const arma::mat & lam) {
   arma::mat out = arma::zeros<arma::mat>(N, lam.n_cols);
   for(int i=0; i<xp.n_rows-1; i++){
     for(int j=xp[i]; j<xp[i+1]; j++){
-      out.row(i) += lam.row(xi[j]); 
+      out.row(i) += lam.row(xi[j]);
     }
   }
   return out;

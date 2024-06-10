@@ -1,7 +1,7 @@
 Package: moltenNMF
 Type: Package
 Title: Non-negative matrix factorization for the molten format data
-Version: 1.6.1
+Version: 1.6.2
 Date: 2022-09-09
 Author: Ko ABE
 Maintainer: Ko ABE <abe.csb@tmd.ac.jp>

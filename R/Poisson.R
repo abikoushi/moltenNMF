@@ -3,6 +3,40 @@ rinitV <- function(D, L){
   matrix(rexp(D*L),D,L)
 }
 
+mNMF_vb_sp <- function(y, X, L,
+                       N0,probx,
+                       iter=1000,
+                       a=0.5, b=0.01,
+                       V=NULL,
+                       #offset = NULL,
+                       display_progress=TRUE,
+                       indices=NULL){
+  stopifnot(grepl(".gCMatrix",class(X)))
+  if(is.null(indices)){
+    indices <- attr(X, "indices")
+  }
+  if(is.null(V)){
+    V <- rinitV(ncol(X),L)
+  }
+  out <- doVB_pois_spw(y, X@i, X@p,
+                       indices, X@Dim[2],
+                       N0,probx,
+                       L=L, iter=iter, a=a, b=b,
+                       V=V,
+                       display_progress=display_progress)
+  rownames(out$shape) <- colnames(X)
+  rownames(out$rate) <- colnames(X)
+  if(!is.null(attr(X, "term.labels"))){
+    vname <- attr(X,"term.labels")
+    di <- diff(attr(X,"indices"))
+    if(length(vname) < length(di)){
+      vname <- c("(Intercept)", vname)
+    }
+    out[["vargroup"]] <- vname[rep(1:length(di),di)] 
+  }
+  return(out)
+}
+
 mNMF_vb.default <- function(y, X, L,
                             iter=1000,
                             a=0.5, b=0.01,
@@ -74,34 +108,17 @@ mNMF_vb.formula <- function(formula,
     V <- rinitV(ncol(X),L)
   }
   if(is.null(offset)){
-    if(class(y) == "dsparseVector"){
-      out <- doVB_pois_sp(y@x, y@i-1L, y@length,
-                          X@i, X@p, indices, X@Dim[2],
-                          L=L, iter=iter, a=a, b=b,
-                          V=V,
-                          display_progress=display_progress)
-    }else{
       out <- doVB_pois(y, X@i, X@p, indices, X@Dim[2],
                        L=L, iter=iter, a=a, b=b,
                        V=V,
                        display_progress=display_progress) 
-    }
   }else{
-    if(class(y) == "dsparseVector"){
-      out <- doVB_pois_offset_sp(y@x, y@i-1L, y@length,
-                                 X@i, X@p, indices, X@Dim[2],
-                                 L=L, tau = offset,
-                                 iter=iter, a=a, b=b,
-                                 V=V,
-                                 display_progress=display_progress)
-    }else{
       out <- doVB_pois_offset(y,
                               X@i, X@p, indices, X@Dim[2],
                               L=L, tau = offset,
                               iter=iter, a=a, b=b,
                               V=V,
                               display_progress=display_progress)
-    }
   }
   rownames(out$shape) <- colnames(X)
   rownames(out$rate) <- colnames(X)
