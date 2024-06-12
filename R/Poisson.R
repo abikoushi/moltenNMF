@@ -5,6 +5,7 @@ rinitV <- function(D, L){
 
 mNMF_vb_sp <- function(y, X, L,
                        N0,probx,
+                       #S=100,
                        iter=1000,
                        a=0.5, b=0.01,
                        V=NULL,
@@ -20,7 +21,7 @@ mNMF_vb_sp <- function(y, X, L,
   }
   out <- doVB_pois_spw(y, X@i, X@p,
                        indices, X@Dim[2],
-                       N0,probx,
+                       N0, probx,
                        L=L, iter=iter, a=a, b=b,
                        V=V,
                        display_progress=display_progress)

@@ -2,7 +2,7 @@
 #include "myproduct.h"
 #include "logexpfuns.h"
 #include "up_rate_sp.h"
-#include "rcate.h"
+#include "NegativeSampling.h"
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
@@ -26,19 +26,8 @@ double up_B_sp(const int & N,
     for(int k=0; k<K; k++){
       vl /= myprodvec_sub(N, xi, xp, varind[k], varind[k+1], V.col(l));
       arma::vec B = mysum_t(varind(k+1)-varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
-      //sample
-      for(int m=0; m<N0; m++){
-        arma::vec ns =  rber(probx);
-        for(int j=0; j<B.n_rows; j++){
-          arma::vec nns = ns;
-          nns.shed_row(j);
-          arma::vec nv = V.col(l);
-          nv.shed_row(j);
-          B(j) += ns(j) * prod(pow(nv,nns)); 
-        }
-      }
-      lp += sum(B);
-      //sample
+      //sampling
+      lp += NegativeSampling2(B, N0, probx, V.col(l));
       B += b;
       beta.col(l).rows(varind[k], varind[k+1]-1) = B;
       V.col(l).rows(varind[k], varind[k+1]-1) = alpha.col(l).rows(varind[k],varind[k+1]-1)/B;

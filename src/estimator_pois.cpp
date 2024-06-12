@@ -102,8 +102,8 @@ List doVB_pois_spw(const arma::vec & y,
   for (int i=0; i<iter; i++) {
     up_A(alpha, R, logV, y, xi, xp, a);
     double nlp = up_B_sp(N, beta, V, logV,
-            N0,probx,
-            alpha, xi, xp, varind, b);
+                         N0, probx,
+                         alpha, xi, xp, varind, b);
     ll.row(i) = lowerbound_logML_pois(alpha, beta, V, logV, R, y, a, b);
     ll.row(i) += nlp;
     pb.increment();
