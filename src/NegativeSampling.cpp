@@ -35,20 +35,17 @@ double NegativeSampling2(arma::vec & B,
                          const int & N0, 
                          const arma::vec & probx,
                          const arma::vec & vl){
-  //const int & S
-  //arma::vec ns =  rber(probx);
-  //for(int m=0; m<S; m++){
   for(int j=0; j<B.n_rows; j++){
     arma::vec nns = probx;
     nns.shed_row(j);
     arma::vec nv = vl;
     nv.shed_row(j);
-    B(j) +=  N0 * probx(j) *  prod(pow(nv, nns)); 
+    B(j) +=  N0 * probx(j) *  prod(1+(nv-1)%nns); 
   }
-  //}
   return sum(B);
 }
 
+/*
 arma::vec rbinom_vec(const int N, const arma::vec & p){
   int K = p.n_rows;
   arma::vec x = arma::zeros<arma::vec>(K);
@@ -57,3 +54,4 @@ arma::vec rbinom_vec(const int N, const arma::vec & p){
   }
   return(x);
 }
+*/

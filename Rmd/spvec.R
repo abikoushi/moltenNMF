@@ -2,7 +2,7 @@ library(moltenNMF)
 library(Matrix)
 library(dplyr)
 library(ggplot2)
-set.seed(2222)
+set.seed(34562)
 lambda<-rexp(60,1)
 df <- expand.grid(row=1:20,col=1:20,dep=1:20)
 X <- sparse_onehot(~row+col+dep, data=df)
@@ -16,7 +16,7 @@ y1 <- y[y>0]
 
 
 system.time({
-  out1 <- moltenNMF::mNMF_vb.default(y,X,1,iter = 500)
+  out1 <- moltenNMF::mNMF_vb.default(y,X,1,iter = 2000)
 })
 dim(X)
 m
@@ -27,7 +27,7 @@ system.time({
                                  indices = attr(X,"indices"),
                                  N0 = m,
                                  probx = p,
-                                 iter = 500)
+                                 iter = 2000)
 })
 
 
@@ -35,7 +35,7 @@ plot(out1$ELBO[-1], type = "l")
 
 plot(out2$ELBO[-1], type = "l")
 
-out2$ELBO
+
 
 mean((digamma(out1$shape)-log(out1$rate))^2)
 mean((digamma(out2$shape)-log(out2$rate))^2)
