@@ -8,16 +8,20 @@ sparse_cate <- function(x, repr="C", binary_dummy=FALSE){
     f <- xi > 0L & !is.na(x)
     xi <- xi[f]
     xp <- seq(1,length(xi))
+    m <- Matrix::sparseMatrix(i = xi, j = xp,
+                              dims = c(1L, length(x)),
+                              repr=repr)
+    rownames(m) <- levels(x)[2]
   }else{
     xi <- as.integer(x)
     xi <- xi[!is.na(x)]
     xp <- seq(1,length(x))
-    xp <- xp[!is.na(x)]    
+    xp <- xp[!is.na(x)]
+    m <- Matrix::sparseMatrix(i = xi, j = xp,
+                              dims = c(length(levels(x)), length(x)),
+                              repr=repr)
+    rownames(m) <- levels(x)
   }
-  m <- Matrix::sparseMatrix(i = xi, j = xp,
-                            dims = c(length(levels(x)), length(x)),
-                            repr=repr)
-  rownames(m) <- levels(x)
   return(m)
 }
 
