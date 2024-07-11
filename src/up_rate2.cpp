@@ -1,6 +1,7 @@
 #include <RcppArmadillo.h>
 #include "myproduct.h"
 #include "up_rate2.h"
+#include "logexpfuns.h"
 using namespace Rcpp;
 
 // for negbin and offset factor

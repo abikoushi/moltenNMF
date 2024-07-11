@@ -26,9 +26,9 @@ double up_B_sp(const int & N,
     for(int k=0; k<K; k++){
       vl /= myprodvec_sub(N, xi, xp, varind[k], varind[k+1], V.col(l));
       arma::vec B = mysum_t(varind(k+1)-varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
-      //sampling
-      lp += NegativeSampling2(B, N0, probx, V.col(l));
-      B += b;
+      //zero-part
+      lp += NegativeSampling2(B, N0, probx.rows(varind(k),varind(k+1)-1), V.col(l).rows(varind[k],varind[k+1]-1), b);
+      //B += b;
       beta.col(l).rows(varind[k], varind[k+1]-1) = B;
       V.col(l).rows(varind[k], varind[k+1]-1) = alpha.col(l).rows(varind[k],varind[k+1]-1)/B;
       vl %= myprodvec_sub(N, xi, xp, varind[k], varind[k+1], V.col(l));

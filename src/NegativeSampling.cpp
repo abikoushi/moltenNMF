@@ -4,6 +4,7 @@ using namespace arma;
 #include "NegativeSampling.h"
 // [[Rcpp::depends(RcppArmadillo)]]
 
+/*
 arma::vec rber(const arma::vec & p){
   int K = p.n_rows;
   arma::vec x = arma::zeros<arma::vec>(K);
@@ -29,29 +30,19 @@ double NegativeSampling(arma::vec & B,
   }
   return sum(B);
 }
+*/
 
-//
 double NegativeSampling2(arma::vec & B,
-                         const int & N0, 
+                         const int & N0,
                          const arma::vec & probx,
-                         const arma::vec & vl){
+                         const arma::vec & vl,
+                         const double & b){
   for(int j=0; j<B.n_rows; j++){
     arma::vec nns = probx;
     nns.shed_row(j);
     arma::vec nv = vl;
     nv.shed_row(j);
-    B(j) +=  N0 * probx(j) *  prod(1+(nv-1)%nns); 
+    B(j) +=  N0 * probx(j) *  prod(1+(nv-1)%nns) + b; 
   }
   return sum(B);
 }
-
-/*
-arma::vec rbinom_vec(const int N, const arma::vec & p){
-  int K = p.n_rows;
-  arma::vec x = arma::zeros<arma::vec>(K);
-  for(int k=0; k<K; k++){
-    x(k) = R::rbinom(N, p(k));
-  }
-  return(x);
-}
-*/

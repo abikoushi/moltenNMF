@@ -34,6 +34,4 @@ arma::mat sweep(int N, arma::uvec xi, arma::uvec xp, arma::vec W);
 
 arma::vec sweep2(arma::uvec xi, arma::uvec xp, arma::vec W, arma::vec y);
 
-arma::mat mat_digamma(arma::mat a);
 
-arma::vec vec_digamma(arma::vec a);

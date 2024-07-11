@@ -205,24 +205,3 @@ arma::vec sweep2(arma::uvec xi, arma::uvec xp, arma::vec W, arma::vec y){
   }
   return out;
 }
-
-arma::mat mat_digamma(arma::mat a){
-  int K = a.n_rows;
-  int L = a.n_cols;
-  arma::mat out(K,L);
-  for(int k=0;k<K;k++){
-    for(int l=0;l<L;l++){
-      out(k,l) = R::digamma(a(k,l));
-    }
-  }
-  return out;
-}
-
-arma::vec vec_digamma(arma::vec a){
-  int K = a.n_rows;
-  arma::vec out(K);
-  for(int k=0;k<K;k++){
-    out[k] = R::digamma(a[k]);
-  }
-  return out;
-}
