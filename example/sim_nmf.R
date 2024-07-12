@@ -19,8 +19,8 @@ set_data <- function(L, nrow, ncol){
   y <- rpois(nrow(X), rowSums(exp(X%*%B)))
   list(X=X, y=y, df=df, trueparam =B)
 }
-set.seed(555)
-dat <- set_data(3, 1000, 1000)
+set.seed(586)
+dat <- set_data(3, 500, 200)
 
 X1 <- with(dat, X[y>0,])
 y1 <- with(dat, y[y>0])
@@ -32,15 +32,13 @@ p <- with(dat, colMeans(X[y==0,]))
 m
 m/nrow(dat$X)
 
-system.time({
+t1 <- system.time({
   out1 <- moltenNMF::mNMF_vb(dat$y, dat$X,
                               L = 3,
                               iter = 200)
 })
-#   user  system elapsed 
-#326.887  17.117 344.981 
-   
-system.time({
+
+t2 <- system.time({
   out2 <- moltenNMF:::mNMF_vb_sp(y1, X1,
                                  L = 3,
                                  indices = attr(dat$X,"indices"),
@@ -48,38 +46,19 @@ system.time({
                                  probx = p,
                                  iter = 200)
 })
-#   user  system elapsed 
-#316.385  16.301 333.673 
+
+1-as.numeric(t2)/as.numeric(t1)
 
 f <- moltenNMF::product_m(dat$X, out2$shape/out2$rate)
 plot(f, dat$y, pch=".")
 abline(0, 1, col="royalblue")
 
 ind <- apply(cor(dat$trueparam,digamma(out2$shape)-log(out2$rate)),1,which.max)
-dim(Bhat)
+
 Bhat <- (digamma(out2$shape)-log(out2$rate))[,ind]
 Bhat <- center0(dat$X,Bhat)
 
 plot(dat$trueparam,Bhat,pch=".")
 abline(0,1,col="royalblue")
 
-plot(out2$ELBO[-1], type = "l")
 
-########
-dfest <- data.frame(digamma(out2$shape)-log(out2$rate),
-                 axis = attr(dat$X,"assign")) %>% 
-  pivot_longer(1:2, values_to = "est") %>% 
-  group_by(axis, name) %>% 
-  #mutate(est = est - mean(est)) %>% 
-  ungroup() %>% 
-  mutate(true = c(t(dat$trueparam)))
-
-  
-dfest
-
-ggplot(dfest, aes(x=est, y=true))+
-  geom_point(alpha=0.3)+
-  geom_abline(intercept=0, slope=1, linetype=2)+
-  facet_grid(axis ~ name)+
-  theme_bw()+labs(x="log-estimates", colour="method")
-ggsave("comp.png")
