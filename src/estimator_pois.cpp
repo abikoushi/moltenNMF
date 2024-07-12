@@ -49,16 +49,16 @@ List doVB_pois(const arma::vec & y,
 List doVB_pois_sp(const arma::vec & yv,
                   const arma::uvec & yi,
                   const int & N,
-               const arma::uvec & xi,
-               const arma::uvec & xp,
-               const arma::uvec & varind,
-               const int & D,
-               const int & L,
-               const int & iter,
-               const double & a,
-               const double & b,
-               arma::mat & V,
-               const bool & display_progress){
+                  const arma::uvec & xi,
+                  const arma::uvec & xp,
+                  const arma::uvec & varind,
+                  const int & D,
+                  const int & L,
+                  const int & iter,
+                  const double & a,
+                  const double & b,
+                  arma::mat & V,
+                  const bool & display_progress){
   arma::mat logV = log(V);
   arma::mat alpha = arma::ones<arma::mat>(D, L);
   arma::mat beta  = arma::ones<arma::mat>(D, L);
@@ -99,9 +99,14 @@ List doVB_pois_spw(const arma::vec & y,
   arma::vec R = arma::zeros<arma::vec>(N);
   arma::vec ll(iter);
   Progress pb(iter, display_progress);
+  arma::vec gamma_all = arma::zeros<arma::vec>(L);
+  for (int l=0;l<L;l++){
+    gamma_all.row(l) = prod(1+(V.col(l)-1)%probx);
+  }
   for (int i=0; i<iter; i++) {
     up_A(alpha, R, logV, y, xi, xp, a);
     double nlp = up_B_sp(N, beta, V, logV,
+                         gamma_all,
                          N0, probx,
                          alpha, xi, xp, varind, b);
     ll.row(i) = lowerbound_logML_pois(alpha, beta, V, logV, R, y, a, b);
