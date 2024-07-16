@@ -14,7 +14,8 @@ sparse_onehot(object,
               sep = "_",
               interaction_operator = ":",
               na.action='na.pass',
-              repr = "C")
+              repr = "C",
+              binary_dummy = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -39,6 +40,7 @@ how \code{NA}s are treated (see \code{\link{model.frame}})
 \item{repr}{
 character string, one of "C", "T", or "R", specifying the sparse representation to be used for the result, i.e., one from the super classes \code{\link{CsparseMatrix}}, \code{\link{TsparseMatrix}}, or \code{\link{RsparseMatrix}}.
 }
+\item{binary_dummy}{If \code{TRUE}, use full-rank dummy encoding for binary variables; if \code{FALSE}, use one-hot encoding for all variables.}
 }
 \details{
 make sparse one-hot encoding (design matrix)

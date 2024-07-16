@@ -4,8 +4,7 @@ rinitV <- function(D, L){
 }
 
 mNMF_vb_sp <- function(y, X, L,
-                       N0,probx,
-                       #S=100,
+                       N0, probx,
                        iter=1000,
                        a=0.5, b=0.01,
                        V=NULL,
