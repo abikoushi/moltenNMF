@@ -8,13 +8,8 @@
 \description{
 \packageDescription{moltenNMF}
 }
-\details{
-
-The DESCRIPTION file:
-\packageDESCRIPTION{moltenNMF}
-\packageIndices{moltenNMF}
-~~ An overview of how to use the package, including the most important ~~
-~~ functions ~~
+\seealso{
+Ko Abe, Teppei Shimamura, UNMF: a unified nonnegative matrix factorization for multi-dimensional omics data, Briefings in Bioinformatics, Volume 24, Issue 5, September 2023, bbad253, \url{https://doi.org/10.1093/bib/bbad253}
 }
 \author{
 \packageAuthor{moltenNMF}
