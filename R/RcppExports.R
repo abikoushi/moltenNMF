@@ -13,6 +13,10 @@ doVB_pois_spw <- function(y, xi, xp, varind, D, N0, probx, L, iter, a, b, V, dis
     .Call(`_moltenNMF_doVB_pois_spw`, y, xi, xp, varind, D, N0, probx, L, iter, a, b, V, display_progress)
 }
 
+doVB_pois_s <- function(y, xi, xp, varind, D, p0, probx, L, iter, a, b, V, display_progress) {
+    .Call(`_moltenNMF_doVB_pois_s`, y, xi, xp, varind, D, p0, probx, L, iter, a, b, V, display_progress)
+}
+
 doVB_pois_offset_sp <- function(yv, yi, N, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress) {
     .Call(`_moltenNMF_doVB_pois_offset_sp`, yv, yi, N, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress)
 }
