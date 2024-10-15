@@ -205,3 +205,4 @@ arma::vec sweep2(arma::uvec xi, arma::uvec xp, arma::vec W, arma::vec y){
   }
   return out;
 }
+
