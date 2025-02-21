@@ -62,3 +62,20 @@ sparse_onehot <- function(object,
   attr(X, "assign") <- rep(1:length(lx), len)
   return(X)
 }
+
+slice_rows <- function(x, i){
+  out = x[i,]
+  if(!is.null(attr(x,"indices"))){
+    attr(out, "indices") = attr(x,"indices")    
+  }
+  if(!is.null(attr(x,"term.labels"))){
+    attr(out, "term.labels") = attr(x, "term.labels")
+  }
+  if(!is.null(attr(x, "value.labels"))){
+    attr(out, "value.labels") = attr(x, "value.labels")[i]
+  }
+  if(!is.null(attr(x, "assign"))){
+    attr(out, "assign") = attr(x, "assign")
+  }
+  return(out)
+}

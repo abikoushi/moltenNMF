@@ -3,6 +3,9 @@ library(Matrix)
 library(dplyr)
 library(ggplot2)
 
+td <- data.frame(Titanic)
+
+###
 set_data_mf <- function(L, nrow, ncol, mu=0){
   W <- matrix(rnorm(nrow*L,0,1),ncol=L)
   H <- matrix(rnorm(L*ncol,0,1),nrow=L)
@@ -17,7 +20,7 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
 dat <- set_data_mf(2,110,100)
 X <- moltenNMF::sparse_onehot(~row+col, data=expand.grid(row=1:110, col=1:100))
 out_d <- moltenNMF:::mNMF_vb.default(as.integer(dat$Y), X = X, L = 2, iter=1000)
-
+? moltenNMF:::mNMF_vb.defaultx
 plot(out_d$ELBO, type = "l")
 V <- out_d$shape/out_d$rate
 f_d <- moltenNMF::product_m(X, V)
