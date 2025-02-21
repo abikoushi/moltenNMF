@@ -1,7 +1,7 @@
 Example: missing imputation
 ================
 Ko ABE
-2024-04-03
+2025-02-21
 
 ## Setup
 
@@ -33,12 +33,9 @@ set.seed(1);ind <- sample.int(N, 0.5*N)
 xall <- expand.grid(row=factor(1:ds[1]),
                     col=factor(1:ds[2]),
                     rgb=factor(1:ds[3]))
-
 Y <- as.vector(dat)
-
-sX <- moltenNMF::sparse_onehot(~row+col+rgb, data=xall[ind,])
-
-out <- mNMF_vb.default(1000*Y[ind], sX,
+X <- moltenNMF::sparse_onehot(~row+col+rgb, data=xall)
+out <- mNMF_vb.default(1000*Y[ind], slice_rows(X,ind),
                        L=10, offset = rep(1000, length(ind)),  iter=200)
 plot(out$ELBO[-1], type="l")
 ```
