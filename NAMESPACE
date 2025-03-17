@@ -28,4 +28,5 @@ export("grepV")
 export("simmilar_top_n")
 
 export("slice_rows")
+export("append_new")
 # export("uriboimage")

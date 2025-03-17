@@ -12,20 +12,20 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-List doVB_pois_offset_sp(const arma::vec & yv,
+List doVB_pois_offset_sp(const int & N,
+                         const arma::vec & yv,
                       const arma::uvec & yi,
-                      const int & N,
-               const arma::uvec & xi,
-               const arma::uvec & xp,
-               const arma::uvec & varind,
-               const int & D,
-               const int & L,
-               const arma::vec & tau,
-               const int & iter,
-               const double & a,
-               const double & b,
-               arma::mat & V,
-               const bool & display_progress){
+                      const arma::uvec & xi,
+                      const arma::uvec & xp,
+                      const arma::uvec & varind,
+                      const int & D,
+                      const int & L,
+                      const arma::vec & tau,
+                      const int & iter,
+                      const double & a,
+                      const double & b,
+                      arma::mat & V,
+                      const bool & display_progress){
   //int N = y.n_rows;
   arma::mat logV = log(V);
   arma::mat alpha = arma::ones<arma::mat>(D, L);

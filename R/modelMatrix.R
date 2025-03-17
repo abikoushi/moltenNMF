@@ -1,4 +1,4 @@
-sparse_cate <- function(x, repr="C", binary_dummy=FALSE){
+sparse_cate <- function(x, repr = "C", binary_dummy=FALSE){
   if(!is.factor(x)){
     x <- factor(x)
     warning("auto-converted to factor")
@@ -77,5 +77,42 @@ slice_rows <- function(x, i){
   if(!is.null(attr(x, "assign"))){
     attr(out, "assign") = attr(x, "assign")
   }
+  return(out)
+}
+
+append_new <- function(x, new, onehot = NULL, newterm = NULL){
+  out = cbind(x, new)
+  y_len = ncol(new)
+  if(is.null(onehot)){
+    onehot = all(rowSums(new) <= 1L)    
+  }
+  if(is.null(newterm)){
+    newterm = paste(as.character(substitute(new)), collapse = "")
+    print(newterm)
+  }
+  ###
+  ind = attr(x, "indices")
+  if(!is.null(ind)){
+    if(onehot){
+      attr(out, "indices") = c(ind, ind[length(ind)] + y_len)
+    }else{
+      attr(out, "indices") = c(ind, ind[length(ind)] + 1:y_len)
+    }
+  }
+  assig = attr(x, "assign")
+  if(!is.null(assig)){
+    if(onehot){
+      attr(out, "assign") <- c(assig, rep(assig[length(assig)]+1L, y_len))
+    }else{
+      attr(out, "assign") <- c(assig, assig[length(assig)]+1L:y_len)
+    }
+  }
+  if(!is.null(attr(x, "term.labels"))){
+    attr(out, "term.labels") = c(attr(x, "term.labels"), newterm)
+  }
+  if(!is.null(attr(x, "value.labels"))){
+    attr(out, "value.labels") = c(attr(x, "value.labels"), rownames(new))
+  }
+  colnames(out) <- c(colnames(x), paste0(newterm, 1L:y_len))
   return(out)
 }

@@ -7,9 +7,10 @@ arma::vec elementwise_div(const arma::vec & yv,
                           const arma::uvec & yi,
                           const arma::vec & R){
   arma::vec out = arma::zeros<arma::vec>(R.n_rows);
-  for(int i=0; i<yv.n_rows; i++){
-    out(yi(i)) = yv(i)/R(yi(i));
-  }
+  // for(int i=0; i<yv.n_rows; i++){
+  //   out(yi(i)) = yv(i)/R(yi(i));
+  // }
+  out.rows(yi) = yv/R.rows(yi);
   return out;
 }
 
