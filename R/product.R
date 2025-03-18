@@ -23,3 +23,14 @@ product_m.default <- function(X, V, aggregate = TRUE){
 product_m <- function(...){
   UseMethod("product_m")
 }
+
+
+product_array <- function(V, X){
+  V0 <- V[[1]][X[,1],]
+  if(ncol(X)>=2){
+    for(i in 2:ncol(X)){
+      V0 <- V0 * V[[i]][X[,i],]  
+    }
+  }
+  rowSums(V0)
+}

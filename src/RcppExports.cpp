@@ -76,6 +76,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// doVB_pois_2D
+List doVB_pois_2D(arma::field<arma::mat> V, const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const arma::uvec& dims, const int& L, const int& iter, const double& a, const double& b, const bool& display_progress);
+RcppExport SEXP _moltenNMF_doVB_pois_2D(SEXP VSEXP, SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP dimsSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP display_progressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::field<arma::mat> >::type V(VSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type rowi(rowiSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type coli(coliSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< const int& >::type L(LSEXP);
+    Rcpp::traits::input_parameter< const int& >::type iter(iterSEXP);
+    Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(doVB_pois_2D(V, y, rowi, coli, dims, L, iter, a, b, display_progress));
+    return rcpp_result_gen;
+END_RCPP
+}
 // doVB_pois_offset_sp
 List doVB_pois_offset_sp(const int& N, const arma::vec& yv, const arma::uvec& yi, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const arma::vec& tau, const int& iter, const double& a, const double& b, arma::mat& V, const bool& display_progress);
 RcppExport SEXP _moltenNMF_doVB_pois_offset_sp(SEXP NSEXP, SEXP yvSEXP, SEXP yiSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP DSEXP, SEXP LSEXP, SEXP tauSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP VSEXP, SEXP display_progressSEXP) {
@@ -250,6 +270,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_doVB_negbin", (DL_FUNC) &_moltenNMF_doVB_negbin, 11},
     {"_moltenNMF_doVB_pois", (DL_FUNC) &_moltenNMF_doVB_pois, 11},
     {"_moltenNMF_doVB_pois_sp", (DL_FUNC) &_moltenNMF_doVB_pois_sp, 13},
+    {"_moltenNMF_doVB_pois_2D", (DL_FUNC) &_moltenNMF_doVB_pois_2D, 10},
     {"_moltenNMF_doVB_pois_offset_sp", (DL_FUNC) &_moltenNMF_doVB_pois_offset_sp, 14},
     {"_moltenNMF_doVB_pois_offset", (DL_FUNC) &_moltenNMF_doVB_pois_offset, 12},
     {"_moltenNMF_myprod", (DL_FUNC) &_moltenNMF_myprod, 4},
