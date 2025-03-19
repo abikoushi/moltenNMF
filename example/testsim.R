@@ -8,51 +8,26 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
   H <- matrix(rnorm(L*ncol,0,1),nrow=L)
   W <- sweep(W,1,rowMeans(W)-mu)
   H <- sweep(H,2,rowMeans(H)-mu)
-  Y <- matrix(rpois(nrow*ncol, exp(W%*%H)),nrow,ncol)
+  Y <- matrix(rpois(nrow*ncol, exp(W%*%H)), nrow, ncol)
   Y <- as(Y, "TsparseMatrix")
   list(Y=Y, trueW=W, trueH=H)
 }
 
-dat <- set_data_mf(2,110,100)
-Y=dat$Y
-ind_na = sample.int(110*100, 1000)
-Y[ind_na] <- NA
+dat <- set_data_mf(2,110, 130)
 
-out <- moltenNMF:::NMF2D_vb(Y, rank = 2, iter = 500)
-plot(out$ELBO, type="l")
-V = moltenNMF:::meanV_2D(out)
-plot(log1p(V[[1]]%*%t(V[[2]])), as.matrix(log1p(dat$Y)), pch=1, cex=0.5, col=rgb(0,0,0,0.2))
-abline(0, 1, col="royalblue",lty=2)
+X <- moltenNMF::sparse_onehot(~row+col, data=expand.grid(row=1:110, col=1:130))
+bm = bench::mark({
+  out_d <- moltenNMF:::mNMF_vb.default(as.integer(dat$Y), X = X, L = 2, iter=1000)
+},iterations = 1)
 
-fit = V[[1]]%*%t(V[[2]])
-Yimp = Y
-plot(dat$Y[ind_na], fit[ind_na])
-abline(0,1)
-image(as.matrix(log1p(Y)), col=hcl.colors(12))
-
-
-lr = 10/nnzero(dat$Y)
-out <- moltenNMF:::NMF2D_svb(dat$Y, rank = 2,
-                             n_epochs = 250, n_baches = 10,
-                             lr_param = c(lr), lr_type = "const")
-plot(out$ELBO, type="l")
-V = moltenNMF:::meanV_2D(out)
-plot(log1p(V[[1]]%*%t(V[[2]])), as.matrix(log1p(dat$Y)), pch=1, cex=0.5, col=rgb(0,0,0,0.2))
-abline(0, 1, col="royalblue",lty=2)
-
-####
-# X <- moltenNMF::sparse_onehot(~row+col, data=expand.grid(row=1:110, col=1:100))
-# bm = bench::mark({
-#   out_d <- moltenNMF:::mNMF_vb.default(as.integer(dat$Y), X = X, L = 2, iter=1000)  
-# },iterations = 1)
-# 
-# nnzero(Y)
+nnzero(dat$Y)
 plot(out_d$ELBO[-1], type = "l")
 V <- out_d$shape/out_d$rate
 f_d <- moltenNMF::product_m(X, V)
-
-# plot(as.numeric(dat$Y), f_d,  pch=1, col=rgb(0,0,0,0.2), xlab="fitted", ylab="obsereved")
-# abline(0, 1, col="grey", lty=2)
+length(f_d)
+length(dat$Y)
+plot(as.matrix(dat$Y), f_d,  pch=1, col=rgb(0,0,0,0.2), xlab="fitted", ylab="obsereved")
+abline(0, 1, col="grey", lty=2)
 
 #with skip-zeros
 y = as.integer(dat$Y)

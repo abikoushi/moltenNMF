@@ -37,6 +37,10 @@ doVB_pois_s_2D <- function(y, rowi, coli, L, iter, subiter, a, b, N1, Nr, Nc, bs
     .Call(`_moltenNMF_doVB_pois_s_2D`, y, rowi, coli, L, iter, subiter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress)
 }
 
+doVB_pois_s_2D_ww <- function(y, rowi, coli, L, iter, subiter, weight, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress) {
+    .Call(`_moltenNMF_doVB_pois_s_2D_ww`, y, rowi, coli, L, iter, subiter, weight, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress)
+}
+
 doVB_pois_offset_sp <- function(N, yv, yi, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress) {
     .Call(`_moltenNMF_doVB_pois_offset_sp`, N, yv, yi, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress)
 }

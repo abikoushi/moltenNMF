@@ -44,16 +44,14 @@ NMF2D_vb <- function(Y, rank,
 NMF2D_svb <- function(Y, rank,
                       n_epochs, 
                       n_baches,
-                      Vini = NULL,
                       lr_param = c(1, 0.8),
                       lr_type = "power",
                       dims=NULL,
-                      weight = NULL,
                       subiter = 1,
                       prior_shape=1, prior_rate=1,
-                      index_decrement = 0,
-                      display_progress=TRUE,
-                      useonlyone=FALSE){
+                      Vini = NULL,
+                      weight = NULL,
+                      display_progress=TRUE){
   if(all(class(Y)!="dgTMatrix")){
     Y = as(Y, "TsparseMatrix")    
   }
@@ -65,26 +63,25 @@ NMF2D_svb <- function(Y, rank,
                  t(apply(Y, 2, sample, size=rank)+0.1))
   }
   n_baches <- min(n_baches, length(Y@x))
-  if(useonlyone){
-    # out = doVB_pois_s_2D_t1(
-    #   Vinit,
-    #   y = Y@x, rowi = Y@i,  coli = Y@j,
-    #   L = rank,
-    #   iter = n_epochs,
-    #   subiter = subiter,
-    #   a = prior_shape, b = prior_rate,
-    #   N1 = length(Y@x),
-    #   Nr = dims[1],
-    #   Nc = dims[2],
-    #   bsize = n_baches,
-    #   lr_param = lr_param,
-    #   lr_type = lr_type,
-    #   display_progress = display_progress)
-  }else{
+  if(is.null(weight)){
     out = doVB_pois_s_2D(y = Y@x, rowi = Y@i,  coli = Y@j,
                          L = rank,
                          iter = n_epochs,
                          subiter = subiter,
+                         a = prior_shape, b = prior_rate,
+                         N1 = length(Y@x),
+                         Nr = dims[1],
+                         Nc = dims[2],
+                         bsize = n_baches,
+                         lr_param = lr_param,
+                         lr_type = lr_type,
+                         display_progress = display_progress)
+  }else{
+    out = doVB_pois_s_2D_ww(y = Y@x, rowi = Y@i,  coli = Y@j,
+                         L = rank,
+                         iter = n_epochs,
+                         subiter = subiter,
+                         weight = weight,
                          a = prior_shape, b = prior_rate,
                          N1 = length(Y@x),
                          Nr = dims[1],
