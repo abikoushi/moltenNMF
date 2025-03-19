@@ -11,6 +11,42 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
+// read_bin
+List read_bin(const std::string& filepath_x, const std::string& filepath_y, const arma::uvec& bag, const int& n_dim);
+RcppExport SEXP _moltenNMF_read_bin(SEXP filepath_xSEXP, SEXP filepath_ySEXP, SEXP bagSEXP, SEXP n_dimSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type filepath_x(filepath_xSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type filepath_y(filepath_ySEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type bag(bagSEXP);
+    Rcpp::traits::input_parameter< const int& >::type n_dim(n_dimSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_bin(filepath_x, filepath_y, bag, n_dim));
+    return rcpp_result_gen;
+END_RCPP
+}
+// writeBinaryVec
+void writeBinaryVec(arma::vec data, std::string filepath);
+RcppExport SEXP _moltenNMF_writeBinaryVec(SEXP dataSEXP, SEXP filepathSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< std::string >::type filepath(filepathSEXP);
+    writeBinaryVec(data, filepath);
+    return R_NilValue;
+END_RCPP
+}
+// writeBinaryFile_umat
+void writeBinaryFile_umat(arma::umat data, std::string filepath);
+RcppExport SEXP _moltenNMF_writeBinaryFile_umat(SEXP dataSEXP, SEXP filepathSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::umat >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< std::string >::type filepath(filepathSEXP);
+    writeBinaryFile_umat(data, filepath);
+    return R_NilValue;
+END_RCPP
+}
 // doVB_negbin
 List doVB_negbin(const arma::vec& y, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const int& iter, const double& a, const double& b, arma::mat& V, const bool& display_progress);
 RcppExport SEXP _moltenNMF_doVB_negbin(SEXP ySEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP VSEXP, SEXP display_progressSEXP) {
@@ -93,6 +129,27 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
     Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
     rcpp_result_gen = Rcpp::wrap(doVB_pois_2D(V, y, rowi, coli, dims, L, iter, a, b, display_progress));
+    return rcpp_result_gen;
+END_RCPP
+}
+// doVB_pois_2D_ww
+List doVB_pois_2D_ww(arma::field<arma::mat> V, const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const arma::uvec& dims, const int& L, const int& iter, const arma::field<arma::vec>& weight, const double& a, const double& b, const bool& display_progress);
+RcppExport SEXP _moltenNMF_doVB_pois_2D_ww(SEXP VSEXP, SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP dimsSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP weightSEXP, SEXP aSEXP, SEXP bSEXP, SEXP display_progressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::field<arma::mat> >::type V(VSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type rowi(rowiSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type coli(coliSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type dims(dimsSEXP);
+    Rcpp::traits::input_parameter< const int& >::type L(LSEXP);
+    Rcpp::traits::input_parameter< const int& >::type iter(iterSEXP);
+    Rcpp::traits::input_parameter< const arma::field<arma::vec>& >::type weight(weightSEXP);
+    Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(doVB_pois_2D_ww(V, y, rowi, coli, dims, L, iter, weight, a, b, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -292,10 +349,14 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_moltenNMF_read_bin", (DL_FUNC) &_moltenNMF_read_bin, 4},
+    {"_moltenNMF_writeBinaryVec", (DL_FUNC) &_moltenNMF_writeBinaryVec, 2},
+    {"_moltenNMF_writeBinaryFile_umat", (DL_FUNC) &_moltenNMF_writeBinaryFile_umat, 2},
     {"_moltenNMF_doVB_negbin", (DL_FUNC) &_moltenNMF_doVB_negbin, 11},
     {"_moltenNMF_doVB_pois", (DL_FUNC) &_moltenNMF_doVB_pois, 11},
     {"_moltenNMF_doVB_pois_sp", (DL_FUNC) &_moltenNMF_doVB_pois_sp, 13},
     {"_moltenNMF_doVB_pois_2D", (DL_FUNC) &_moltenNMF_doVB_pois_2D, 10},
+    {"_moltenNMF_doVB_pois_2D_ww", (DL_FUNC) &_moltenNMF_doVB_pois_2D_ww, 11},
     {"_moltenNMF_doVB_pois_s_2D", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D, 15},
     {"_moltenNMF_doVB_pois_offset_sp", (DL_FUNC) &_moltenNMF_doVB_pois_offset_sp, 14},
     {"_moltenNMF_doVB_pois_offset", (DL_FUNC) &_moltenNMF_doVB_pois_offset, 12},
