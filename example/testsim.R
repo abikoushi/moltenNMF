@@ -14,8 +14,6 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
 }
 
 dat <- set_data_mf(2,110,100)
-
-library(Matrix)
 Y=dat$Y
 ind_na = sample.int(110*100, 1000)
 Y[ind_na] <- NA
