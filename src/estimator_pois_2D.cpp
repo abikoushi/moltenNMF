@@ -49,8 +49,10 @@ double up_theta_2D(arma::field<arma::mat> & alpha,
                    const double & a,
                    const double & b){
   double lp = 0;
+  //row k=0
   lp += up_A_2D(alpha, logV, y, X, a, L, dims, 0);
   lp += up_B_2D(alpha, beta, V, logV, b, L, dims, 0);
+  //column k=1
   lp += up_A_2D(alpha, logV, y, X, a, L, dims, 1);
   lp += up_B_2D(alpha, beta, V, logV, b, L,dims, 1);
   return lp;
@@ -311,8 +313,8 @@ List doVB_pois_s_2D(const arma::vec & y,
   for(int epoc=0; epoc<iter; epoc++){
     arma::umat bags = randpick_c(N1, bsize);
     double rho = g -> lr_t(epoc, lr_param);
+    //rho /= (double) bsize;
     double rho2 = 1.0 - rho;
-    //rho *= SN;
     for(int step = 0; step < bags.n_cols; step++){
       arma::uvec bag = sort(bags.col(step));
       arma::vec Sy = y.rows(bag);

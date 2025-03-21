@@ -96,7 +96,7 @@ NMF2D_svb <- function(Y, rank,
 
 ###
 
-meanV_2D <- function(out){
+meanV_array <- function(out){
   V <- lapply(1:length(out$shape), function(i)sweep(out$shape[[i]], 2, out$rate[i,],"/"))
   names(V) <- names(out$shape)
   return(V)
