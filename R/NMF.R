@@ -22,7 +22,8 @@ NMF2D_vb <- function(Y, rank,
     nn_wch = which(!is.na(Y@x))
     out = doVB_pois_2D_ww(Vini,
                        y = Y@x[nn_wch],
-                       rowi = Y@i[nn_wch],  coli = Y@j[nn_wch],
+                       rowi = Y@i[nn_wch],
+                       coli = Y@j[nn_wch],
                        dims = dims,
                        L = rank, iter=iter, 
                        weight = weight,
@@ -39,7 +40,6 @@ NMF2D_vb <- function(Y, rank,
   }
   return(out)
 }
-
 
 NMF2D_svb <- function(Y, rank,
                       n_epochs, 

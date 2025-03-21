@@ -57,14 +57,6 @@ summyprod <- function(n, xi, xp, lam) {
     .Call(`_moltenNMF_summyprod`, n, xi, xp, lam)
 }
 
-myprod_r <- function(N, xj, xp, lam) {
-    .Call(`_moltenNMF_myprod_r`, N, xj, xp, lam)
-}
-
-myprod_r_i <- function(N, xj, xp, id, lam) {
-    .Call(`_moltenNMF_myprod_r_i`, N, xj, xp, id, lam)
-}
-
 NegBin_lp <- function(y, np, xi, xp, alpha, beta, tau) {
     .Call(`_moltenNMF_NegBin_lp`, y, np, xi, xp, alpha, beta, tau)
 }
