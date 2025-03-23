@@ -202,34 +202,6 @@ double up_Bs_arr(const arma::field<arma::mat> & alpha,
   return lp;
 }
 
-//with weight & use sumV
-double up_Bs_arr(const arma::field<arma::mat> & alpha,
-             arma::mat & beta,
-             arma::field<arma::mat> & V,
-             arma::field<arma::mat> & logV,
-             arma::rowvec & sumVk,
-             const arma::field<arma::uvec> & uid,
-             const double & b,
-             const int & L,
-             const double & NS,
-             const arma::field<arma::vec> & weight,
-             const int & k){
-  double lp = 0;
-  for(int l=0; l<L; l++){
-    sumVk(l) += NS*sumouterprod_s(V, k, l, weight, uid);
-    lp -= sumVk(l) - b;
-    beta(k,l) = sumVk(l);
-    arma::vec alpha_k_l = alpha(k).col(l);
-    arma::vec V_l = alpha_k_l/beta(k,l);
-    arma::mat Vk = V(k);
-    Vk.col(l) = V_l;
-    V(k) = Vk;
-    arma::mat logv = logV(k);
-    up_log_gamma(logv, alpha_k_l, log(beta(k,l)), l);
-    logV(k) = logv;
-  }
-  return lp;
-}
 
 //without weight & use SumV
 double up_theta_s_arr(arma::field<arma::mat> & alpha,
@@ -258,32 +230,6 @@ double up_theta_s_arr(arma::field<arma::mat> & alpha,
   return lp_a+lp_b;
 }
 
-//with weight
-double up_theta_s_arr(arma::field<arma::mat> & alpha,
-                  arma::mat & beta,
-                  arma::field<arma::mat> & V,
-                  arma::field<arma::mat> & logV,
-                  const arma::vec & y,
-                  const arma::umat & X,
-                  const int & L,
-                  const arma::field<arma::uvec> & uid,
-                  const double & a,
-                  const double & b,
-                  const double & NS,
-                  const arma::field<arma::vec> & weight){
-  double lp_a = 0;
-  double lp_b = 0;
-  for(int k=0; k<X.n_cols; k++){
-    lp_a += up_As_2D(alpha, logV, y, X, a, L, uid, k);
-    arma::rowvec sumVk = beta.row(k) - b;
-    for(int l=0; l<sumVk.n_elem; l++){
-      sumVk(l) -=  NS*sumouterprod_s(V, k, l, uid);      
-    }
-    lp_b += up_Bs_arr(alpha, beta, V, logV, sumVk, uid, b, L, NS, weight, k);
-  }
-  return lp_a+lp_b;
-}
-
 double doVB_pois_s_sub_arr(const arma::vec & y,
                        const arma::umat & X,
                        const arma::uvec & dims,
@@ -306,7 +252,7 @@ double doVB_pois_s_sub_arr(const arma::vec & y,
   return lp;
 }
 
-//ToDo
+//ToDo: solve an error
 //SVB
 //without weight
 // [[Rcpp::export]]
@@ -375,3 +321,57 @@ List doVB_pois_s_arr(const arma::umat & X,
 
 //ToDo : 
 //SVB with weight
+//with weight & use sumV
+double up_Bs_arr(const arma::field<arma::mat> & alpha,
+                 arma::mat & beta,
+                 arma::field<arma::mat> & V,
+                 arma::field<arma::mat> & logV,
+                 arma::rowvec & sumVk,
+                 const arma::field<arma::uvec> & uid,
+                 const double & b,
+                 const int & L,
+                 const double & NS,
+                 const arma::field<arma::vec> & weight,
+                 const int & k){
+  double lp = 0;
+  for(int l=0; l<L; l++){
+    sumVk(l) += NS*sumouterprod_s(V, k, l, weight, uid);
+    lp -= sumVk(l) - b;
+    beta(k,l) = sumVk(l);
+    arma::vec alpha_k_l = alpha(k).col(l);
+    arma::vec V_l = alpha_k_l/beta(k,l);
+    arma::mat Vk = V(k);
+    Vk.col(l) = V_l;
+    V(k) = Vk;
+    arma::mat logv = logV(k);
+    up_log_gamma(logv, alpha_k_l, log(beta(k,l)), l);
+    logV(k) = logv;
+  }
+  return lp;
+}
+
+//with weight
+double up_theta_s_arr(arma::field<arma::mat> & alpha,
+                      arma::mat & beta,
+                      arma::field<arma::mat> & V,
+                      arma::field<arma::mat> & logV,
+                      const arma::vec & y,
+                      const arma::umat & X,
+                      const int & L,
+                      const arma::field<arma::uvec> & uid,
+                      const double & a,
+                      const double & b,
+                      const double & NS,
+                      const arma::field<arma::vec> & weight){
+  double lp_a = 0;
+  double lp_b = 0;
+  for(int k=0; k<X.n_cols; k++){
+    lp_a += up_As_2D(alpha, logV, y, X, a, L, uid, k);
+    arma::rowvec sumVk = beta.row(k) - b;
+    for(int l=0; l<sumVk.n_elem; l++){
+      sumVk(l) -=  NS*sumouterprod_s(V, k, l, uid);      
+    }
+    lp_b += up_Bs_arr(alpha, beta, V, logV, sumVk, uid, b, L, NS, weight, k);
+  }
+  return lp_a+lp_b;
+}

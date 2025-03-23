@@ -10,7 +10,7 @@ dim(df)
 trueV <- list(matrix(rexp(100*2, 0.5), 100, 2),
               matrix(rexp(ncol*2, 0.5), ncol, 2),
               matrix(rexp(3*2, 0.5), 3, 2))
-truef = product_array(trueV, as.matrix(df))
+truef = moltenNMF:::product_array(trueV, as.matrix(df))
 y = rpois(nrow(df), truef)
 
 plot(truef, y)
@@ -34,8 +34,8 @@ system.time({
 # 0.365   0.007   0.378 
 
 plot(out1$logprob, type = "l")
-Vhat = meanV_pois(out1)
-fhat1 = product_array(V = Vhat, X = as.matrix(df))
+Vhat = moltenNMF:::meanV_array(out1)
+fhat1 = moltenNMF:::product_array(V = Vhat, X = as.matrix(df))
 
 ggplot(df, aes(x=fhat1, y=y))+
   geom_bin2d(aes(fill = after_stat(log10(count))))+
@@ -48,11 +48,17 @@ system.time({
   out2 = moltenNMF:::NTF_svb(Y = y0,
                              X = X0,
                              rank = 2,
-                             n_epochs = 1,
-                             n_baches = 10,
+                             n_epochs = 10,
+                             n_baches = 100,
                              dims = c(100, ncol, 3),
                              prior_shape = 1, prior_rate = 1,
                              display_progress = FALSE)
 })
 
-head(X0[,2])
+plot(out2$logprob, type = "l")
+Vhat = moltenNMF:::meanV_array(out2)
+fhat2 = moltenNMF:::product_array(V = Vhat, X = as.matrix(df))
+
+ggplot(df, aes(x=fhat2, y=y))+
+  geom_bin2d(aes(fill = after_stat(log10(count))))+
+  geom_abline(intercept = 0, slope = 1, linetype=2)

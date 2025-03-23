@@ -17,8 +17,8 @@ double up_A_2D(arma::field<arma::mat> & alpha,
   //inclement sufficient statistics
     arma::mat r = arma::zeros<arma::mat>(y.n_rows, L);
     for(int j = 0; j < X.n_cols; j++){
-      arma::mat logVk = logV(j);
-      r += logVk.rows(X.col(j));
+      arma::mat logVj = logV(j);
+      r += logVj.rows(X.col(j));
     }
     r = exp(r);
     arma::vec R = sum(r,1);
@@ -45,6 +45,10 @@ double up_As_2D(arma::field<arma::mat> & alpha,
   arma::mat r = arma::zeros<arma::mat>(y.n_rows, L);
   for(int j = 0; j < X.n_cols; j++){
     arma::mat logVj = logV(j);
+    //for(int i = 0; i< y.n_rows; i++){
+      //Rprintf("%d ", X(i,j));
+      //r.row(i) += logVj.row(X(i,j));
+    //}
     r += logVj.rows(X.col(j));
   }
   r = exp(r);

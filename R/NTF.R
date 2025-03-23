@@ -52,7 +52,7 @@ NTF_svb <- function(Y, X,
                     weight = NULL,
                     subiter = 1,
                     prior_shape=1, prior_rate=1,
-                    index_decrement = 0,
+                    index_decrement = 1L,
                     display_progress=TRUE){
   if(is.null(dims)){
     dims <- apply(X, 2, function(x)diff(range(x)))+1L

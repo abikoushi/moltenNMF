@@ -28,7 +28,8 @@ ggplot(data = NULL, aes(x=c(V[[1]]%*%t(V[[2]])), y=c(as.matrix(dat$Y))))+
 nnzero(dat$Y)
 #lr = 1000/nnzero(dat$Y)
 out2 <- moltenNMF:::NMF2D_svb(dat$Y, rank = 3,
-                             n_epochs = 100, n_baches = as.integer(6000),
+                             n_epochs = 100, n_baches = as.integer(100),
+                             prior_shape = 0.01, prior_rate = 0.01,
                              lr_param = c(0.001), lr_type = "const")
 plot(out2$ELBO, type="l")
 head(out2$shape[[1]])
@@ -39,8 +40,9 @@ V = moltenNMF:::meanV_2D(out2)
 V = moltenNMF:::rearrange_cols(V, normalize = FALSE)
 moltenNMF:::matplot2(V = t(V[[1]]))
 
-ax_lim = range(dat$Y)
+fit1 = V[[1]]%*%t(V[[2]])
+ax_lim = c(0, max(max(dat$Y), max(fit1)))
 
-plot(V[[1]]%*%t(V[[2]]), as.matrix(dat$Y), pch=1, cex=0.5, col=rgb(0,0,0,0.2), xlim =ax_lim, ylim = ax_lim)
+plot(fit1, as.matrix(dat$Y), pch=1, cex=0.5, col=rgb(0,0,0,0.2), xlim =ax_lim, ylim = ax_lim)
 abline(0, 1, col="royalblue",lty=2)
 

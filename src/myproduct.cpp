@@ -2,7 +2,7 @@
 #include "myproduct.h"
 
 //////
-//up shape & rate
+//Main module for updating shape & rate
 //////
 
 // [[Rcpp::export]]
