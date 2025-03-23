@@ -14,6 +14,5 @@ devtools::install_github("abikoushi/moltenNMF")
 
 ## Example
 
-[A simple example of 'moltenNMF'](https://github.com/abikoushi/moltenNMF/blob/main/Rmd/moltenNMF.md)
-
-[missing data imputation](https://github.com/abikoushi/moltenNMF/blob/main/Rmd/gehag.md)
+1. [A simple example of 'moltenNMF'](https://github.com/abikoushi/moltenNMF/blob/main/Rmd/moltenNMF.md)
+2. [missing data imputation](https://github.com/abikoushi/moltenNMF/blob/main/Rmd/gehag.md)
