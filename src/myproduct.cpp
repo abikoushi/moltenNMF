@@ -2,17 +2,18 @@
 #include "myproduct.h"
 
 //////
-//up shape & rate
+//Main module for updating shape & rate
 //////
 
-arma::mat mysum_t(const int & N,
-                  const arma::uvec & xi,
-                  const arma::uvec & xp,
-                  const arma::mat & lam) {
-  arma::mat out = arma::zeros<arma::mat>(N, lam.n_cols);
-  for(int i=0; i<xp.n_rows-1; i++){
-    for(int j=xp[i]; j<xp[i+1]; j++){
-      out.row(i) += lam.row(xi[j]);
+// [[Rcpp::export]]
+arma::mat myprod(const int & N,
+                 const arma::uvec & xi,
+                 const arma::uvec & xp,
+                 const arma::mat & lam) {
+  arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
+  for(int i = 0; i < xp.n_rows - 1; i++){
+    for(int j = xp(i); j < xp(i+1); j++){
+      out.row(xi(j)) %= lam.row(i);
     }
   }
   return out;
@@ -20,7 +21,7 @@ arma::mat mysum_t(const int & N,
 
 arma::vec myprodvec(const int & n, const arma::uvec & xi, const arma::uvec & xp, const arma::vec & lam) {
   arma::vec out = arma::ones<arma::vec>(n);
-  for(int i=0; i<xp.n_rows-1; i++){
+  for(int i = 0; i < xp.n_rows-1; i++){
     for(int j = xp(i); j < xp(i+1); j++){
       out.row(xi(j)) *= lam(i);
     }
@@ -39,23 +40,22 @@ arma::vec myprodvec_sub(const int & n, const arma::uvec & xi, const arma::uvec &
   return out;
 }
 
-//////
-//export
-//////
-
-// [[Rcpp::export]]
-arma::mat myprod(const int & N,
-                 const arma::uvec & xi,
-                 const arma::uvec & xp,
-                 const arma::mat & lam) {
-  arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
-  for(int i=0; i<xp.n_rows-1; i++){
-    for(int j=xp[i]; j<xp[i+1]; j++){
-      out.row(xi[j]) %= lam.row(i); 
+arma::mat mysum_t(const int & N,
+                  const arma::uvec & xi,
+                  const arma::uvec & xp,
+                  const arma::mat & lam) {
+  arma::mat out = arma::zeros<arma::mat>(N, lam.n_cols);
+  for(int i = 0; i < xp.n_rows - 1; i++){
+    for(int j = xp(i); j < xp(i + 1); j++){
+      out.row(i) += lam.row(xi(j));
     }
   }
   return out;
 }
+
+//////
+//export
+//////
 
 // [[Rcpp::export]]
 arma::vec summyprod(const int & n, const arma::uvec & xi,
@@ -138,7 +138,6 @@ arma::mat myprod2(int n, arma::uvec mi, arma::uvec xp, arma::mat lam, arma::vec 
   }
   return out;
 }
-
 
 arma::mat myprod_skip(const int & N,
                       const arma::uvec & xi,

@@ -8,7 +8,7 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
   H <- matrix(rnorm(L*ncol,0,1),nrow=L)
   W <- sweep(W,1,rowMeans(W)-mu)
   H <- sweep(H,2,colMeans(H)-mu)
-  Y <- matrix(rpois(nrow*ncol, exp(W%*%H)), nrow, ncol)
+  Y <- matrix(rpois(nrow*ncol, exp(W)%*%exp(H)), nrow, ncol)
   Y <- as(Y, "TsparseMatrix")
   list(Y=Y, trueW=W, trueH=H)
 }
@@ -16,6 +16,11 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
 dat <- set_data_mf(2, 102, 101)
 
 X <- moltenNMF::sparse_onehot(~row+col, data=expand.grid(row=1:102, col=1:101))
+
+length(X@p)
+X@i[(X@p[1]+1):X@p[2]]+1 #行インデックス 1列目
+X@i[(X@p[2]+1):X@p[3]]+1 #行インデックス 2列目
+
 bm = bench::mark({
   out_d <- moltenNMF:::mNMF_vb.default(as.integer(dat$Y), X = X, L = 2, iter=1000)
 },iterations = 1)
@@ -36,8 +41,7 @@ Y = sparseVector(y[wch], wch, length = length(y))
 bm2 = bench::mark({
   out <- moltenNMF:::mNMF_vb.default(Y, X = X, L = 2, iter=1000)
 }, iterations = 1)
-# user  system elapsed 
-# 6.069   0.041   6.169 
+
 
 bm$time
 bm2$time
