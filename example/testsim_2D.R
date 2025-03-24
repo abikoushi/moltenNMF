@@ -12,7 +12,8 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
   Y <- as(Y, "TsparseMatrix")
   list(Y=Y, trueW=W, trueH=H)
 }
-dat <- set_data_mf(3, 111, 105)
+
+dat <- set_data_mf(3, 111, 103)
 hist(as.matrix(dat$Y))
 out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)
 plot(out$ELBO[-1], type = "l")
