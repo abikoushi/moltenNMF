@@ -15,8 +15,8 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
 dat <- set_data_mf(3, 110, 105)
 hist(as.matrix(dat$Y))
 out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)
-plot(out$ELBO, type = "l")
-V = moltenNMF:::meanV_2D(out)
+plot(out$ELBO[-1], type = "l")
+V = moltenNMF:::meanV_array(out)
 head(out$shape[[1]])
 head(out$shape[[2]])
 out$rate
@@ -28,15 +28,18 @@ ggplot(data = NULL, aes(x=c(V[[1]]%*%t(V[[2]])), y=c(as.matrix(dat$Y))))+
 nnzero(dat$Y)
 #lr = 1000/nnzero(dat$Y)
 out2 <- moltenNMF:::NMF2D_svb(dat$Y, rank = 3,
-                             n_epochs = 100, n_baches = as.integer(100),
-                             prior_shape = 0.01, prior_rate = 0.01,
-                             lr_param = c(0.001), lr_type = "const")
+                             n_epochs = 100, n_baches = as.integer(2000),
+                             prior_shape = 1, prior_rate = 1,
+                             lr_param = c(15,0.9), lr_type = "exponential")
 plot(out2$ELBO, type="l")
+head(out$shape[[1]])
+head(out$shape[[2]])
 head(out2$shape[[1]])
 head(out2$shape[[2]])
+out$rate
 out2$rate
 
-V = moltenNMF:::meanV_2D(out2)
+V = moltenNMF:::meanV_array(out2)
 V = moltenNMF:::rearrange_cols(V, normalize = FALSE)
 moltenNMF:::matplot2(V = t(V[[1]]))
 
@@ -45,4 +48,5 @@ ax_lim = c(0, max(max(dat$Y), max(fit1)))
 
 plot(fit1, as.matrix(dat$Y), pch=1, cex=0.5, col=rgb(0,0,0,0.2), xlim =ax_lim, ylim = ax_lim)
 abline(0, 1, col="royalblue",lty=2)
+
 
