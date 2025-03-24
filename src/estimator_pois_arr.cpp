@@ -6,6 +6,7 @@ using namespace arma;
 #include "rand.h"
 #include "outerprod.h"
 #include "up_shape_2D.h"
+#include "up_param_array.h"
 #include "lr.h"
 #include <progress.hpp>
 #include <progress_bar.hpp>
@@ -119,11 +120,13 @@ List doVB_pois_arr(const arma::vec & y,
   arma::field<arma::mat> V(dims.n_rows);
   arma::field<arma::mat> logV(dims.n_rows);
   arma::field<arma::mat> alpha(dims.n_rows);
-  arma::mat beta = arma::ones<arma::mat>(dims.n_rows, L);
+  arma::mat beta(dims.n_rows, L);
   for(int k=0; k<dims.n_rows; k++){
     V(k) = randg<mat>(dims(k),L);
     logV(k) = log(V(k));
+    beta.row(k) = sum(V(k), 0);
   }
+  beta += b;
   arma::vec lp = arma::zeros<arma::vec>(iter);
   Progress pb(iter, display_progress);
   for (int i=0; i<iter; i++) {
@@ -150,11 +153,13 @@ List doVB_pois_w_arr(const arma::vec & y,
   field<mat> V(X.n_cols);
   field<mat> logV(X.n_cols);
   field<mat> alpha(X.n_cols);
-  arma::mat beta = arma::ones<arma::mat>(X.n_cols, L);
+  arma::mat beta(X.n_cols, L);
   for(int k=0; k<X.n_cols; k++){
     V(k) = randg<mat>(dims(k),L);
     logV(k) = log(V(k));
+    beta.row(k) = sum(V(k), 0);
   }
+  beta += b;
   arma::vec lp = arma::zeros<arma::vec>(iter);
   Progress pb(iter, display_progress);
   for (int i=0; i<iter; i++) {
@@ -202,6 +207,31 @@ double up_Bs_arr(const arma::field<arma::mat> & alpha,
   return lp;
 }
 
+double up_Bs_arr(const arma::field<arma::mat> & alpha,
+                 arma::mat & beta,
+                 arma::field<arma::mat> & V,
+                 arma::field<arma::mat> & logV,
+                 arma::rowvec & sumVk,
+                 const arma::field<arma::uvec> & uid,
+                 const double & b,
+                 const int & L,
+                 const int & k){
+  double lp = 0;
+  for(int l=0; l<L; l++){
+    sumVk(l) += sumouterprod_s(V, k, l, uid);
+    lp -= sumVk(l) - b;
+    beta(k,l) = sumVk(l);
+    arma::vec alpha_k_l = alpha(k).col(l);
+    arma::vec V_l = alpha_k_l/beta(k,l);
+    arma::mat Vk = V(k);
+    Vk.col(l) = V_l;
+    V(k) = Vk;
+    arma::mat logv = logV(k);
+    up_log_gamma(logv, alpha_k_l, log(beta(k,l)), l);
+    logV(k) = logv;
+  }
+  return lp;
+}
 
 //without weight & use SumV
 double up_theta_s_arr(arma::field<arma::mat> & alpha,
@@ -219,16 +249,18 @@ double up_theta_s_arr(arma::field<arma::mat> & alpha,
   double lp_b = 0;
   for(int k=0; k<X.n_cols; k++){
     //Rprintf("%d : ", k);
-    lp_a += up_As_2D(alpha, logV, y, X, a, L, uid, k);
+    lp_a += up_As_2D(alpha, logV, y, X, a, L, uid, k, NS);
     arma::rowvec sumVk = beta.row(k);
     for(int l = 0; l < L; l++){
-      sumVk(l) -=  NS*sumouterprod_s(V, k, l, uid);      
+      //sumVk(l) -= NS*sumouterprod_s(V, k, l, uid);
+      sumVk(l) -= sumouterprod_s(V, k, l, uid);
     }
-    lp_b += up_Bs_arr(alpha, beta, V, logV, sumVk, uid, b, L, NS, k);
+    lp_b += up_Bs_arr(alpha, beta, V, logV, sumVk, uid, b, L, k);
   }
   //Rprintf("\n");
   return lp_a+lp_b;
 }
+
 
 double doVB_pois_s_sub_arr(const arma::vec & y,
                        const arma::umat & X,
@@ -252,9 +284,7 @@ double doVB_pois_s_sub_arr(const arma::vec & y,
   return lp;
 }
 
-//ToDo: solve an error
-//SVB
-//without weight
+//SVB without weight
 // [[Rcpp::export]]
 List doVB_pois_s_arr(const arma::umat & X,
                  const arma::vec & y,
@@ -274,21 +304,25 @@ List doVB_pois_s_arr(const arma::umat & X,
   for(int k=0; k<dims.n_rows; k++){
     alpha(k) = arma::ones<arma::mat>(dims(k), L);
   }
-  arma::mat beta = arma::ones<arma::mat>(dims.n_rows, L);
+  arma::mat beta(dims.n_rows, L);
   for(int k=0; k<dims.n_rows; k++){
     arma::mat Vk = arma::mat(dims(k),L);
     V(k) = arma::randg<mat>(dims(k), L);
     logV(k) = log(V(k));
+    beta.row(k) = sum(V(k), 0);
   }
+  beta += b;
   std::unique_ptr<lr> g;
   if(lr_type == "const"){
     g.reset(new lr_const);
-  }else if(lr_type == "power"){
+  }else if(lr_type == "exponential"){
     g.reset(new lr_power);
   }else{
     Rcpp::stop("This lr_type is not implemented\n");
   }
-  const double NS = (bsize/N1);
+  // const double NS = (bsize/N1);
+  const double NS = N1 / ((double) bsize);
+  double invS = 1.0 / ( (double) bsize ); 
   arma::vec lp = arma::zeros<arma::vec>(iter);
   Progress pb(iter, display_progress);
   for(int epoc=0; epoc<iter; epoc++){
@@ -296,6 +330,7 @@ List doVB_pois_s_arr(const arma::umat & X,
     arma::umat bags = randpick_c(N1, bsize);
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
+    rho *= invS;
     for(int step = 0; step < bags.n_cols; step++){
       arma::uvec bag = sort(bags.col(step));
       arma::umat SX = X.rows(bag);
@@ -307,10 +342,7 @@ List doVB_pois_s_arr(const arma::umat & X,
       arma::field<arma::mat> alpha_s = alpha;
       arma::mat beta_s = beta;
       lp(epoc) += doVB_pois_s_sub_arr(Sy, SX, dims, L, subiter, a, b, N1, NS, uid, alpha_s, beta_s, V, logV);
-      for(int j = 0; j < dims.n_rows; j++){
-        alpha(j).rows(uid(j)) = rho2*alpha(j).rows(uid(j)) + rho*alpha_s(j).rows(uid(j));
-      }
-      beta = rho2*beta + rho*beta_s;
+      up_vpar(rho, rho2, uid, alpha, alpha_s, beta, beta_s);
     }
     pb.increment();
   }

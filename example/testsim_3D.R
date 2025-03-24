@@ -25,7 +25,7 @@ system.time({
                             X = X0,
                             rank = 2,
                             iter = iter,
-                            dims = c(100,ncol,3),
+                            dims = c(100, ncol, 3),
                             #weight = list(rep(1,100), rep(1,10), rep(1,3)),
                             prior_shape = 1, prior_rate = 1,
                             display_progress = TRUE)
@@ -48,13 +48,15 @@ system.time({
   out2 = moltenNMF:::NTF_svb(Y = y0,
                              X = X0,
                              rank = 2,
-                             n_epochs = 10,
-                             n_baches = 100,
+                             n_epochs = 20,
+                             n_baches = 1000,
+                             lr_param = c(16, 0.8),
                              dims = c(100, ncol, 3),
                              prior_shape = 1, prior_rate = 1,
-                             display_progress = FALSE)
+                             display_progress = TRUE)
 })
 
+out2$rate
 plot(out2$logprob, type = "l")
 Vhat = moltenNMF:::meanV_array(out2)
 fhat2 = moltenNMF:::product_array(V = Vhat, X = as.matrix(df))
@@ -62,3 +64,4 @@ fhat2 = moltenNMF:::product_array(V = Vhat, X = as.matrix(df))
 ggplot(df, aes(x=fhat2, y=y))+
   geom_bin2d(aes(fill = after_stat(log10(count))))+
   geom_abline(intercept = 0, slope = 1, linetype=2)
+

@@ -12,7 +12,7 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
   Y <- as(Y, "TsparseMatrix")
   list(Y=Y, trueW=W, trueH=H)
 }
-dat <- set_data_mf(3, 110, 105)
+dat <- set_data_mf(3, 111, 105)
 hist(as.matrix(dat$Y))
 out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)
 plot(out$ELBO[-1], type = "l")
@@ -46,7 +46,6 @@ moltenNMF:::matplot2(V = t(V[[1]]))
 fit1 = V[[1]]%*%t(V[[2]])
 ax_lim = c(0, max(max(dat$Y), max(fit1)))
 
-plot(fit1, as.matrix(dat$Y), pch=1, cex=0.5, col=rgb(0,0,0,0.2), xlim =ax_lim, ylim = ax_lim)
-abline(0, 1, col="royalblue",lty=2)
-
-
+ggplot(data = NULL, aes(x=c(fit1), y=c(as.matrix(dat$Y))))+
+  geom_bin2d(aes(fill = after_stat(log10(count))))+
+  geom_abline(intercept = 0, slope = 1, linetype=2, colour="grey")
