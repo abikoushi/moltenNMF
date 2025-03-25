@@ -13,7 +13,7 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
   list(Y=Y, trueW=W, trueH=H)
 }
 
-dat <- set_data_mf(3, 111, 103)
+dat <- set_data_mf(3, 111, 133)
 hist(as.matrix(dat$Y))
 out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)
 plot(out$ELBO[-1], type = "l")
@@ -31,7 +31,8 @@ nnzero(dat$Y)
 out2 <- moltenNMF:::NMF2D_svb(dat$Y, rank = 3,
                              n_epochs = 100, n_baches = as.integer(2000),
                              prior_shape = 1, prior_rate = 1,
-                             lr_param = c(15,0.9), lr_type = "exponential")
+                             lr_param = c(16,0.8), lr_type = "exponential")
+out2$ELBO
 plot(out2$ELBO, type="l")
 head(out$shape[[1]])
 head(out$shape[[2]])
@@ -44,9 +45,10 @@ V = moltenNMF:::meanV_array(out2)
 V = moltenNMF:::rearrange_cols(V, normalize = FALSE)
 moltenNMF:::matplot2(V = t(V[[1]]))
 
-fit1 = V[[1]]%*%t(V[[2]])
-ax_lim = c(0, max(max(dat$Y), max(fit1)))
+fit2 = V[[1]]%*%t(V[[2]])
+ax_lim = c(0, max(max(dat$Y), max(fit2)))
 
-ggplot(data = NULL, aes(x=c(fit1), y=c(as.matrix(dat$Y))))+
+ggplot(data = NULL, aes(x=c(fit2), y=c(as.matrix(dat$Y))))+
   geom_bin2d(aes(fill = after_stat(log10(count))))+
   geom_abline(intercept = 0, slope = 1, linetype=2, colour="grey")
+

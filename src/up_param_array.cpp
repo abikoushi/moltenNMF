@@ -4,16 +4,18 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 
 //update variational posterior
-void up_vpar(const double rho, const double rho2,
-             const arma::field<arma::uvec> uid,
+void up_vpar(const double rho,
+             const double & rho2,
+             const arma::field<arma::uvec> & uid,
              arma::field<arma::mat> & alpha,
-             arma::field<arma::mat> & alpha_s,
-             arma::mat & beta, arma::mat & beta_s){
-  int K = beta.n_rows; 
+             const arma::field<arma::mat> & alpha_s,
+             arma::mat & beta,
+             const arma::mat & beta_s){
+  int K = beta.n_rows;
+  beta = rho2 * beta + rho * beta_s;
   for(int j = 0; j < K; j++){
     alpha(j).rows(uid(j)) = rho2 * alpha(j).rows(uid(j)) + rho * alpha_s(j).rows(uid(j));
   }
-  beta = rho2 * beta + rho * beta_s;  
 }
 
 //update latent V & logV

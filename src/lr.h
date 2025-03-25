@@ -19,3 +19,5 @@ class lr_const : public lr{
     return lrparam(0);
   }
 };
+
+void set_lr_method(std::unique_ptr<lr> & g, const std::string & lr_type);

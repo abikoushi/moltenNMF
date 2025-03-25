@@ -208,6 +208,19 @@ List doVB_pois_2D_ww(arma::field<arma::mat> V,
  }
  */
 
+arma::rowvec calc_sumV(const arma::mat beta, 
+                       const arma::field<arma::mat> V, 
+                       const arma::field<arma::uvec> uid,
+                       const int k){
+  arma::rowvec SumV = beta.row(k);
+  int not_k = 1;
+  if(k==1){
+    not_k = 0;
+  }
+  SumV -= sum(V(not_k).rows(uid(not_k)), 0);
+  return SumV;
+}
+
 
 //without NS
 double up_Bs_2D(const arma::field<arma::mat> & alpha,
@@ -247,9 +260,8 @@ double up_theta_s_2D(arma::field<arma::mat> & alpha,
                      const double & b,
                      const double & NS){
   arma::mat SumV(2,L);
-  for(int j=0;j<2;j++){
-    //SumV.row(j) = (beta.row(j)) - sum(V(j).rows(uid(j)), 0)*NS;
-    SumV.row(j) = (beta.row(j)) - sum(V(j).rows(uid(j)), 0);
+  for(int j=0; j<2; j++){
+    SumV.row(j) = calc_sumV(beta, V, uid, j);
   }
   SumV.elem(find(SumV<0.0)).fill(b);
   double lp = 0;
@@ -313,13 +325,7 @@ List doVB_pois_s_2D(const arma::vec & y,
   beta += b;
   arma::vec lp = arma::zeros<arma::vec>(iter);
   std::unique_ptr<lr> g;
-  if(lr_type == "const"){
-    g.reset(new lr_const);
-  }else if(lr_type == "exponential"){
-    g.reset(new lr_power);
-  }else{
-    Rcpp::stop("This lr_type is not implemented\n");
-  }
+  set_lr_method(g, lr_type);
   const double NS = N1 / ((double) bsize);
   double invS = 1.0 / ( (double) bsize ); 
   Progress pb(iter, display_progress);
@@ -422,8 +428,7 @@ double up_theta_s_2D(arma::field<arma::mat> & alpha,
                      const double & NS){
   arma::mat SumV(2,L);
   for(int j=0;j<2;j++){
-    SumV.row(j) = (beta.row(j)) - sum(V(j).rows(uid(j)), 0);
-    //SumV.row(j) = (beta.row(j)) - sum(V(j).rows(uid(j)), 0)*NS;
+    SumV.row(j) = calc_sumV(beta, V, uid, j);
   }
   SumV.elem(find(SumV<0.0)).fill(0.0);
   double lp = 0;
@@ -488,13 +493,7 @@ List doVB_pois_s_2D_ww(const arma::vec & y,
   beta.row(1) = sum(V(0), 0);
   arma::vec lp = arma::zeros<arma::vec>(iter);
   std::unique_ptr<lr> g;
-  if(lr_type == "const"){
-    g.reset(new lr_const);
-  }else if(lr_type == "exponential"){
-    g.reset(new lr_power);
-  }else{
-    Rcpp::stop("This lr_type is not implemented\n");
-  }
+  set_lr_method(g, lr_type);
   const double NS = N1 / ((double) bsize);
   double invS = 1.0 / ( (double) bsize ); 
   Progress pb(iter, display_progress);
