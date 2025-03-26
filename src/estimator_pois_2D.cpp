@@ -10,6 +10,16 @@ using namespace Rcpp;
 #include <progress_bar.hpp>
 // [[Rcpp::depends(RcppProgress)]]
 
+arma::rowvec sumV(const arma::field<arma::mat> V, 
+                  const int k){
+  int not_k = 1;
+  if(k==1){
+    not_k = 0;
+  }
+  arma::rowvec SumV = sum(V(not_k), 0);
+  return SumV;
+}
+
 double up_B_2D(const arma::field<arma::mat> & alpha,
                arma::mat & beta,
                arma::field<arma::mat> & V,
@@ -19,16 +29,10 @@ double up_B_2D(const arma::field<arma::mat> & alpha,
                const arma::uvec & dims, 
                const int & k){
   double lp = 0;
-  int not_k = 1;
-  if(k==1){
-    not_k = 0;
-  }
-  for(int l=0; l<L; l++){
-    double B0 = sum(V(not_k).col(l));
-    lp -= B0;
-    beta(k,l) = B0 + b;
-    up_latentV(V, logV, alpha, beta, k);
-  }
+  arma::rowvec B0 = sumV(V, k);
+  lp -= sum(B0);
+  beta.row(k) = B0 + b;
+  up_latentV(V, logV, alpha, beta, k);
   return lp;
 }
 
@@ -43,10 +47,10 @@ double up_theta_2D(arma::field<arma::mat> & alpha,
                    const double & a,
                    const double & b){
   double lp = 0;
-  //row k=0
+  //row k = 0
   lp += up_A_2D(alpha, logV, y, X, a, L, dims, 0);
   lp += up_B_2D(alpha, beta, V, logV, b, L, dims, 0);
-  //column k=1
+  //column k = 1
   lp += up_A_2D(alpha, logV, y, X, a, L, dims, 1);
   lp += up_B_2D(alpha, beta, V, logV, b, L,dims, 1);
   return lp;
@@ -92,7 +96,6 @@ List doVB_pois_2D(arma::field<arma::mat> V,
 //////
 //with weight, batch
 //////
-
 double up_B_2D(const arma::field<arma::mat> & alpha,
                arma::mat & beta,
                arma::field<arma::mat> & V,
@@ -111,8 +114,8 @@ double up_B_2D(const arma::field<arma::mat> & alpha,
     double B0 = sum(V(not_k).col(l) % weight(not_k));
     lp -= B0;
     beta(k,l) = B0 + b;
-    up_latentV(V, logV, alpha, beta, k);
   }
+  up_latentV(V, logV, alpha, beta, k);
   return lp;
 }
 
@@ -179,72 +182,46 @@ List doVB_pois_2D_ww(arma::field<arma::mat> V,
 //SVB, without weight
 //////
 //without weight
-
-/*
- double up_Bs_2D(const arma::field<arma::mat> & alpha,
- arma::mat & beta,
- arma::field<arma::mat> & V,
- arma::field<arma::mat> & logV,
- arma::mat & SumV,
- const arma::field<arma::uvec> & uid,
- const double & b,
- const int & L,
- const double & NS,
- const int & k){
- double lp = 0;
- int not_k = 1;
- if(k==1){
- not_k = 0;
- }
- for(int l=0; l<L; l++){
- arma::vec vl = V(not_k).col(l);
- vl = vl.rows(uid(not_k));
- SumV(not_k,l) += NS*sum(vl);
- lp -= SumV(not_k,l) - b;
- beta(k,l) = SumV(not_k,l);
- up_latentV(V, logV, alpha, beta, k);
- }
- return lp;
- }
- */
+arma::rowvec sumV_uid(const arma::field<arma::mat> V, 
+                      const arma::field<arma::uvec> uid,
+                      const int k){
+  int not_k = 1;
+  if(k==1){
+    not_k = 0;
+  }
+  arma::rowvec SumV = sum(V(not_k).rows(uid(not_k)), 0);
+  return SumV;
+}
 
 arma::rowvec calc_sumV(const arma::mat beta, 
                        const arma::field<arma::mat> V, 
                        const arma::field<arma::uvec> uid,
                        const int k){
   arma::rowvec SumV = beta.row(k);
-  int not_k = 1;
-  if(k==1){
-    not_k = 0;
-  }
-  SumV -= sum(V(not_k).rows(uid(not_k)), 0);
+  SumV -= sumV_uid(V, uid, k);
   return SumV;
 }
 
+void minus_sumV(arma::mat & beta, 
+                const arma::field<arma::mat> V, 
+                const arma::field<arma::uvec> uid,
+                const int k){
+  beta.row(k) -= sumV_uid(V, uid, k);
+}
 
-//without NS
 double up_Bs_2D(const arma::field<arma::mat> & alpha,
                 arma::mat & beta,
                 arma::field<arma::mat> & V,
                 arma::field<arma::mat> & logV,
-                arma::mat & SumV,
                 const arma::field<arma::uvec> & uid,
                 const double & b,
                 const int & L,
                 const int & k){
   double lp = 0;
-  int not_k = 1;
-  if(k==1){
-    not_k = 0;
-  }
-  for(int l=0; l<L; l++){
-    arma::vec vl = V(not_k).col(l);
-    vl = vl.rows(uid(not_k));
-    SumV(not_k,l) += sum(vl);
-    lp -= SumV(not_k,l) - b;
-    beta(k,l) = SumV(not_k, l);
-    up_latentV(V, logV, alpha, beta, k);
-  }
+  beta.row(k) = sumV(V, k) + b;
+  //beta.row(k) += sumV_uid(V, uid, k);
+  lp -= sum((beta.row(k) - b));
+  up_latentV_uid(V, logV, alpha, beta, k, uid);
   return lp;
 }
 
@@ -259,18 +236,21 @@ double up_theta_s_2D(arma::field<arma::mat> & alpha,
                      const double & a,
                      const double & b,
                      const double & NS){
-  arma::mat SumV(2,L);
-  for(int j=0; j<2; j++){
-    SumV.row(j) = calc_sumV(beta, V, uid, j);
-  }
-  SumV.elem(find(SumV<0.0)).fill(b);
   double lp = 0;
-  //rows k=0
+  //rows k = 0
   lp += up_As_2D(alpha, logV, y, X, a, L, uid, 0, NS);
-  lp += up_Bs_2D(alpha, beta, V, logV, SumV, uid, b, L, 0);
-  //columns k=1
+  //minus_sumV(beta, V, uid, 0);
+  lp += up_Bs_2D(alpha, beta, V, logV, uid, b, L, 0);
+  // beta.row(0).print();
+  // sum(V(1)+b, 0).print();
+  // Rprintf("\n");
+  //columns k = 1
   lp += up_As_2D(alpha, logV, y, X, a, L, uid, 1, NS);
-  lp += up_Bs_2D(alpha, beta, V, logV, SumV, uid, b, L,  1);
+  //minus_sumV(beta, V, uid, 1);
+  lp += up_Bs_2D(alpha, beta, V, logV, uid, b, L,  1);
+  // beta.row(1).print();
+  // sum(V(0)+b, 0).print();
+  // Rprintf("\n");
   return lp;
 }
 
@@ -320,20 +300,19 @@ List doVB_pois_s_2D(const arma::vec & y,
   alpha(0) = arma::ones<arma::mat>(Nr, L);
   alpha(1) = arma::ones<arma::mat>(Nc, L);
   arma::mat beta(2,L);
-  beta.row(0) = sum(V(1), 0);
-  beta.row(1) = sum(V(0), 0);
-  beta += b;
+  beta.row(0) = sum(V(1), 0) + b;
+  beta.row(1) = sum(V(0), 0) + b;
   arma::vec lp = arma::zeros<arma::vec>(iter);
   std::unique_ptr<lr> g;
   set_lr_method(g, lr_type);
   const double NS = N1 / ((double) bsize);
-  double invS = 1.0 / ( (double) bsize ); 
+  // double invS = 1.0 / ( (double) bsize ); 
   Progress pb(iter, display_progress);
   for(int epoc=0; epoc<iter; epoc++){
     arma::umat bags = randpick_c(N1, bsize);
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
-    rho *= invS;
+    // rho *= invS;
     for(int step = 0; step < bags.n_cols; step++){
       arma::uvec bag = sort(bags.col(step));
       arma::vec Sy = y.rows(bag);
@@ -380,7 +359,7 @@ double up_Bs_2D(const arma::field<arma::mat> & alpha,
     arma::vec vl = V(not_k).col(l);
     vl = vl.rows(uid(not_k)) % wk.rows(uid(not_k));
     SumV(not_k,l) += NS*sum(vl);
-    lp -= SumV(not_k,l) - b;
+    lp -= (SumV(not_k,l) - b);
     beta(k,l) = SumV(not_k, l);
     up_latentV(V, logV, alpha, beta, k);
   }

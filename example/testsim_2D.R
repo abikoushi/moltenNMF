@@ -15,7 +15,7 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
 
 dat <- set_data_mf(3, 111, 133)
 hist(as.matrix(dat$Y))
-out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)
+out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 200)
 plot(out$ELBO[-1], type = "l")
 V = moltenNMF:::meanV_array(out)
 head(out$shape[[1]])
@@ -29,16 +29,13 @@ ggplot(data = NULL, aes(x=c(V[[1]]%*%t(V[[2]])), y=c(as.matrix(dat$Y))))+
 nnzero(dat$Y)
 #lr = 1000/nnzero(dat$Y)
 out2 <- moltenNMF:::NMF2D_svb(dat$Y, rank = 3,
-                             n_epochs = 100, n_baches = as.integer(2000),
+                             n_epochs = 20, n_baches = as.integer(2000),
                              prior_shape = 1, prior_rate = 1,
-                             lr_param = c(16,0.8), lr_type = "exponential")
-out2$ELBO
+                             lr_param = c(15,0.9), lr_type = "exponential")
 plot(out2$ELBO, type="l")
-head(out$shape[[1]])
-head(out$shape[[2]])
+
 head(out2$shape[[1]])
 head(out2$shape[[2]])
-out$rate
 out2$rate
 
 V = moltenNMF:::meanV_array(out2)

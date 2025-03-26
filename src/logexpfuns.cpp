@@ -33,10 +33,19 @@ arma::vec vec_digamma(arma::vec a){
   return out;
 }
 
-void up_log_gamma(arma::mat & logv, const arma::vec & a, const double & logb, const int & l){
-  int K = logv.n_rows;
-  for(int k=0; k<K; k++){
-    logv(k,l) = R::digamma(a(k)) - logb;
+void up_log_gamma(arma::mat & logv, const arma::vec & a, const double & logb,
+                  const int & l){
+  int D = logv.n_rows;
+  for(int d=0; d<D; d++){
+    logv(d,l) = R::digamma(a(d)) - logb;
+  }
+}
+
+void up_log_gamma_uid(arma::mat & logv, const arma::vec & a, const double & logb,
+                      const int & l, const arma::uvec uid){
+  int ulen = uid.n_rows;
+  for(int d=0; d<ulen; d++){
+    logv(uid(d),l) = R::digamma(a(uid(d))) - logb;
   }
 }
 
