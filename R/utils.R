@@ -19,3 +19,7 @@ simmilar_top_n <- function(V, ref,
   out <- data.frame(V[ord,], dist=d[ord])
   return(out)
 }
+
+learning_rate <- function(x, lr_param, lr_type){
+  sapply(x, check_lr, lr_param = lr_param, lr_type = lr_type)  
+}

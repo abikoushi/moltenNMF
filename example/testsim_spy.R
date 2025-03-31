@@ -14,27 +14,13 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
 }
 
 dat <- set_data_mf(2, 102, 101)
-
 X <- moltenNMF::sparse_onehot(~row+col, data=expand.grid(row=1:102, col=1:101))
-#class(X)
-##ngCMatrix
-X@i[X@p[1]+1]
-X@i[(X@p[1]+1):X@p[2]]+1 #行インデックス 1列目
-X@i[(X@p[2]+1):X@p[3]]+1 #行インデックス 2列目
-
-TX = as(X,"TsparseMatrix")
-
-TX@i
-TX@j
-
-i0 = X@i[which(X@i==0)]
-i0[(X@p[1]+1):X@p[2]]
 
 bm = bench::mark({
   out_d <- moltenNMF:::mNMF_vb.default(as.integer(dat$Y), X = X, L = 2, iter=1000)
 },iterations = 1)
 
-nnzero(dat$Y)
+
 plot(out_d$ELBO[-1], type = "l")
 V <- out_d$shape/out_d$rate
 f_d <- moltenNMF::product_m(X, V)
@@ -43,23 +29,43 @@ length(dat$Y)
 plot(as.matrix(dat$Y), f_d,  pch=1, col=rgb(0,0,0,0.2), xlab="fitted", ylab="obsereved")
 abline(0, 1, col="grey", lty=2)
 
-#with skip-zeros
+# #with skip-zeros
+# y = as.integer(dat$Y)
+# wch = which(y>0)
+# Y = sparseVector(y[wch], wch, length = length(y))
+# bm2 = bench::mark({
+#   out <- moltenNMF:::mNMF_vb.default(Y, X = X, L = 2, iter=1000)
+# }, iterations = 1)
+# 
+# bm$time
+# bm2$time
+# bm$mem_alloc
+# bm2$mem_alloc
+
 y = as.integer(dat$Y)
 wch = which(y>0)
 Y = sparseVector(y[wch], wch, length = length(y))
-bm2 = bench::mark({
-  out <- moltenNMF:::mNMF_vb.default(Y, X = X, L = 2, iter=1000)
-}, iterations = 1)
+length(Y)
+system.time({
+  out_s <- moltenNMF:::mNMF_svb(Y, X = X, L = 2,
+                                n_epochs = 100, 
+                                n_batches = 2000, 
+                                lr_param = c(15,0.9), lr_type = "exponential")  
+})
 
+head.matrix(out_s$shape)
+head.matrix(out_s$rate)
 
-bm$time
-bm2$time
-bm$mem_alloc
-bm2$mem_alloc
-
-plot(out$ELBO[-1], type = "l")
-V <- out$shape/out$rate
+out_s$ELBO
+plot(out_s$ELBO[-1], type = "l")
+V <- out_s$shape/out_s$rate
 f <- moltenNMF::product_m(X, V)
+
+head.matrix(out_s$shape)
+head.matrix(out_s$rate)
+
+plot(as.numeric(dat$Y), f,  pch=".")
+abline(0, 1, col="grey", lty=2)
 
 plot(as.numeric(log1p(dat$Y)), log1p(f_d),  pch=1, col=rgb(1,0.5,0,0.1))
 points(as.numeric(log1p(dat$Y)), log1p(f),  pch=2, col=rgb(0,0.5,1,0.1))
@@ -80,4 +86,3 @@ Hhat_d <- sweep(Hhat_d,1,rowMeans(Hhat_d))
 points(dat$trueH,t(Hhat_d), col=rgb(1,0,0,0.2))
 abline(0,1,lty=2)
 
-?optim

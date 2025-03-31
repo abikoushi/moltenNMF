@@ -94,6 +94,43 @@ NMF2D_svb <- function(Y, rank,
   return(out)
 }
 
+
+NMF2D_svb_t1 <- function(Y, rank,
+                      n_epochs, 
+                      n_baches,
+                      lr_param = c(1, 0.8),
+                      lr_type = "exponential",
+                      dims=NULL,
+                      subiter = 1,
+                      prior_shape=1, prior_rate=1,
+                      Vini = NULL,
+                      weight = NULL,
+                      display_progress=TRUE){
+  if(all(class(Y)!="dgTMatrix")){
+    Y = as(Y, "TsparseMatrix")    
+  }
+  if(is.null(dims)){
+    dims <- dim(Y)
+  }
+  if(is.null(Vini)){
+    Vini <- list(matrix(rgamma(dims[1]*rank, 1, 10), dims[1], rank),
+                 t(apply(Y, 2, sample, size=rank)+0.1))
+  }
+  n_baches <- min(n_baches, length(Y@x))
+  out = doVB_pois_s_2D_t1(y = Y@x, rowi = Y@i,  coli = Y@j,
+                       L = rank,
+                       iter = n_epochs,
+                       subiter = subiter,
+                       a = prior_shape, b = prior_rate,
+                       N1 = length(Y@x),
+                       Nr = dims[1],
+                       Nc = dims[2],
+                       bsize = n_baches,
+                       lr_param = lr_param,
+                       lr_type = lr_type,
+                       display_progress = display_progress)
+  return(out)
+}
 ###
 
 meanV_array <- function(out){

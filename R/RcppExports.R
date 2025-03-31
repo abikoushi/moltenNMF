@@ -25,6 +25,10 @@ doVB_pois_sp <- function(N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display
     .Call(`_moltenNMF_doVB_pois_sp`, N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display_progress)
 }
 
+doSVB_pois_sp <- function(N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress) {
+    .Call(`_moltenNMF_doSVB_pois_sp`, N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress)
+}
+
 doVB_pois_2D <- function(V, y, rowi, coli, dims, L, iter, a, b, display_progress) {
     .Call(`_moltenNMF_doVB_pois_2D`, V, y, rowi, coli, dims, L, iter, a, b, display_progress)
 }
@@ -35,6 +39,10 @@ doVB_pois_2D_ww <- function(V, y, rowi, coli, dims, L, iter, weight, a, b, displ
 
 doVB_pois_s_2D <- function(y, rowi, coli, L, iter, subiter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress) {
     .Call(`_moltenNMF_doVB_pois_s_2D`, y, rowi, coli, L, iter, subiter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress)
+}
+
+doVB_pois_s_2D_t1 <- function(y, rowi, coli, L, iter, subiter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress) {
+    .Call(`_moltenNMF_doVB_pois_s_2D_t1`, y, rowi, coli, L, iter, subiter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress)
 }
 
 doVB_pois_s_2D_ww <- function(y, rowi, coli, L, iter, subiter, weight, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress) {
@@ -49,8 +57,24 @@ doVB_pois_offset <- function(y, xi, xp, varind, D, L, tau, iter, a, b, V, displa
     .Call(`_moltenNMF_doVB_pois_offset`, y, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress)
 }
 
+check_lr <- function(epoc, lr_param, lr_type) {
+    .Call(`_moltenNMF_check_lr`, epoc, lr_param, lr_type)
+}
+
 myprod <- function(N, xi, xp, lam) {
     .Call(`_moltenNMF_myprod`, N, xi, xp, lam)
+}
+
+myprodvec <- function(n, xi, xp, lam) {
+    .Call(`_moltenNMF_myprodvec`, n, xi, xp, lam)
+}
+
+myprodvec_sub <- function(n, xi, xp, start, end, lam) {
+    .Call(`_moltenNMF_myprodvec_sub`, n, xi, xp, start, end, lam)
+}
+
+mysum_t <- function(N, xi, xp, lam) {
+    .Call(`_moltenNMF_mysum_t`, N, xi, xp, lam)
 }
 
 summyprod <- function(n, xi, xp, lam) {

@@ -20,6 +20,19 @@ arma::rowvec sumV(const arma::field<arma::mat> V,
   return SumV;
 }
 
+arma::rowvec sumV(const arma::field<arma::mat> V, 
+                  const int k,
+                  const arma::field<arma::vec> weight){
+  int not_k = 1;
+  if(k==1){
+    not_k = 0;
+  }
+  arma::mat Vk = V(not_k);
+  Vk.each_col() %= weight(k);
+  arma::rowvec SumV = sum(Vk, 0);
+  return SumV;
+}
+
 double up_B_2D(const arma::field<arma::mat> & alpha,
                arma::mat & beta,
                arma::field<arma::mat> & V,
@@ -193,21 +206,22 @@ arma::rowvec sumV_uid(const arma::field<arma::mat> V,
   return SumV;
 }
 
-arma::rowvec calc_sumV(const arma::mat beta, 
-                       const arma::field<arma::mat> V, 
-                       const arma::field<arma::uvec> uid,
-                       const int k){
-  arma::rowvec SumV = beta.row(k);
-  SumV -= sumV_uid(V, uid, k);
-  return SumV;
-}
-
 void minus_sumV(arma::mat & beta, 
                 const arma::field<arma::mat> V, 
                 const arma::field<arma::uvec> uid,
-                const int k){
+                const int k,
+                const double b){
   beta.row(k) -= sumV_uid(V, uid, k);
 }
+
+void plus_sumV(arma::mat & beta, 
+                const arma::field<arma::mat> V, 
+                const arma::field<arma::uvec> uid,
+                const int k,
+                const double b){
+  beta.row(k) += sumV_uid(V, uid, k);
+}
+
 
 double up_Bs_2D(const arma::field<arma::mat> & alpha,
                 arma::mat & beta,
@@ -218,10 +232,11 @@ double up_Bs_2D(const arma::field<arma::mat> & alpha,
                 const int & L,
                 const int & k){
   double lp = 0;
+  // minus_sumV(beta, V, uid, k, b);
+  // plus_sumV(beta, V, uid, k, b);
   beta.row(k) = sumV(V, k) + b;
-  //beta.row(k) += sumV_uid(V, uid, k);
-  lp -= sum((beta.row(k) - b));
   up_latentV_uid(V, logV, alpha, beta, k, uid);
+  lp -= sum((beta.row(k) - b));
   return lp;
 }
 
@@ -239,18 +254,10 @@ double up_theta_s_2D(arma::field<arma::mat> & alpha,
   double lp = 0;
   //rows k = 0
   lp += up_As_2D(alpha, logV, y, X, a, L, uid, 0, NS);
-  //minus_sumV(beta, V, uid, 0);
   lp += up_Bs_2D(alpha, beta, V, logV, uid, b, L, 0);
-  // beta.row(0).print();
-  // sum(V(1)+b, 0).print();
-  // Rprintf("\n");
   //columns k = 1
   lp += up_As_2D(alpha, logV, y, X, a, L, uid, 1, NS);
-  //minus_sumV(beta, V, uid, 1);
   lp += up_Bs_2D(alpha, beta, V, logV, uid, b, L,  1);
-  // beta.row(1).print();
-  // sum(V(0)+b, 0).print();
-  // Rprintf("\n");
   return lp;
 }
 
@@ -274,6 +281,7 @@ double doVB_pois_s_sub_2D(const arma::vec & y,
   return lp;
 }
 
+//without weight
 // [[Rcpp::export]]
 List doVB_pois_s_2D(const arma::vec & y,
                     const arma::uvec & rowi,
@@ -334,62 +342,105 @@ List doVB_pois_s_2D(const arma::vec & y,
                       Named("ELBO")=lp);
 }
 
+// use only 1 sample in each updates
+// [[Rcpp::export]]
+List doVB_pois_s_2D_t1(const arma::vec & y,
+                    const arma::uvec & rowi,
+                    const arma::uvec & coli,
+                    const int & L,
+                    const int & iter,
+                    const int & subiter,
+                    const double & a,
+                    const double & b,
+                    const double & N1,
+                    const int & Nr,
+                    const int & Nc,
+                    const int & bsize,
+                    const arma::vec & lr_param,
+                    const std::string & lr_type,
+                    const bool & display_progress){
+  arma::field<arma::mat> logV(2);
+  arma::field<arma::mat> alpha(2);
+  arma::field<arma::mat> V(2);
+  V(0) = arma::randg<arma::mat>(Nr,L);
+  V(1) = arma::randg<arma::mat>(Nc,L);
+  logV(0) = log(V(0));
+  logV(1) = log(V(1));
+  alpha(0) = arma::ones<arma::mat>(Nr, L);
+  alpha(1) = arma::ones<arma::mat>(Nc, L);
+  arma::mat beta(2,L);
+  beta.row(0) = sum(V(1), 0) + b;
+  beta.row(1) = sum(V(0), 0) + b;
+  arma::vec lp = arma::zeros<arma::vec>(iter);
+  std::unique_ptr<lr> g;
+  set_lr_method(g, lr_type);
+  const double NS = N1 / ((double) bsize);
+  // double invS = 1.0 / ( (double) bsize ); 
+  Progress pb(iter, display_progress);
+  for(int epoc=0; epoc<iter; epoc++){
+    arma::umat bags = randpick_c(N1, bsize);
+    double rho = g -> lr_t(epoc, lr_param);
+    double rho2 = 1.0 - rho;
+    // rho *= invS;
+    arma::uvec bag = arma::randperm(N1, bsize);
+      arma::vec Sy = y.rows(bag);
+      arma::umat SX(bag.n_rows, 2);
+      SX.col(0) = rowi.rows(bag);
+      SX.col(1) = coli.rows(bag);
+      arma::field<arma::uvec> uid(2);
+      uid(0) = unique(SX.col(0));
+      uid(1) = unique(SX.col(1));
+      arma::field<arma::mat> alpha_s = alpha;
+      arma::mat beta_s = beta;
+      lp(epoc) += doVB_pois_s_sub_2D(Sy, SX, L, subiter, a, b, NS, uid, alpha_s, beta_s, V, logV);
+      up_vpar(rho, rho2, uid, alpha, alpha_s, beta, beta_s);
+    pb.increment();
+  }
+  return List::create(Named("shape")=alpha,
+                      Named("rate")=beta,
+                      Named("ELBO")=lp);
+}
+
 ////////
 ///with weight, SVB
 ////////
-
-double up_Bs_2D(const arma::field<arma::mat> & alpha,
-                arma::mat & beta,
-                arma::field<arma::mat> & V,
-                arma::field<arma::mat> & logV,
-                arma::mat & SumV,
-                const arma::field<arma::vec> & weight,
-                const arma::field<arma::uvec> & uid,
-                const double & b,
-                const int & L,
-                const double & NS,
-                const int & k){
-  double lp = 0;
+arma::rowvec sumV_uid(const arma::field<arma::mat> V, 
+                      const arma::field<arma::uvec> uid,
+                      const int k,
+                      const arma::field<arma::vec> weight){
   int not_k = 1;
   if(k==1){
     not_k = 0;
   }
-  for(int l=0; l<L; l++){
-    arma::vec wk = weight(k);
-    arma::vec vl = V(not_k).col(l);
-    vl = vl.rows(uid(not_k)) % wk.rows(uid(not_k));
-    SumV(not_k,l) += NS*sum(vl);
-    lp -= (SumV(not_k,l) - b);
-    beta(k,l) = SumV(not_k, l);
-    up_latentV(V, logV, alpha, beta, k);
-  }
-  return lp;
+  arma::mat Vk = V(not_k).rows(uid(not_k));
+  Vk.each_col() %= weight(k).rows(uid(not_k));
+  arma::rowvec SumV = sum(Vk, 0);
+  return SumV;
+}
+
+void minus_sumV(arma::mat & beta, 
+                const arma::field<arma::mat> V, 
+                const arma::field<arma::uvec> uid,
+                const int k,
+                const double b,
+                const arma::field<arma::vec> weight){
+  beta.row(k) -= sumV_uid(V, uid, k, weight);
+  //beta.elem(find(beta<0.0)).fill(b);
 }
 
 double up_Bs_2D(const arma::field<arma::mat> & alpha,
                 arma::mat & beta,
                 arma::field<arma::mat> & V,
                 arma::field<arma::mat> & logV,
-                arma::mat & SumV,
                 const arma::field<arma::vec> & weight,
                 const arma::field<arma::uvec> & uid,
                 const double & b,
                 const int & L,
                 const int & k){
   double lp = 0;
-  int not_k = 1;
-  if(k==1){
-    not_k = 0;
-  }
-  for(int l=0; l<L; l++){
-    arma::vec wk = weight(k);
-    arma::vec vl = V(not_k).col(l);
-    vl = vl.rows(uid(not_k)) % wk.rows(uid(not_k));
-    SumV(not_k,l) += sum(vl);
-    lp -= SumV(not_k,l) - b;
-    beta(k,l) = SumV(not_k, l);
-    up_latentV(V, logV, alpha, beta, k);
-  }
+  beta.row(k) += sumV_uid(V, uid, k, weight);
+  lp -= sum((beta.row(k) - b));
+  up_latentV_uid(V, logV, alpha, beta, k, uid);
   return lp;
 }
 
@@ -405,18 +456,13 @@ double up_theta_s_2D(arma::field<arma::mat> & alpha,
                      const double & a,
                      const double & b,
                      const double & NS){
-  arma::mat SumV(2,L);
-  for(int j=0;j<2;j++){
-    SumV.row(j) = calc_sumV(beta, V, uid, j);
-  }
-  SumV.elem(find(SumV<0.0)).fill(0.0);
   double lp = 0;
   //rows k=0
   lp += up_As_2D(alpha, logV, y, X, a, L, uid, 0, NS);
-  lp += up_Bs_2D(alpha, beta, V, logV, SumV, weight, uid, b, L, 0);
+  lp += up_Bs_2D(alpha, beta, V, logV, weight, uid, b, L, 0);
   //columns k=1
   lp += up_As_2D(alpha, logV, y, X, a, L, uid, 1, NS);
-  lp += up_Bs_2D(alpha, beta, V, logV, SumV, weight, uid, b, L, 1);
+  lp += up_Bs_2D(alpha, beta, V, logV, weight, uid, b, L, 1);
   return lp;
 }
 
@@ -441,6 +487,7 @@ double doVB_pois_s_sub_2D(const arma::vec & y,
   return lp;
 }
 
+//with weight
 // [[Rcpp::export]]
 List doVB_pois_s_2D_ww(const arma::vec & y,
                     const arma::uvec & rowi,
@@ -480,7 +527,7 @@ List doVB_pois_s_2D_ww(const arma::vec & y,
     arma::umat bags = randpick_c(N1, bsize);
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
-    rho *= invS;
+    //rho *= invS;
     const double NS = N1 / ((double) bsize);
     double invS = 1.0 / ( (double) bsize ); 
     for(int step = 0; step < bags.n_cols; step++){
