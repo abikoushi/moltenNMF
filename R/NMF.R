@@ -1,9 +1,10 @@
 # 2D array
 NMF2D_vb <- function(Y, rank,
                      iter=100,
-                     Vini = NULL,
-                     dims=NULL, 
+                     weight = NULL,
                      prior_shape = 1, prior_rate = 1,
+                     Vini = NULL,
+                     dims=NULL,
                      display_progress=TRUE){
   if(all(class(Y)!="dgTMatrix")){
     Y = as(Y, "TsparseMatrix") 
@@ -15,28 +16,40 @@ NMF2D_vb <- function(Y, rank,
   Vini <- list(matrix(rgamma(dims[1]*rank, 1, 10), dims[1], rank),
                  t(apply(Y, 2, sample, size=rank)+0.1))
   }
-  naY = is.na(Y)
-  if(any(naY)){
-    weight <- list( (Y@Dim[1] - rowSums(naY))/Y@Dim[1],
-                    (Y@Dim[2] - colSums(naY))/Y@Dim[2] )
-    nn_wch = which(!is.na(Y@x))
+  if(!is.null(weight)){
     out = doVB_pois_2D_ww(Vini,
-                       y = Y@x[nn_wch],
-                       rowi = Y@i[nn_wch],
-                       coli = Y@j[nn_wch],
-                       dims = dims,
-                       L = rank, iter=iter, 
-                       weight = weight,
-                       a = prior_shape, b = prior_rate,
-                       display_progress = display_progress)
+                          y = Y@x[nn_wch],
+                          rowi = Y@i[nn_wch],
+                          coli = Y@j[nn_wch],
+                          dims = dims,
+                          L = rank, iter=iter, 
+                          weight = weight,
+                          a = prior_shape, b = prior_rate,
+                          display_progress = display_progress)
   }else{
-    out = doVB_pois_2D(Vini,
-                       y = Y@x, rowi = Y@i,  coli = Y@j,
-                       dims = dims,
-                       L = rank, iter=iter, 
-                       a = prior_shape, b = prior_rate,
-                       display_progress = display_progress)
-  
+    naY = is.na(Y)
+    if(any(naY)){
+      weight <- list( (Y@Dim[1] - rowSums(naY))/Y@Dim[1],
+                      (Y@Dim[2] - colSums(naY))/Y@Dim[2] )
+      nn_wch = which(!is.na(Y@x))
+      out = doVB_pois_2D_ww(Vini,
+                            y = Y@x[nn_wch],
+                            rowi = Y@i[nn_wch],
+                            coli = Y@j[nn_wch],
+                            dims = dims,
+                            L = rank, iter=iter, 
+                            weight = weight,
+                            a = prior_shape, b = prior_rate,
+                            display_progress = display_progress)
+    }else{
+      out = doVB_pois_2D(Vini,
+                         y = Y@x, rowi = Y@i,  coli = Y@j,
+                         dims = dims,
+                         L = rank, iter=iter, 
+                         a = prior_shape, b = prior_rate,
+                         display_progress = display_progress)
+      
+    }    
   }
   return(out)
 }

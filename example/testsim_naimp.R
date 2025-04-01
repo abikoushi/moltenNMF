@@ -14,14 +14,17 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
 }
 
 dat <- set_data_mf(2,110, 130)
-
+dim(dat$Y)
 Y=dat$Y
-ind_na = sample.int(110*100, 1000)
+ind_na = sample.int(110*130, 1000)
 Y[ind_na] <- NA
+dim(Y)
+naY = is.na(Y)
+dim(naY)
 
 out <- moltenNMF:::NMF2D_vb(Y, rank = 2, iter = 500)
 plot(out$ELBO, type="l")
-V = moltenNMF:::meanV_2D(out)
+V = moltenNMF:::meanV_array(out)
 plot(log1p(V[[1]]%*%t(V[[2]])), as.matrix(log1p(dat$Y)), pch=1, cex=0.5, col=rgb(0,0,0,0.2))
 abline(0, 1, col="royalblue",lty=2)
 

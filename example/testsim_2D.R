@@ -4,7 +4,6 @@ library(dplyr)
 library(ggplot2)
 library(patchwork)
 
-
 set_data_mf <- function(L, nrow, ncol, mu=0){
   W <- matrix(rnorm(nrow*L,0,1), ncol=L)
   H <- matrix(rnorm(L*ncol,0,1), nrow=L)
@@ -42,13 +41,13 @@ p1 = ggplot(data = NULL, aes(x=c(fit1), y=c(as.matrix(dat$Y))))+
 
 
 
-curve(learning_rate(x, lr_param = c(15,1), lr_type = "exponential"), 0,100)
-curve(learning_rate(x, lr_param = c(15,0.8), lr_type = "exponential"), add=TRUE)
+curve(moltenNMF:::learning_rate(x, lr_param = c(15,1), lr_type = "exponential"), 0,100)
+curve(moltenNMF:::learning_rate(x, lr_param = c(15,0.8), lr_type = "exponential"), add=TRUE)
 
 out2 <- moltenNMF:::NMF2D_svb(dat$Y, rank = 3,
-                             n_epochs = 100, n_baches = as.integer(1000),
+                             n_epochs = 100, n_baches = as.integer(2000),
                              prior_shape = 1, prior_rate = 1,
-                             lr_param = c(30, 1), lr_type = "exponential")
+                             lr_param = c(15, 1), lr_type = "exponential")
 plot(out2$ELBO, type="l")
 head(out2$shape[[1]])
 head(out2$shape[[2]])
@@ -56,7 +55,7 @@ out2$rate
 
 V = moltenNMF:::meanV_array(out2)
 V = moltenNMF:::rearrange_cols(V, normalize = FALSE)
-moltenNMF:::matplot2(V = t(V2[[1]]))
+moltenNMF:::matplot2(V = t(V[[1]]))
 
 fit2 = V[[1]]%*%t(V[[2]])
 ax_lim = c(0, max(max(dat$Y), max(fit2)))

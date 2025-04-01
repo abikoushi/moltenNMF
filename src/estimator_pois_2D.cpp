@@ -28,7 +28,7 @@ arma::rowvec sumV(const arma::field<arma::mat> V,
     not_k = 0;
   }
   arma::mat Vk = V(not_k);
-  Vk.each_col() %= weight(k);
+  Vk.each_col() %= weight(not_k);
   arma::rowvec SumV = sum(Vk, 0);
   return SumV;
 }
@@ -119,15 +119,9 @@ double up_B_2D(const arma::field<arma::mat> & alpha,
                const arma::uvec & dims, 
                const int & k){
   double lp = 0;
-  int not_k = 1;
-  if(k==1){
-    not_k = 0;
-  }
-  for(int l=0; l<L; l++){
-    double B0 = sum(V(not_k).col(l) % weight(not_k));
-    lp -= B0;
-    beta(k,l) = B0 + b;
-  }
+  arma::rowvec B0 = sumV(V, k, weight);
+  lp -= sum(B0);
+  beta.row(k) = B0 + b;
   up_latentV(V, logV, alpha, beta, k);
   return lp;
 }
@@ -215,10 +209,10 @@ void minus_sumV(arma::mat & beta,
 }
 
 void plus_sumV(arma::mat & beta, 
-                const arma::field<arma::mat> V, 
-                const arma::field<arma::uvec> uid,
-                const int k,
-                const double b){
+               const arma::field<arma::mat> V, 
+               const arma::field<arma::uvec> uid,
+               const int k,
+               const double b){
   beta.row(k) += sumV_uid(V, uid, k);
 }
 
@@ -232,9 +226,8 @@ double up_Bs_2D(const arma::field<arma::mat> & alpha,
                 const int & L,
                 const int & k){
   double lp = 0;
-  // minus_sumV(beta, V, uid, k, b);
-  // plus_sumV(beta, V, uid, k, b);
   beta.row(k) = sumV(V, k) + b;
+  //plus_sumV(beta, V, uid, k, b);
   up_latentV_uid(V, logV, alpha, beta, k, uid);
   lp -= sum((beta.row(k) - b));
   return lp;
@@ -254,9 +247,11 @@ double up_theta_s_2D(arma::field<arma::mat> & alpha,
   double lp = 0;
   //rows k = 0
   lp += up_As_2D(alpha, logV, y, X, a, L, uid, 0, NS);
+  //minus_sumV(beta, V, uid, 0, b);
   lp += up_Bs_2D(alpha, beta, V, logV, uid, b, L, 0);
   //columns k = 1
   lp += up_As_2D(alpha, logV, y, X, a, L, uid, 1, NS);
+  //minus_sumV(beta, V, uid, 1, b);
   lp += up_Bs_2D(alpha, beta, V, logV, uid, b, L,  1);
   return lp;
 }
@@ -438,7 +433,7 @@ double up_Bs_2D(const arma::field<arma::mat> & alpha,
                 const int & L,
                 const int & k){
   double lp = 0;
-  beta.row(k) += sumV_uid(V, uid, k, weight);
+  beta.row(k) = sumV_uid(V, uid, k, weight);
   lp -= sum((beta.row(k) - b));
   up_latentV_uid(V, logV, alpha, beta, k, uid);
   return lp;
