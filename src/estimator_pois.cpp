@@ -39,6 +39,7 @@ List doVB_pois(const arma::vec & y,
     ll.row(i) = lowerbound_logML_pois(alpha, beta, V, logV, R, y, a, b);
     pb.increment();
   }
+  ll -= sum(lgamma(y+1));
   return List::create(Named("shape")=alpha,
                       Named("rate")=beta,
                       Named("ELBO")=ll);
@@ -71,6 +72,7 @@ List doVB_pois_sp(const int & N,
     ll.row(i) = lowerbound_logML_pois_sp(alpha, beta, V, logV, R, yv, yi, a, b);
     pb.increment();
   }
+  ll -= sum(lgamma(yv+1));
   return List::create(Named("shape")=alpha,
                       Named("rate")=beta,
                       Named("ELBO")=ll);

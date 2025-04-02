@@ -29,18 +29,20 @@ length(dat$Y)
 plot(as.matrix(dat$Y), f_d,  pch=1, col=rgb(0,0,0,0.2), xlab="fitted", ylab="obsereved")
 abline(0, 1, col="grey", lty=2)
 
-# #with skip-zeros
-# y = as.integer(dat$Y)
-# wch = which(y>0)
-# Y = sparseVector(y[wch], wch, length = length(y))
-# bm2 = bench::mark({
-#   out <- moltenNMF:::mNMF_vb.default(Y, X = X, L = 2, iter=1000)
-# }, iterations = 1)
-# 
-# bm$time
-# bm2$time
-# bm$mem_alloc
-# bm2$mem_alloc
+#with skip-zeros
+y = as.integer(dat$Y)
+wch = which(y>0)
+Y = sparseVector(y[wch], wch, length = length(y))
+bm2 = bench::mark({
+  out <- moltenNMF:::mNMF_vb.default(Y, X = X, L = 2, iter=1000)
+}, iterations = 1)
+
+plot(out_d$ELBO[-1], type = "l")
+lines(out$ELBO[-1], type = "l")
+bm$time
+bm2$time
+bm$mem_alloc
+bm2$mem_alloc
 
 y = as.integer(dat$Y)
 wch = which(y>0)

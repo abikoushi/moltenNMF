@@ -20,7 +20,8 @@ double lowerbound_logML_pois(const arma::mat & alpha,
                              const arma::vec & y,
                              const double & a,
                              const double & b){
-  return sum(-R + y%log(R) - lgamma(y+1)) +
+  //omit `- sum(lgamma(y+1))`
+  return sum(-R + y%log(R) ) + 
     + accu((a-1)*loglambda - b*lambda + a*log(beta) - std::lgamma(a)) +
     - accu((alpha-1)%loglambda - beta%lambda + alpha%log(beta) - lgamma(alpha));
 }
@@ -34,7 +35,8 @@ double lowerbound_logML_pois_sp(const arma::mat & alpha,
                              const arma::uvec & yi,
                              const double & a,
                              const double & b){
-  return sum(-R + elementwise_prod(yv, yi, log(R))) - sum(lgamma(yv+1)) +
+  //omit `- sum(lgamma(yv+1))`
+  return sum(-R + elementwise_prod(yv, yi, log(R))) + 
     + accu((a-1)*loglambda - b*lambda + a*log(beta) - std::lgamma(a)) +
     - accu((alpha-1)%loglambda - beta%lambda + alpha%log(beta) - lgamma(alpha));
 }
