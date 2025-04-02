@@ -75,7 +75,7 @@ double kld2(const arma::field<arma::mat> & alpha,
             const double & a,
             const double & b){
   double lp = 0;
-  int K=alpha.n_rows;
+  int K = beta.n_rows;
   for(int k=0; k<K ;k++){
     arma::mat alpha_k = alpha(k);
     arma::rowvec beta_k = beta.row(k);

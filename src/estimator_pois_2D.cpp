@@ -2,6 +2,7 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
 #include "logexpfuns.h"
+#include "ELBO.h"
 #include "rand.h"
 #include "up_shape_2D.h"
 #include "lr.h"
@@ -49,6 +50,18 @@ double up_B_2D(const arma::field<arma::mat> & alpha,
   return lp;
 }
 
+void up_B_2D(arma::mat & beta,
+               arma::field<arma::mat> & V,
+               const double & b){
+  //double lp = 0;
+  //row k = 0; column k = 1
+  for(int k=0; k<beta.n_rows ;k++){
+    arma::rowvec B0 = sumV(V, k);
+    beta.row(k) = B0 + b;    
+    //lp -= sum(B0);
+  }
+}
+
 double up_theta_2D(arma::field<arma::mat> & alpha,
                    arma::mat & beta,
                    arma::field<arma::mat> & V,
@@ -60,12 +73,14 @@ double up_theta_2D(arma::field<arma::mat> & alpha,
                    const double & a,
                    const double & b){
   double lp = 0;
+  //lp += up_A_2D(alpha, logV, y, X, a, L, dims);
+  //up_B_2D(beta, V, b);
   //row k = 0
   lp += up_A_2D(alpha, logV, y, X, a, L, dims, 0);
-  lp += up_B_2D(alpha, beta, V, logV, b, L, dims, 0);
+  up_B_2D(alpha, beta, V, logV, b, L, dims, 0);
   //column k = 1
   lp += up_A_2D(alpha, logV, y, X, a, L, dims, 1);
-  lp += up_B_2D(alpha, beta, V, logV, b, L,dims, 1);
+  up_B_2D(alpha, beta, V, logV, b, L,dims, 1);
   return lp;
 }
 
@@ -96,8 +111,9 @@ List doVB_pois_2D(arma::field<arma::mat> V,
   arma::vec lp = arma::zeros<arma::vec>(iter);
   Progress pb(iter, display_progress);
   for (int i=0; i<iter; i++) {
-    double lp0 = up_theta_2D(alpha, beta, V, logV, y, X, L, dims, a, b);
-    lp(i) = lp0 + kld2(alpha, beta, a, b);
+    lp(i) = up_theta_2D(alpha, beta, V, logV, y, X, L, dims, a, b);
+    lp(i) += kld2(alpha, beta, a, b);
+    up_latentV(V, logV, alpha, beta);
     pb.increment();
   }
   lp -= sum(lgamma(y+1));
@@ -309,13 +325,13 @@ List doVB_pois_s_2D(const arma::vec & y,
   std::unique_ptr<lr> g;
   set_lr_method(g, lr_type);
   const double NS = N1 / ((double) bsize);
-  // double invS = 1.0 / ( (double) bsize ); 
+  double invS = 1.0 / ( (double) bsize ); 
   Progress pb(iter, display_progress);
   for(int epoc=0; epoc<iter; epoc++){
     arma::umat bags = randpick_c(N1, bsize);
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
-    // rho *= invS;
+    //rho *= invS;
     for(int step = 0; step < bags.n_cols; step++){
       arma::uvec bag = sort(bags.col(step));
       arma::vec Sy = y.rows(bag);
@@ -327,9 +343,12 @@ List doVB_pois_s_2D(const arma::vec & y,
       uid(1) = unique(SX.col(1));
       arma::field<arma::mat> alpha_s = alpha;
       arma::mat beta_s = beta;
-      lp(epoc) += doVB_pois_s_sub_2D(Sy, SX, L, subiter, a, b, NS, uid, alpha_s, beta_s, V, logV);
-      up_vpar(rho, rho2, uid, alpha, alpha_s, beta, beta_s);
+      lp(epoc) += up_As_2D(alpha_s, logV, Sy, SX, a, L, uid, NS);
+      up_B_2D(beta_s,V,b);
+      //lp(epoc) += doVB_pois_s_sub_2D(Sy, SX, L, subiter, a, b, NS, uid, alpha_s, beta_s, V, logV);
+      up_vpar(rho, rho2, uid, alpha, alpha_s, beta, beta_s, V, logV);
     }
+    lp(epoc) += kld2(alpha, beta, a, b);
     pb.increment();
   }
   return List::create(Named("shape")=alpha,
