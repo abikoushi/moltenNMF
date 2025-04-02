@@ -45,7 +45,6 @@ List doVB_pois(const arma::vec & y,
                       Named("ELBO")=ll);
 }
 
-
 // [[Rcpp::export]]
 List doVB_pois_sp(const int & N,
                   const arma::vec & yv,
@@ -77,8 +76,6 @@ List doVB_pois_sp(const int & N,
                       Named("rate")=beta,
                       Named("ELBO")=ll);
 }
-
-
 
 /////
 //SVB

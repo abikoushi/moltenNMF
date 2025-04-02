@@ -3,6 +3,11 @@ library(Matrix)
 library(dplyr)
 library(ggplot2)
 
+v1=rexp(10)
+v2=rexp(10)
+sum(v1*v2)
+sum(v1)+sum(v2)
+
 set_data_mf <- function(L, nrow, ncol, mu=0){
   W <- matrix(rnorm(nrow*L,0,1),ncol=L)
   H <- matrix(rnorm(L*ncol,0,1),nrow=L)

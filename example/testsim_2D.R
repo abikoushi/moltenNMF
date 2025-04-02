@@ -15,7 +15,7 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
   list(Y=Y, trueW=W, trueH=H)
 }
 
-dat <- set_data_mf(3, 100, 200)
+dat <- set_data_mf(3, 99, 500)
 hist(as.matrix(dat$Y))
 out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 500)
 plot(out$ELBO[-1], type = "l")
@@ -26,29 +26,16 @@ p1 = ggplot(data = NULL, aes(x=c(fit1), y=c(as.matrix(dat$Y))))+
   geom_bin2d(aes(fill = after_stat(log10(count))))+
   geom_abline(intercept = 0, slope = 1, linetype=2, colour="grey")
 print(p1)
+
 #####
-#nnzero(dat$Y)
-# beta = rbind(colSums(V[[1]])+1, colSums(V[[2]])+1)
-# moltenNMF:::minus_sumV(beta, V, uid = uid, k = 0, b=1)
-# beta
-# moltenNMF:::sumV(V, k = 1)
-# moltenNMF:::sumV(V, k = 0)
-# uid = list(0:9, 0:9)
-# moltenNMF:::sumV_uid(V, k = 0, uid = uid)
-# colSums(V[[2]][uid[[2]]+1,])
-# 
-# moltenNMF:::sumV_uid(V, k = 0, uid = uid)
-# colSums(V[[2]][uid[[2]]+1,])
-
-curve(moltenNMF:::learning_rate(x, lr_param = c(15,1), lr_type = "exponential"), 0,100)
-curve(moltenNMF:::learning_rate(x, lr_param = c(15,0.8), lr_type = "exponential"), add=TRUE)
-
 length(dat$Y)
 out2 <- moltenNMF:::NMF2D_svb(dat$Y, rank = 3,
-                             n_epochs = 200, n_baches = as.integer(500),
+                             n_epochs = 200, n_baches = as.integer(200),
                              prior_shape = 1, prior_rate = 1,
                              lr_param = c(16, 0.9), lr_type = "exponential")
 plot(out2$ELBO[-1], type="l")
+lines(out$ELBO[-1], type="l")
+
 head(out2$shape[[1]])
 head(out2$shape[[2]])
 out2$rate
