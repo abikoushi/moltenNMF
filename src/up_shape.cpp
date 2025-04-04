@@ -49,17 +49,32 @@ void up_A_sp(arma::mat & alpha,
 //ToDo : sub sampled sparse y
 ////
 
-void up_A_sp(arma::mat & alpha,
+// void up_A_sp(arma::mat & alpha,
+//              arma::vec & R,
+//              const arma::mat & loglambda,
+//              const arma::vec & yv,
+//              const arma::uvec & yi,
+//              const arma::uvec & xi,
+//              const arma::uvec & xp,
+//              const double & a, 
+//              const arma::uvec uid){
+//   arma::mat r =  myprod(R.n_rows, xi, xp, exp(loglambda)); //(N, L)
+//   R.rows(uid) = sum(r, 1);
+//   alpha = mysum_t(alpha.n_rows, xi, xp, r.each_col() % elementwise_div(yv, yi, R)); //D,L
+//   alpha += a;
+// }
+
+void up_As_sp(arma::mat & alpha,
              arma::vec & R,
              const arma::mat & loglambda,
              const arma::vec & yv,
              const arma::uvec & yi,
              const arma::uvec & xi,
              const arma::uvec & xp,
-             const double & a, 
-             const arma::uvec uid){
+             const double & a,
+             const double & NS){
   arma::mat r =  myprod(R.n_rows, xi, xp, exp(loglambda)); //(N, L)
-  R.rows(uid) = sum(r.rows(uid), 1);
-  alpha = mysum_t(alpha.n_rows, xi, xp, r.each_col() % elementwise_div(yv, yi, R)); //D,L
+  R = sum(r, 1);
+  alpha = NS*mysum_t(alpha.n_rows, xi, xp, r.each_col() % elementwise_div(yv, yi, R)); //D,L
   alpha += a;
 }

@@ -1,9 +1,13 @@
 #include "RcppArmadillo.h"
-#include "up_param_array.h"
+#include "up_vpar_2D.h"
 #include "logexpfuns.h"
 // [[Rcpp::depends(RcppArmadillo)]]
 
-//update latent V & logV
+
+
+
+
+//update V & logV
 void up_latentV(arma::field<arma::mat> & V,
                 arma::field<arma::mat> & logV,
                 const arma::field<arma::mat> & alpha,
@@ -40,11 +44,11 @@ void up_latentV(arma::field<arma::mat> & V,
 }
 
 void up_latentV_uid(arma::field<arma::mat> & V,
-                arma::field<arma::mat> & logV,
-                const arma::field<arma::mat> & alpha,
-                const arma::mat & beta, 
-                const int & k,
-                const arma::field<arma::uvec> & uid){
+                    arma::field<arma::mat> & logV,
+                    const arma::field<arma::mat> & alpha,
+                    const arma::mat & beta, 
+                    const int & k,
+                    const arma::field<arma::uvec> & uid){
   arma::mat Vk = V(k);
   arma::mat logv = logV(k);
   arma::mat alpha_k = alpha(k);
@@ -88,15 +92,63 @@ void up_vpar(const double rho,
   }
 }
 
-void up_vpar(const double rho,
-             const double & rho2,
-             const arma::field<arma::uvec> & uid,
-             arma::field<arma::mat> & alpha,
-             const arma::field<arma::mat> & alpha_s,
+
+arma::rowvec sumV_uid(const arma::field<arma::mat> V, 
+                      const arma::field<arma::uvec> uid,
+                      const int k){
+  int not_k = 1;
+  if(k==1){
+    not_k = 0;
+  }
+  arma::rowvec SumV = sum(V(not_k).rows(uid(not_k)), 0);
+  return SumV;
+}
+
+arma::rowvec sumV_uid(const arma::field<arma::mat> V, 
+                      const arma::field<arma::uvec> uid,
+                      const int k,
+                      const arma::field<arma::vec> weight){
+  int not_k = 1;
+  if(k==1){
+    not_k = 0;
+  }
+  arma::mat Vk = V(not_k).rows(uid(not_k));
+  Vk.each_col() %= weight(k).rows(uid(not_k));
+  arma::rowvec SumV = sum(Vk, 0);
+  return SumV;
+}
+
+void minus_sumV(arma::mat & beta, 
+                const arma::field<arma::mat> V, 
+                const arma::field<arma::uvec> uid,
+                const int k){
+  beta.row(k) -= sumV_uid(V, uid, k);
+}
+
+void plus_sumV(arma::mat & beta, 
+               const arma::field<arma::mat> V, 
+               const arma::field<arma::uvec> uid,
+               const int k){
+  beta.row(k) += sumV_uid(V, uid, k);
+}
+
+void minus_sumV(arma::mat & beta, 
+                const arma::field<arma::mat> V, 
+                const arma::field<arma::uvec> uid,
+                const int k,
+                const arma::field<arma::vec> weight){
+  beta.row(k) -= sumV_uid(V, uid, k, weight);
+}
+
+void up_vpar(arma::field<arma::mat> & alpha,
              arma::mat & beta,
-             const arma::mat & beta_s,
              arma::field<arma::mat> & V,
-             arma::field<arma::mat> & logV){
+             arma::field<arma::mat> & logV,
+             const arma::field<arma::mat> & alpha_s,
+             const arma::mat & beta_s,
+             const arma::field<arma::uvec> & uid,
+             const double rho,
+             const double & rho2){
   int K = beta.n_rows;
   beta = rho2 * beta + rho * beta_s;
   for(int j = 0; j < K; j++){

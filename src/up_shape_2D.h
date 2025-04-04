@@ -15,15 +15,6 @@ double up_A_2D(arma::field<arma::mat> & alpha,
         const int & L,
         const arma::uvec & dims);
 
-// double up_As_2D(arma::field<arma::mat> & alpha,
-//                 const arma::field<arma::mat> & logV,
-//                 const arma::vec & y,
-//                 const arma::umat & X,
-//                 const double & a,
-//                 const int & L,
-//                 const arma::field<arma::uvec> & uid,
-//                 const int & k);
-
 double up_As_2D(arma::field<arma::mat> & alpha,
                 const arma::field<arma::mat> & logV,
                 const arma::vec & y,
@@ -32,7 +23,7 @@ double up_As_2D(arma::field<arma::mat> & alpha,
                 const int & L,
                 const arma::field<arma::uvec> & uid,
                 const int & k,
-                const double NS);
+                const double & NS);
 
 double up_As_2D(arma::field<arma::mat> & alpha,
                 const arma::field<arma::mat> & logV,
@@ -41,4 +32,4 @@ double up_As_2D(arma::field<arma::mat> & alpha,
                 const double & a,
                 const int & L,
                 const arma::field<arma::uvec> & uid,
-                const double NS);
+                const double & NS);

@@ -3,11 +3,6 @@ library(Matrix)
 library(dplyr)
 library(ggplot2)
 
-v1=rexp(10)
-v2=rexp(10)
-sum(v1*v2)
-sum(v1)+sum(v2)
-
 set_data_mf <- function(L, nrow, ncol, mu=0){
   W <- matrix(rnorm(nrow*L,0,1),ncol=L)
   H <- matrix(rnorm(L*ncol,0,1),nrow=L)
@@ -24,7 +19,6 @@ X <- moltenNMF::sparse_onehot(~row+col, data=expand.grid(row=1:102, col=1:101))
 bm = bench::mark({
   out_d <- moltenNMF:::mNMF_vb.default(as.integer(dat$Y), X = X, L = 2, iter=1000)
 },iterations = 1)
-
 
 plot(out_d$ELBO[-1], type = "l")
 V <- out_d$shape/out_d$rate
@@ -43,7 +37,7 @@ bm2 = bench::mark({
 }, iterations = 1)
 
 plot(out_d$ELBO[-1], type = "l")
-lines(out$ELBO[-1], type = "l")
+lines(out$ELBO[-1], type = "l", lty=2)
 bm$time
 bm2$time
 bm$mem_alloc
@@ -52,26 +46,25 @@ bm2$mem_alloc
 y = as.integer(dat$Y)
 wch = which(y>0)
 Y = sparseVector(y[wch], wch, length = length(y))
-length(Y)
+
 system.time({
   out_s <- moltenNMF:::mNMF_svb(Y, X = X, L = 2,
                                 n_epochs = 100, 
-                                n_batches = 2000, 
-                                lr_param = c(15,0.9), lr_type = "exponential")  
+                                n_batches = 2000,
+                                lr_param = c(20,0.9), 
+                                lr_type = "exponential",
+                                display_progress = TRUE)
 })
-
+#   user  system elapsed 
+# 46.812   0.120  47.079 
 head.matrix(out_s$shape)
 head.matrix(out_s$rate)
 
-out_s$ELBO
-plot(out_s$ELBO[-1], type = "l")
 V <- out_s$shape/out_s$rate
 f <- moltenNMF::product_m(X, V)
 
-head.matrix(out_s$shape)
-head.matrix(out_s$rate)
-
-plot(as.numeric(dat$Y), f,  pch=".")
+plot(as.numeric(dat$Y), f_d,  pch=1, col=rgb(1,0.5,0,0.1))
+points(as.numeric(dat$Y), f,  pch=2, col=rgb(0,0.5,1,0.1))
 abline(0, 1, col="grey", lty=2)
 
 plot(as.numeric(log1p(dat$Y)), log1p(f_d),  pch=1, col=rgb(1,0.5,0,0.1))

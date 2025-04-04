@@ -7,10 +7,11 @@
 #include "binaryIO.h"
 using namespace Rcpp;
 
-///
+//////
 //read
-///
-
+//rows: rows to read
+//Y, X:template matrix
+//////
 void readRowsFromBinary(arma::mat & Y, 
                         const std::string & filepath,
                         const arma::uvec & rows) {
@@ -66,10 +67,9 @@ void readRowsFromBinary_umat(arma::umat & X,
 List read_bin(const std::string & filepath_x,
               const std::string & filepath_y,
               const arma::uvec & bag,
-              const int & n_dim){
-  arma::umat X(bag.n_rows, n_dim-1);
+              const int & x_dim){
+  arma::umat X(bag.n_rows, x_dim);
   arma::vec val(bag.n_rows);
-  //readBin(X, val, filepath_x, filepath_y, bag);
   readRowsFromBinary_umat(X, filepath_x, bag);
   readRowsFromBinary(val, filepath_y, bag);
   return List::create(_["X"]=X, _["y"]=val);
@@ -79,7 +79,7 @@ List read_bin(const std::string & filepath_x,
 //write
 ///
 
-// [[Rcpp::export]]
+/*
 void writeBinaryVec(arma::vec data, std::string filepath) {
   std::ofstream out(filepath, std::ios::binary);
   if (!out.is_open()) {
@@ -89,7 +89,6 @@ void writeBinaryVec(arma::vec data, std::string filepath) {
   out.close();
 }
 
-// [[Rcpp::export]]
 void writeBinaryFile_umat(arma::umat data, std::string filepath) {
   std::ofstream out(filepath, std::ios::binary);
   if (!out.is_open()) {
@@ -98,3 +97,4 @@ void writeBinaryFile_umat(arma::umat data, std::string filepath) {
   out.write(reinterpret_cast<char*>(data.memptr()), data.n_elem * sizeof(unsigned int));
   out.close();
 }
+*/

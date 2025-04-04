@@ -69,7 +69,7 @@ double up_As_2D(arma::field<arma::mat> & alpha,
                 const int & L,
                 const arma::field<arma::uvec> & uid,
                 const int & k,
-                const double NS){
+                const double & NS){
   //initialize by hyper parameter
   arma::uvec uid_k = uid(k);
   arma::mat alpha_k = alpha(k);
@@ -96,7 +96,7 @@ double up_As_2D(arma::field<arma::mat> & alpha,
                 const double & a,
                 const int & L,
                 const arma::field<arma::uvec> & uid,
-                const double NS){
+                const double & NS){
   int K= X.n_cols;
   //calculate latent statistics
   arma::mat r = arma::zeros<arma::mat>(y.n_rows, L);

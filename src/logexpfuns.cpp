@@ -41,7 +41,8 @@ void up_log_gamma(arma::mat & logv, const arma::vec & a, const double & logb,
   }
 }
 
-void up_log_gamma_uid(arma::mat & logv, const arma::vec & a, const double & logb,
+void up_log_gamma_uid(arma::mat & logv,
+                      const arma::vec & a, const double & logb,
                       const int & l, const arma::uvec uid){
   int ulen = uid.n_rows;
   for(int d=0; d<ulen; d++){

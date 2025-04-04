@@ -12,39 +12,17 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // read_bin
-List read_bin(const std::string& filepath_x, const std::string& filepath_y, const arma::uvec& bag, const int& n_dim);
-RcppExport SEXP _moltenNMF_read_bin(SEXP filepath_xSEXP, SEXP filepath_ySEXP, SEXP bagSEXP, SEXP n_dimSEXP) {
+List read_bin(const std::string& filepath_x, const std::string& filepath_y, const arma::uvec& bag, const int& x_dim);
+RcppExport SEXP _moltenNMF_read_bin(SEXP filepath_xSEXP, SEXP filepath_ySEXP, SEXP bagSEXP, SEXP x_dimSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type filepath_x(filepath_xSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type filepath_y(filepath_ySEXP);
     Rcpp::traits::input_parameter< const arma::uvec& >::type bag(bagSEXP);
-    Rcpp::traits::input_parameter< const int& >::type n_dim(n_dimSEXP);
-    rcpp_result_gen = Rcpp::wrap(read_bin(filepath_x, filepath_y, bag, n_dim));
+    Rcpp::traits::input_parameter< const int& >::type x_dim(x_dimSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_bin(filepath_x, filepath_y, bag, x_dim));
     return rcpp_result_gen;
-END_RCPP
-}
-// writeBinaryVec
-void writeBinaryVec(arma::vec data, std::string filepath);
-RcppExport SEXP _moltenNMF_writeBinaryVec(SEXP dataSEXP, SEXP filepathSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::vec >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< std::string >::type filepath(filepathSEXP);
-    writeBinaryVec(data, filepath);
-    return R_NilValue;
-END_RCPP
-}
-// writeBinaryFile_umat
-void writeBinaryFile_umat(arma::umat data, std::string filepath);
-RcppExport SEXP _moltenNMF_writeBinaryFile_umat(SEXP dataSEXP, SEXP filepathSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< arma::umat >::type data(dataSEXP);
-    Rcpp::traits::input_parameter< std::string >::type filepath(filepathSEXP);
-    writeBinaryFile_umat(data, filepath);
-    return R_NilValue;
 END_RCPP
 }
 // doVB_negbin
@@ -112,32 +90,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// doSVB_pois_sp
-List doSVB_pois_sp(const int& N, const arma::vec& yv, const arma::uvec& yi, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const int& iter, const double& a, const double& b, arma::mat& V, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
-RcppExport SEXP _moltenNMF_doSVB_pois_sp(SEXP NSEXP, SEXP yvSEXP, SEXP yiSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP VSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const int& >::type N(NSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type yv(yvSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type yi(yiSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type xi(xiSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type xp(xpSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type varind(varindSEXP);
-    Rcpp::traits::input_parameter< const int& >::type D(DSEXP);
-    Rcpp::traits::input_parameter< const int& >::type L(LSEXP);
-    Rcpp::traits::input_parameter< const int& >::type iter(iterSEXP);
-    Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
-    Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
-    Rcpp::traits::input_parameter< arma::mat& >::type V(VSEXP);
-    Rcpp::traits::input_parameter< const int& >::type bsize(bsizeSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type lr_param(lr_paramSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type lr_type(lr_typeSEXP);
-    Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(doSVB_pois_sp(N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress));
-    return rcpp_result_gen;
-END_RCPP
-}
 // doVB_pois_2D
 List doVB_pois_2D(arma::field<arma::mat> V, const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const arma::uvec& dims, const int& L, const int& iter, const double& a, const double& b, const bool& display_progress);
 RcppExport SEXP _moltenNMF_doVB_pois_2D(SEXP VSEXP, SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP dimsSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP display_progressSEXP) {
@@ -180,8 +132,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // doVB_pois_s_2D
-List doVB_pois_s_2D(const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const int& L, const int& iter, const int& subiter, const double& a, const double& b, const double& N1, const int& Nr, const int& Nc, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
-RcppExport SEXP _moltenNMF_doVB_pois_s_2D(SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP subiterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP N1SEXP, SEXP NrSEXP, SEXP NcSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
+List doVB_pois_s_2D(const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const int& L, const int& iter, const double& a, const double& b, const double& N1, const int& Nr, const int& Nc, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
+RcppExport SEXP _moltenNMF_doVB_pois_s_2D(SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP N1SEXP, SEXP NrSEXP, SEXP NcSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -190,7 +142,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::uvec& >::type coli(coliSEXP);
     Rcpp::traits::input_parameter< const int& >::type L(LSEXP);
     Rcpp::traits::input_parameter< const int& >::type iter(iterSEXP);
-    Rcpp::traits::input_parameter< const int& >::type subiter(subiterSEXP);
     Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
     Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
     Rcpp::traits::input_parameter< const double& >::type N1(N1SEXP);
@@ -200,13 +151,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type lr_param(lr_paramSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type lr_type(lr_typeSEXP);
     Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(doVB_pois_s_2D(y, rowi, coli, L, iter, subiter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress));
+    rcpp_result_gen = Rcpp::wrap(doVB_pois_s_2D(y, rowi, coli, L, iter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
 // doVB_pois_s_2D_t1
-List doVB_pois_s_2D_t1(const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const int& L, const int& iter, const int& subiter, const double& a, const double& b, const double& N1, const int& Nr, const int& Nc, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
-RcppExport SEXP _moltenNMF_doVB_pois_s_2D_t1(SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP subiterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP N1SEXP, SEXP NrSEXP, SEXP NcSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
+List doVB_pois_s_2D_t1(const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const int& L, const int& iter, const double& a, const double& b, const double& N1, const int& Nr, const int& Nc, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
+RcppExport SEXP _moltenNMF_doVB_pois_s_2D_t1(SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP N1SEXP, SEXP NrSEXP, SEXP NcSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -215,7 +166,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::uvec& >::type coli(coliSEXP);
     Rcpp::traits::input_parameter< const int& >::type L(LSEXP);
     Rcpp::traits::input_parameter< const int& >::type iter(iterSEXP);
-    Rcpp::traits::input_parameter< const int& >::type subiter(subiterSEXP);
     Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
     Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
     Rcpp::traits::input_parameter< const double& >::type N1(N1SEXP);
@@ -225,13 +175,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type lr_param(lr_paramSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type lr_type(lr_typeSEXP);
     Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(doVB_pois_s_2D_t1(y, rowi, coli, L, iter, subiter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress));
+    rcpp_result_gen = Rcpp::wrap(doVB_pois_s_2D_t1(y, rowi, coli, L, iter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
 // doVB_pois_s_2D_ww
-List doVB_pois_s_2D_ww(const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const int& L, const int& iter, const int& subiter, const arma::field<arma::vec>& weight, const double& a, const double& b, const double& N1, const int& Nr, const int& Nc, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
-RcppExport SEXP _moltenNMF_doVB_pois_s_2D_ww(SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP subiterSEXP, SEXP weightSEXP, SEXP aSEXP, SEXP bSEXP, SEXP N1SEXP, SEXP NrSEXP, SEXP NcSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
+List doVB_pois_s_2D_ww(const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const int& L, const int& iter, const arma::field<arma::vec>& weight, const double& a, const double& b, const double& N1, const int& Nr, const int& Nc, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
+RcppExport SEXP _moltenNMF_doVB_pois_s_2D_ww(SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP weightSEXP, SEXP aSEXP, SEXP bSEXP, SEXP N1SEXP, SEXP NrSEXP, SEXP NcSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -240,7 +190,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::uvec& >::type coli(coliSEXP);
     Rcpp::traits::input_parameter< const int& >::type L(LSEXP);
     Rcpp::traits::input_parameter< const int& >::type iter(iterSEXP);
-    Rcpp::traits::input_parameter< const int& >::type subiter(subiterSEXP);
     Rcpp::traits::input_parameter< const arma::field<arma::vec>& >::type weight(weightSEXP);
     Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
     Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
@@ -251,7 +200,30 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type lr_param(lr_paramSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type lr_type(lr_typeSEXP);
     Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(doVB_pois_s_2D_ww(y, rowi, coli, L, iter, subiter, weight, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress));
+    rcpp_result_gen = Rcpp::wrap(doVB_pois_s_2D_ww(y, rowi, coli, L, iter, weight, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress));
+    return rcpp_result_gen;
+END_RCPP
+}
+// doVB_pois_s_2D_bin
+List doVB_pois_s_2D_bin(const std::string& filepath_x, const std::string& filepath_y, const int& L, const int& iter, const double& a, const double& b, const double& N1, const int& Nr, const int& Nc, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
+RcppExport SEXP _moltenNMF_doVB_pois_s_2D_bin(SEXP filepath_xSEXP, SEXP filepath_ySEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP N1SEXP, SEXP NrSEXP, SEXP NcSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type filepath_x(filepath_xSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type filepath_y(filepath_ySEXP);
+    Rcpp::traits::input_parameter< const int& >::type L(LSEXP);
+    Rcpp::traits::input_parameter< const int& >::type iter(iterSEXP);
+    Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< const double& >::type N1(N1SEXP);
+    Rcpp::traits::input_parameter< const int& >::type Nr(NrSEXP);
+    Rcpp::traits::input_parameter< const int& >::type Nc(NcSEXP);
+    Rcpp::traits::input_parameter< const int& >::type bsize(bsizeSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type lr_param(lr_paramSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type lr_type(lr_typeSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(doVB_pois_s_2D_bin(filepath_x, filepath_y, L, iter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -298,6 +270,32 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat& >::type V(VSEXP);
     Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
     rcpp_result_gen = Rcpp::wrap(doVB_pois_offset(y, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress));
+    return rcpp_result_gen;
+END_RCPP
+}
+// doSVB_pois_sp
+List doSVB_pois_sp(const int& N, const arma::vec& yv, const arma::uvec& yi, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const int& iter, const double& a, const double& b, arma::mat& V, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
+RcppExport SEXP _moltenNMF_doSVB_pois_sp(SEXP NSEXP, SEXP yvSEXP, SEXP yiSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP VSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int& >::type N(NSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type yv(yvSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type yi(yiSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type xi(xiSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type xp(xpSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type varind(varindSEXP);
+    Rcpp::traits::input_parameter< const int& >::type D(DSEXP);
+    Rcpp::traits::input_parameter< const int& >::type L(LSEXP);
+    Rcpp::traits::input_parameter< const int& >::type iter(iterSEXP);
+    Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
+    Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
+    Rcpp::traits::input_parameter< arma::mat& >::type V(VSEXP);
+    Rcpp::traits::input_parameter< const int& >::type bsize(bsizeSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type lr_param(lr_paramSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type lr_type(lr_typeSEXP);
+    Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(doSVB_pois_sp(N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -452,22 +450,60 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// rowmeanvar_mtx
+List rowmeanvar_mtx(const int& n_row, const int& n_col, const std::string& readtxt, const int& n_header);
+RcppExport SEXP _moltenNMF_rowmeanvar_mtx(SEXP n_rowSEXP, SEXP n_colSEXP, SEXP readtxtSEXP, SEXP n_headerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const int& >::type n_row(n_rowSEXP);
+    Rcpp::traits::input_parameter< const int& >::type n_col(n_colSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type readtxt(readtxtSEXP);
+    Rcpp::traits::input_parameter< const int& >::type n_header(n_headerSEXP);
+    rcpp_result_gen = Rcpp::wrap(rowmeanvar_mtx(n_row, n_col, readtxt, n_header));
+    return rcpp_result_gen;
+END_RCPP
+}
+// rowfilter_mtx
+void rowfilter_mtx(const std::string& readtxt, const std::string& writetxt, const arma::vec& rowind);
+RcppExport SEXP _moltenNMF_rowfilter_mtx(SEXP readtxtSEXP, SEXP writetxtSEXP, SEXP rowindSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type readtxt(readtxtSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type writetxt(writetxtSEXP);
+    Rcpp::traits::input_parameter< const arma::vec& >::type rowind(rowindSEXP);
+    rowfilter_mtx(readtxt, writetxt, rowind);
+    return R_NilValue;
+END_RCPP
+}
+// read_mtx
+List read_mtx(const std::string& readtxt, const arma::uvec& bag, const int& x_dim);
+RcppExport SEXP _moltenNMF_read_mtx(SEXP readtxtSEXP, SEXP bagSEXP, SEXP x_dimSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type readtxt(readtxtSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type bag(bagSEXP);
+    Rcpp::traits::input_parameter< const int& >::type x_dim(x_dimSEXP);
+    rcpp_result_gen = Rcpp::wrap(read_mtx(readtxt, bag, x_dim));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_read_bin", (DL_FUNC) &_moltenNMF_read_bin, 4},
-    {"_moltenNMF_writeBinaryVec", (DL_FUNC) &_moltenNMF_writeBinaryVec, 2},
-    {"_moltenNMF_writeBinaryFile_umat", (DL_FUNC) &_moltenNMF_writeBinaryFile_umat, 2},
     {"_moltenNMF_doVB_negbin", (DL_FUNC) &_moltenNMF_doVB_negbin, 11},
     {"_moltenNMF_doVB_pois", (DL_FUNC) &_moltenNMF_doVB_pois, 11},
     {"_moltenNMF_doVB_pois_sp", (DL_FUNC) &_moltenNMF_doVB_pois_sp, 13},
-    {"_moltenNMF_doSVB_pois_sp", (DL_FUNC) &_moltenNMF_doSVB_pois_sp, 16},
     {"_moltenNMF_doVB_pois_2D", (DL_FUNC) &_moltenNMF_doVB_pois_2D, 10},
     {"_moltenNMF_doVB_pois_2D_ww", (DL_FUNC) &_moltenNMF_doVB_pois_2D_ww, 11},
-    {"_moltenNMF_doVB_pois_s_2D", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D, 15},
-    {"_moltenNMF_doVB_pois_s_2D_t1", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D_t1, 15},
-    {"_moltenNMF_doVB_pois_s_2D_ww", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D_ww, 16},
+    {"_moltenNMF_doVB_pois_s_2D", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D, 14},
+    {"_moltenNMF_doVB_pois_s_2D_t1", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D_t1, 14},
+    {"_moltenNMF_doVB_pois_s_2D_ww", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D_ww, 15},
+    {"_moltenNMF_doVB_pois_s_2D_bin", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D_bin, 13},
     {"_moltenNMF_doVB_pois_offset_sp", (DL_FUNC) &_moltenNMF_doVB_pois_offset_sp, 14},
     {"_moltenNMF_doVB_pois_offset", (DL_FUNC) &_moltenNMF_doVB_pois_offset, 12},
+    {"_moltenNMF_doSVB_pois_sp", (DL_FUNC) &_moltenNMF_doSVB_pois_sp, 16},
     {"_moltenNMF_check_lr", (DL_FUNC) &_moltenNMF_check_lr, 3},
     {"_moltenNMF_myprod", (DL_FUNC) &_moltenNMF_myprod, 4},
     {"_moltenNMF_myprodvec", (DL_FUNC) &_moltenNMF_myprodvec, 4},
@@ -478,6 +514,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_Poisson_lp", (DL_FUNC) &_moltenNMF_Poisson_lp, 6},
     {"_moltenNMF_PoissonGamma_rng", (DL_FUNC) &_moltenNMF_PoissonGamma_rng, 6},
     {"_moltenNMF_NegbinGamma_rng", (DL_FUNC) &_moltenNMF_NegbinGamma_rng, 7},
+    {"_moltenNMF_rowmeanvar_mtx", (DL_FUNC) &_moltenNMF_rowmeanvar_mtx, 4},
+    {"_moltenNMF_rowfilter_mtx", (DL_FUNC) &_moltenNMF_rowfilter_mtx, 3},
+    {"_moltenNMF_read_mtx", (DL_FUNC) &_moltenNMF_read_mtx, 3},
     {NULL, NULL, 0}
 };
 

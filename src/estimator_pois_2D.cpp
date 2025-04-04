@@ -2,11 +2,11 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
 #include "logexpfuns.h"
-#include "ELBO.h"
 #include "rand.h"
 #include "up_shape_2D.h"
 #include "lr.h"
-#include "up_param_array.h"
+#include "up_vpar_2D.h"
+#include "binaryIO.h"
 #include <progress.hpp>
 #include <progress_bar.hpp>
 // [[Rcpp::depends(RcppProgress)]]
@@ -51,8 +51,8 @@ double up_B_2D(const arma::field<arma::mat> & alpha,
 }
 
 void up_B_2D(arma::mat & beta,
-               arma::field<arma::mat> & V,
-               const double & b){
+            const arma::field<arma::mat> & V,
+            const double & b){
   //double lp = 0;
   //row k = 0; column k = 1
   for(int k=0; k<beta.n_rows ;k++){
@@ -221,7 +221,6 @@ List doVB_pois_s_2D(const arma::vec & y,
                     const arma::uvec & coli,
                     const int & L,
                     const int & iter,
-                    const int & subiter,
                     const double & a,
                     const double & b,
                     const double & N1,
@@ -246,7 +245,7 @@ List doVB_pois_s_2D(const arma::vec & y,
   arma::vec lp = arma::zeros<arma::vec>(iter);
   std::unique_ptr<lr> g;
   set_lr_method(g, lr_type);
-  const double NS = N1 / ((double) bsize);
+  const double NS = N1 / ( (double) bsize );
   double invS = 1.0 / ( (double) bsize ); 
   Progress pb(iter, display_progress);
   for(int epoc=0; epoc<iter; epoc++){
@@ -267,7 +266,7 @@ List doVB_pois_s_2D(const arma::vec & y,
       arma::mat beta_s = beta;
       lp(epoc) += up_As_2D(alpha_s, logV, Sy, SX, a, L, uid, NS);
       up_B_2D(beta_s, V, b);
-      up_vpar(rho, rho2, uid, alpha, alpha_s, beta, beta_s, V, logV);
+      up_vpar(alpha, beta, V, logV, alpha_s, beta_s,uid, rho, rho2);
     }
     lp(epoc) /= (double) bags.n_cols;
     lp(epoc) += kld2(alpha, beta, a, b);
@@ -286,7 +285,6 @@ List doVB_pois_s_2D_t1(const arma::vec & y,
                     const arma::uvec & coli,
                     const int & L,
                     const int & iter,
-                    const int & subiter,
                     const double & a,
                     const double & b,
                     const double & N1,
@@ -330,8 +328,9 @@ List doVB_pois_s_2D_t1(const arma::vec & y,
       arma::field<arma::mat> alpha_s = alpha;
       arma::mat beta_s = beta;
       lp(epoc) += up_As_2D(alpha_s, logV, Sy, SX, a, L, uid, NS);
-      up_B_2D(beta_s,V,b);
-      up_vpar(rho, rho2, uid, alpha, alpha_s, beta, beta_s, V, logV);
+      up_B_2D(beta_s, V, b);
+      lp(epoc) += kld2(alpha, beta, a, b);
+      up_vpar(alpha, beta, V, logV, alpha_s, beta_s, uid, rho, rho2);
     pb.increment();
   }
   lp -= sum(lgamma(y));
@@ -349,7 +348,6 @@ List doVB_pois_s_2D_ww(const arma::vec & y,
                     const arma::uvec & coli,
                     const int & L,
                     const int & iter,
-                    const int & subiter,
                     const arma::field<arma::vec> & weight,
                     const double & a,
                     const double & b,
@@ -370,8 +368,8 @@ List doVB_pois_s_2D_ww(const arma::vec & y,
   alpha(0) = arma::ones<arma::mat>(Nr, L);
   alpha(1) = arma::ones<arma::mat>(Nc, L);
   arma::mat beta(2,L);
-  beta.row(0) = sum(V(1), 0);
-  beta.row(1) = sum(V(0), 0);
+  beta.row(0) = sum(V(1), 0) + b;
+  beta.row(1) = sum(V(0), 0) + b;
   arma::vec lp = arma::zeros<arma::vec>(iter);
   std::unique_ptr<lr> g;
   set_lr_method(g, lr_type);
@@ -398,7 +396,7 @@ List doVB_pois_s_2D_ww(const arma::vec & y,
       arma::mat beta_s = beta;
       lp(epoc) += up_As_2D(alpha_s, logV, Sy, SX, a, L, uid, NS);
       up_B_2D(beta_s, V, weight, b);
-      up_vpar(rho, rho2, uid, alpha, alpha_s, beta, beta_s, V, logV);
+      up_vpar(alpha, beta, V, logV, alpha_s, beta_s, uid, rho, rho2);
     }
     pb.increment();
   }
@@ -408,55 +406,66 @@ List doVB_pois_s_2D_ww(const arma::vec & y,
                       Named("ELBO")=lp);
 }
 
-/*
- arma::rowvec sumV_uid(const arma::field<arma::mat> V, 
- const arma::field<arma::uvec> uid,
- const int k){
- int not_k = 1;
- if(k==1){
- not_k = 0;
- }
- arma::rowvec SumV = sum(V(not_k).rows(uid(not_k)), 0);
- return SumV;
- }
- 
- arma::rowvec sumV_uid(const arma::field<arma::mat> V, 
- const arma::field<arma::uvec> uid,
- const int k,
- const arma::field<arma::vec> weight){
- int not_k = 1;
- if(k==1){
- not_k = 0;
- }
- arma::mat Vk = V(not_k).rows(uid(not_k));
- Vk.each_col() %= weight(k).rows(uid(not_k));
- arma::rowvec SumV = sum(Vk, 0);
- return SumV;
- }
- 
- void minus_sumV(arma::mat & beta, 
- const arma::field<arma::mat> V, 
- const arma::field<arma::uvec> uid,
- const int k,
- const double b,
- const arma::field<arma::vec> weight){
- beta.row(k) -= sumV_uid(V, uid, k, weight);
- }
- 
- 
- void minus_sumV(arma::mat & beta, 
- const arma::field<arma::mat> V, 
- const arma::field<arma::uvec> uid,
- const int k,
- const double b){
- beta.row(k) -= sumV_uid(V, uid, k);
- }
- 
- void plus_sumV(arma::mat & beta, 
- const arma::field<arma::mat> V, 
- const arma::field<arma::uvec> uid,
- const int k,
- const double b){
- beta.row(k) += sumV_uid(V, uid, k);
- }
-*/
+////////
+///without weight, SVB from .bin file
+////////
+// [[Rcpp::export]]
+List doVB_pois_s_2D_bin(const std::string & filepath_x,
+                        const std::string & filepath_y,
+                        const int & L,
+                        const int & iter,
+                        const double & a,
+                        const double & b,
+                        const double & N1,
+                        const int & Nr,
+                        const int & Nc,
+                        const int & bsize,
+                        const arma::vec & lr_param,
+                        const std::string & lr_type,
+                        const bool & display_progress){
+  arma::field<arma::mat> V(2);
+  arma::field<arma::mat> logV(2);
+  arma::field<arma::mat> alpha(2);
+  V(0) = arma::randg<arma::mat>(Nr, L);
+  V(1) = arma::randg<arma::mat>(Nc, L);
+  logV(0) = log(V(0));
+  logV(1) = log(V(1));
+  alpha(0) = arma::ones<arma::mat>(Nr, L);
+  alpha(1) = arma::ones<arma::mat>(Nc, L);
+  arma::mat beta(2, L);
+  beta.row(0) = sum(V(1), 0) + b;
+  beta.row(1) = sum(V(0), 0) + b;
+  // beta.print();
+  arma::vec lp = arma::zeros<arma::vec>(iter);
+  std::unique_ptr<lr> g;
+  set_lr_method(g, lr_type);
+  Progress pb(iter, display_progress);
+  const double NS = N1 / ( (double) bsize ) ;
+  for(int epoc = 0; epoc < iter; epoc++){
+    arma::umat bags = randpick_c(N1, bsize);
+    double rho = g -> lr_t(epoc, lr_param);
+    double rho2 = 1.0 - rho;
+    for(int step = 0; step < bags.n_cols; step++){
+      arma::uvec bag = sort(bags.col(step));
+      arma::umat SX(bsize, 2);
+      arma::vec Sy(bsize);
+      readRowsFromBinary_umat(SX, filepath_x, bag);
+      readRowsFromBinary(Sy, filepath_y, bag);
+      arma::field<arma::uvec> uid(2);
+      uid(0) = unique(SX.col(0));
+      uid(1) = unique(SX.col(1));
+      arma::field<arma::mat> alpha_s = alpha;
+      arma::mat beta_s = beta;
+      lp(epoc) += up_As_2D(alpha_s, logV, Sy, SX, a, L, uid, NS);
+      up_B_2D(beta_s, V, b);
+      up_vpar(alpha, beta, V, logV, alpha_s, beta_s, uid, rho, rho2);
+    }
+    lp(epoc) /= (double) bags.n_cols;
+    lp(epoc) += kld2(alpha, beta, a, b);
+    pb.increment();
+    // beta.print();
+  }
+  return List::create(Named("shape")=alpha,
+                      Named("rate")=beta,
+                      Named("logprob")=lp);
+}

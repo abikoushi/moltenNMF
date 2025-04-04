@@ -31,13 +31,13 @@ void up_vpar(const double rho,
              arma::mat & beta,
              const arma::mat & beta_s);
 
-void up_vpar(const double rho,
-             const double & rho2,
-             const arma::field<arma::uvec> & uid,
-             arma::field<arma::mat> & alpha,
-             const arma::field<arma::mat> & alpha_s,
+void up_vpar(arma::field<arma::mat> & alpha,
              arma::mat & beta,
-             const arma::mat & beta_s,
              arma::field<arma::mat> & V,
-             arma::field<arma::mat> & logV);
+             arma::field<arma::mat> & logV,
+             const arma::field<arma::mat> & alpha_s,
+             const arma::mat & beta_s,
+             const arma::field<arma::uvec> & uid,
+             const double rho,
+             const double & rho2);
 

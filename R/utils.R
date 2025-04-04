@@ -23,3 +23,19 @@ simmilar_top_n <- function(V, ref,
 learning_rate <- function(x, lr_param, lr_type){
   sapply(x, check_lr, lr_param = lr_param, lr_type = lr_type)  
 }
+
+size_mtx <- function(file_path){
+  con <- file(file_path, open = "r") #Open for reading in text mode
+  size <- scan(con, what=integer(), comment.char = "%", nlines = 1, skip = 1, quiet = TRUE)
+  close(con)
+  size
+}
+
+writebin_spmat <- function(object, filepath_x, filepath_y,
+                           index_decrement=0L){
+  if(all(class(object) != "dgTMatrix")){
+    object = as(object, "TsparseMatrix")    
+  }
+  writeBin(object@x, filepath_y)
+  writeBin(c(rbind(object@i-index_decrement, object@j-index_decrement)), filepath_x)
+}
