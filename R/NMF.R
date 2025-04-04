@@ -13,8 +13,8 @@ NMF2D_vb <- function(Y, rank,
     dims <- dim(Y)
   }
   if(is.null(Vini)){
-  Vini <- list(matrix(rgamma(dims[1]*rank, 1, 10), dims[1], rank),
-               matrix(rgamma(dims[2]*rank, 1, 10), dims[2], rank))
+  Vini <- list(matrix(rgamma(dims[1]*rank, 1, 1), dims[1], rank),
+               matrix(rgamma(dims[2]*rank, 1, 1), dims[2], rank))
   }
   if(!is.null(weight)){
     out = doVB_pois_2D_ww(Vini,
@@ -71,8 +71,8 @@ NMF2D_svb <- function(Y, rank,
     dims <- dim(Y)
   }
   if(is.null(Vini)){
-    Vini <- list(matrix(rgamma(dims[1]*rank, 1, 10), dims[1], rank),
-                 t(apply(Y, 2, sample, size=rank)+0.1))
+    Vini <- list(matrix(rgamma(dims[1]*rank, 1, 1), dims[1], rank),
+                 matrix(rgamma(dims[2]*rank, 1, 1), dims[2], rank))
   }
   n_baches <- min(n_baches, length(Y@x))
   if(is.null(weight)){
@@ -123,8 +123,8 @@ NMF2D_svb_t1 <- function(Y, rank,
     dims <- dim(Y)
   }
   if(is.null(Vini)){
-    Vini <- list(matrix(rgamma(dims[1]*rank, 1, 10), dims[1], rank),
-                 t(apply(Y, 2, sample, size=rank)+0.1))
+    Vini <- list(matrix(rgamma(dims[1]*rank, 1, 1), dims[1], rank),
+                 matrix(rgamma(dims[2]*rank, 1, 1), dims[2], rank))
   }
   n_baches <- min(n_baches, length(Y@x))
   out = doVB_pois_s_2D_t1(y = Y@x, rowi = Y@i,  coli = Y@j,
