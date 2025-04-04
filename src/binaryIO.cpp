@@ -20,7 +20,7 @@ void readRowsFromBinary(arma::mat & Y,
     Rcpp::stop("Failed to open file for reading.");
   }
   int nrows = rows.n_elem;
-  for (arma::uword i = 0; i < nrows; ++i) {
+  for (int i = 0; i < nrows; ++i) {
     //Rprintf("%d ", i);
     size_t offset = rows(i) * Y.n_cols * sizeof(double);
     in.seekg(offset, std::ios::beg);
@@ -45,7 +45,7 @@ void readRowsFromBinary_umat(arma::umat & X,
     Rcpp::stop("Failed to open file for reading.");
   }
   int nrows = rows.n_elem;
-  for (arma::uword i = 0; i < nrows; ++i) {
+  for (int i = 0; i < nrows; ++i) {
     size_t offset = rows(i) * X.n_cols * sizeof(unsigned int);
     in.seekg(offset, std::ios::beg);
     if (!in) {
@@ -56,7 +56,7 @@ void readRowsFromBinary_umat(arma::umat & X,
     if (!in) {
       Rcpp::stop("Error reading from the file.");
     }
-    for (arma::uword j = 0; j < X.n_cols; ++j) {
+    for (int j = 0; j < (int) X.n_cols; ++j) {
       X(i, j) = buffer[j];
     }
   }

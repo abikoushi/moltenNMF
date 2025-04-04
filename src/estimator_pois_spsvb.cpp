@@ -124,7 +124,7 @@ List doSVB_pois_sp(const int & N,
     arma::umat bags = randpick_c(N, bsize);
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
-    for(int step = 0; step < bags.n_cols; step++){
+    for(int step = 0; step < (int) bags.n_cols; step++){
       arma::uvec S_yi;
       arma::vec S_yv;
       arma::uvec S_xp;

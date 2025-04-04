@@ -7,8 +7,8 @@ void subset_spx(arma::uvec & xi2, arma::uvec & xp2,
   xp2 = xp;
   std::vector<arma::uword> result;
   int count_p = 0;
-  for(int i = 0; i < xp.n_rows-1; i++){
-    for(int j = xp(i); j < xp(i+1); j++){
+  for(int i = 0; i < ((int) xp.n_rows) -1; i++){
+    for(int j = xp(i); j < (int) xp(i+1); j++){
       if(any(xi(j) == uid)){
         count_p += 1;
         arma::uvec newxi = find(xi(j) == uid);
@@ -24,8 +24,8 @@ arma::uvec subset_xp(const arma::uvec & xi, const arma::uvec & xp,
                      const arma::uvec & uid) {
   arma::uvec xp2 = xp;
   int count_p = 0;
-  for(int i = 0; i < xp.n_rows-1; i++){
-    for(int j = xp(i); j < xp(i+1); j++){
+  for(int i = 0; i < ((int) xp.n_rows) - 1; i++){
+    for(int j = xp(i); j < (int) xp(i+1); j++){
       if(any(xi(j) == uid)){
         count_p += 1;
       }
@@ -42,7 +42,7 @@ void filter_y(arma::vec & yv2, arma::uvec & yi2,
   std::vector<double> result_v;
   std::vector<int> result_i;
   int count_i = 0; 
-  for(int i = 0; i < ind.n_rows; i++){
+  for(int i = 0; i < (int) ind.n_rows; i++){
     if(any(yi==ind(i))){
       arma::uvec ti = find(yi==ind(i));
       result_v.push_back(yv(ti(0)));

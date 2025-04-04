@@ -1,10 +1,69 @@
 #include "RcppArmadillo.h"
 // [[Rcpp::depends(RcppArmadillo)]]
+#include "logexpfuns.h"
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <vector>
 using namespace Rcpp;
+
+double poisloss(const double & obs , const double & fit){
+  return -(xlogy(obs, fit) - fit - lgamma(obs+1));
+}
+
+double mseloss(const double & obs , const double & fit){
+  return pow(obs - fit, 2);
+}
+
+////
+//post-
+////
+// [[Rcpp::export]]
+List obsfitloss_mtx(const std::string & readtxt, arma::mat fit, const int & n_header){
+  double MSE = 0;
+  double pois = 0;
+  int x;
+  int y;
+  double v;
+  std::ifstream file(readtxt);
+  std::string str;    
+  int index = 0;
+  int n = 0;
+  for(int i=0; i<n_header; i++){
+    //skip header
+    std::getline(file, str);
+    index++;
+  }
+  while(std::getline(file, str)){
+    //index++;
+    std::stringstream ss(str);
+    std::vector<std::string> svec;
+    while( ss.good() ){
+      std::string substr;
+      getline(ss, substr, ' ');
+      svec.push_back(substr);
+    }
+    // Rprintf("%d ", index);
+    x = stoi(svec[0]);
+    y = stoi(svec[1]);
+    v = stod(svec[2]);
+    x--;
+    y--;
+    pois += poisloss(v, fit(x,y));
+    MSE += mseloss(v, fit(x,y));
+    fit(x,y) = 0.;
+  }
+  MSE += accu(pow(fit,2));
+  MSE /= (double) fit.n_elem;
+  pois += accu(fit);
+  pois /= (double) fit.n_elem;
+  return List::create(Named("Poisson")=pois,
+                      Named("MSE")=MSE);
+}
+
+////
+//pre-
+////
 
 // [[Rcpp::export]]
 List rowmeanvar_mtx(const int & n_row, const int & n_col,
@@ -14,18 +73,17 @@ List rowmeanvar_mtx(const int & n_row, const int & n_col,
   int y;
   double v;
   std::ifstream file(readtxt);
-  std::string str;    
+  std::string str;
   int index = 0;
   int n = 0;
   arma::vec vout = arma::zeros<arma::vec>(n_row);
   arma::vec v2out = arma::zeros<arma::vec>(n_row);
   for(int i=0; i<n_header; i++){
+    //skip header
     std::getline(file, str);
     index++;
   }
-  //Rprintf("%d\n", index);
   while(std::getline(file, str)){
-    //if(index > 2){
     std::stringstream ss(str);
     std::vector<std::string> svec;
     while( ss.good() ){
@@ -38,12 +96,11 @@ List rowmeanvar_mtx(const int & n_row, const int & n_col,
     v = stod(svec[2]);
     vout(x-1) += v;
     v2out(x-1) += pow(v,2);
-    //}
-    index++;
+    //index++;
   }
-  vout /= n_col;
-  v2out /= n_col-1;
-  v2out -= pow(vout,2);
+  vout /= (double) n_col;
+  v2out /= ((double) n_col) - 1;
+  v2out -= pow(vout, 2);
   return List::create(Named("mean")=vout,
                       Named("var")=v2out);
 }

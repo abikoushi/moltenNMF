@@ -3,20 +3,16 @@
 #include "logexpfuns.h"
 // [[Rcpp::depends(RcppArmadillo)]]
 
-
-
-
-
 //update V & logV
 void up_latentV(arma::field<arma::mat> & V,
                 arma::field<arma::mat> & logV,
                 const arma::field<arma::mat> & alpha,
                 const arma::mat & beta){
-  for(int k=0; k<beta.n_rows; k++){
+  for(int k = 0; k < (int) beta.n_rows; k++){
     arma::mat Vk = V(k);
     arma::mat logv = logV(k);
     arma::mat alpha_k = alpha(k);
-    for(int l=0; l < beta.n_cols; l++){
+    for(int l = 0; l < (int) beta.n_cols; l++){
       arma::vec alpha_k_l = alpha_k.col(l);
       Vk.col(l) = alpha_k_l/beta(k,l);
       up_log_gamma(logv, alpha_k_l, log(beta(k,l)), l);
@@ -34,7 +30,7 @@ void up_latentV(arma::field<arma::mat> & V,
   arma::mat Vk = V(k);
   arma::mat logv = logV(k);
   arma::mat alpha_k = alpha(k);
-  for(int l=0; l < beta.n_cols; l++){
+  for(int l = 0; l < (int) beta.n_cols; l++){
     arma::vec alpha_k_l = alpha_k.col(l);
     Vk.col(l) = alpha_k_l/beta(k,l);
     up_log_gamma(logv, alpha_k_l, log(beta(k,l)), l);
@@ -53,7 +49,7 @@ void up_latentV_uid(arma::field<arma::mat> & V,
   arma::mat logv = logV(k);
   arma::mat alpha_k = alpha(k);
   arma::uvec uid_k = uid(k);
-  for(int l=0; l < beta.n_cols; l++){
+  for(int l = 0; l < (int) beta.n_cols; l++){
     arma::vec alpha_k_l = alpha_k.col(l);
     arma::vec vl = Vk.col(l);
     vl.rows(uid_k) = alpha_k_l.rows(uid_k)/beta(k,l);

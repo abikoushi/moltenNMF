@@ -16,7 +16,7 @@ double up_A_2D(arma::field<arma::mat> & alpha,
   alpha(k) = alpha_k;
   //inclement sufficient statistics
     arma::mat r = arma::zeros<arma::mat>(y.n_rows, L);
-    for(int j = 0; j < X.n_cols; j++){
+    for(int j = 0; j < (int) X.n_cols; j++){
       arma::mat logVj = logV(j);
       r += logVj.rows(X.col(j));
     }
@@ -46,7 +46,7 @@ double up_A_2D(arma::field<arma::mat> & alpha,
   arma::vec R = sum(r, 1);
   r.each_col() /= R;
   r.each_col() %= y;
-  for(int k = 0;k<K;k++){
+  for(int k = 0; k < K; k++){
     //initialize by hyper parameter
     arma::mat alpha_k(dims(k),L);
     alpha_k.fill(a);
@@ -77,7 +77,7 @@ double up_As_2D(arma::field<arma::mat> & alpha,
   alpha(k) = alpha_k;
   //inclement sufficient statistics
   arma::mat r = arma::zeros<arma::mat>(y.n_rows, L);
-  for(int j = 0; j < X.n_cols; j++){
+  for(int j = 0; j < (int) X.n_cols; j++){
     arma::mat logVj = logV(j);
     r += logVj.rows(X.col(j));
   }
@@ -108,7 +108,7 @@ double up_As_2D(arma::field<arma::mat> & alpha,
     arma::vec R = sum(r, 1);
     r.each_col() /= R;
     r.each_col() %= y;
-  for(int k=0; k<K; k++){
+  for(int k = 0; k < K; k++){
       arma::uvec uid_k = uid(k);
       arma::mat alpha_k = alpha(k);
       //initialize by hyper parameter

@@ -17,7 +17,7 @@ void up_B(const int & N,
           const double & b){
   int K = varind.n_rows - 1;
   int L = V.n_cols;
-  for(int l=0;l<L;l++){
+  for(int l = 0; l < L; l++){
     arma::vec vl = myprodvec(N, xi, xp, V.col(l));
     for(int k=0; k<K; k++){
       vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));

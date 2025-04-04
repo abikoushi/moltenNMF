@@ -1,3 +1,4 @@
+double xlogy(const double & x, const double & y);
 
 double logsumexp(const arma::rowvec & x);
 

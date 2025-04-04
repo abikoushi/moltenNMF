@@ -1,6 +1,14 @@
 #include <RcppArmadillo.h>
 #include "logexpfuns.h"
 
+double xlogy(const double & x, const double & y){
+  double res = 0.0;
+  if(y > 0.0){
+    res = x * log(y);
+  }
+  return res;
+}
+
 double logsumexp(const arma::rowvec & x){
   double maxx = max(x);
   return maxx + std::log(sum(exp(x-maxx)));
@@ -63,8 +71,8 @@ double kld(const arma::mat & alpha,
            const double & a,
            const double & b){
   double lp = 0;
-  for(int i=0; i<alpha.n_rows; i++){
-    for(int l=0; l<alpha.n_cols; l++){
+  for(int i=0; i < (int) alpha.n_rows; i++){
+    for(int l=0; l < (int) alpha.n_cols; l++){
       lp += kl2gamma(a, b, alpha(i,l), beta(l));
     }
   }

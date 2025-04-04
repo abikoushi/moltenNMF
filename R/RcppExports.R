@@ -93,6 +93,10 @@ NegbinGamma_rng <- function(N, np, xi, xp, alpha, beta, tau) {
     .Call(`_moltenNMF_NegbinGamma_rng`, N, np, xi, xp, alpha, beta, tau)
 }
 
+obsfitloss_mtx <- function(readtxt, fit, n_header) {
+    .Call(`_moltenNMF_obsfitloss_mtx`, readtxt, fit, n_header)
+}
+
 rowmeanvar_mtx <- function(n_row, n_col, readtxt, n_header) {
     .Call(`_moltenNMF_rowmeanvar_mtx`, n_row, n_col, readtxt, n_header)
 }

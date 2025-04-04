@@ -246,14 +246,14 @@ List doVB_pois_s_2D(const arma::vec & y,
   std::unique_ptr<lr> g;
   set_lr_method(g, lr_type);
   const double NS = N1 / ( (double) bsize );
-  double invS = 1.0 / ( (double) bsize ); 
+  // double invS = 1.0 / ( (double) bsize ); 
   Progress pb(iter, display_progress);
   for(int epoc=0; epoc<iter; epoc++){
     arma::umat bags = randpick_c(N1, bsize);
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
     //rho *= invS;
-    for(int step = 0; step < bags.n_cols; step++){
+    for(int step = 0; step < (int) bags.n_cols; step++){
       arma::uvec bag = sort(bags.col(step));
       arma::vec Sy = y.rows(bag);
       arma::umat SX(bag.n_rows, 2);
@@ -374,7 +374,7 @@ List doVB_pois_s_2D_ww(const arma::vec & y,
   std::unique_ptr<lr> g;
   set_lr_method(g, lr_type);
   const double NS = N1 / ((double) bsize);
-  double invS = 1.0 / ( (double) bsize ); 
+  // double invS = 1.0 / ( (double) bsize ); 
   Progress pb(iter, display_progress);
   for(int epoc=0; epoc<iter; epoc++){
     arma::umat bags = randpick_c(N1, bsize);
@@ -383,7 +383,7 @@ List doVB_pois_s_2D_ww(const arma::vec & y,
     //rho *= invS;
     const double NS = N1 / ((double) bsize);
     double invS = 1.0 / ( (double) bsize ); 
-    for(int step = 0; step < bags.n_cols; step++){
+    for(int step = 0; step < (int) bags.n_cols; step++){
       arma::uvec bag = sort(bags.col(step));
       arma::vec Sy = y.rows(bag);
       arma::umat SX(bag.n_rows, 2);
@@ -445,7 +445,7 @@ List doVB_pois_s_2D_bin(const std::string & filepath_x,
     arma::umat bags = randpick_c(N1, bsize);
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
-    for(int step = 0; step < bags.n_cols; step++){
+    for(int step = 0; step < (int) bags.n_cols; step++){
       arma::uvec bag = sort(bags.col(step));
       arma::umat SX(bsize, 2);
       arma::vec Sy(bsize);

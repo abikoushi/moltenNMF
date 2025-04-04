@@ -450,6 +450,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// obsfitloss_mtx
+List obsfitloss_mtx(const std::string& readtxt, arma::mat fit, const int& n_header);
+RcppExport SEXP _moltenNMF_obsfitloss_mtx(SEXP readtxtSEXP, SEXP fitSEXP, SEXP n_headerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type readtxt(readtxtSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type fit(fitSEXP);
+    Rcpp::traits::input_parameter< const int& >::type n_header(n_headerSEXP);
+    rcpp_result_gen = Rcpp::wrap(obsfitloss_mtx(readtxt, fit, n_header));
+    return rcpp_result_gen;
+END_RCPP
+}
 // rowmeanvar_mtx
 List rowmeanvar_mtx(const int& n_row, const int& n_col, const std::string& readtxt, const int& n_header);
 RcppExport SEXP _moltenNMF_rowmeanvar_mtx(SEXP n_rowSEXP, SEXP n_colSEXP, SEXP readtxtSEXP, SEXP n_headerSEXP) {
@@ -514,6 +527,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_Poisson_lp", (DL_FUNC) &_moltenNMF_Poisson_lp, 6},
     {"_moltenNMF_PoissonGamma_rng", (DL_FUNC) &_moltenNMF_PoissonGamma_rng, 6},
     {"_moltenNMF_NegbinGamma_rng", (DL_FUNC) &_moltenNMF_NegbinGamma_rng, 7},
+    {"_moltenNMF_obsfitloss_mtx", (DL_FUNC) &_moltenNMF_obsfitloss_mtx, 3},
     {"_moltenNMF_rowmeanvar_mtx", (DL_FUNC) &_moltenNMF_rowmeanvar_mtx, 4},
     {"_moltenNMF_rowfilter_mtx", (DL_FUNC) &_moltenNMF_rowfilter_mtx, 3},
     {"_moltenNMF_read_mtx", (DL_FUNC) &_moltenNMF_read_mtx, 3},

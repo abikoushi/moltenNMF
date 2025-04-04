@@ -56,6 +56,13 @@ p2 = ggplot(data = NULL, aes(x=c(fit2), y=c(as.matrix(dat$Y))))+
   geom_bin2d(aes(fill = after_stat(log10(count))))+
   geom_abline(intercept = 0, slope = 1, linetype=2, colour="grey")
 print(p2)
+
+writeMM(obj = dat$Y, file = "testdat2d.mtx")
+
+moltenNMF:::obsfitloss_mtx("testdat2d.mtx", fit = fit1, n_header = 2)
+dim(fit2)
+# mean((dat$Y-fit1)^2)
+# -mean(dpois(as.matrix(dat$Y),fit1, log = TRUE))
 ####
 
 moltenNMF:::writebin_spmat(dat$Y,
