@@ -2,18 +2,20 @@ library(moltenNMF)
 library(Matrix)
 library(ggplot2)
 library(rbenchmark)
+
 path <- scan("datapath.txt", what = character())
+M = readRDS(path[1])
+writeMM(M, file = path[2])
+tpath <- path[2]
+s = moltenNMF:::size_mtx(tpath)
+system.time({
+  resmv = moltenNMF:::rowmeanvar_mtx(n_row = s[1], n_col = s[2], readtxt = tpath, n_header = 2)
+})
+# ユーザ   システム       経過  
+# 297.92       6.31     308.78 
+saveRDS(resmv, file = "meanvar_MOCA.rds")
 
-# tpath <- path[2]
-# s = size_mtx(tpath)
-# system.time({
-#   resmv = rowmeanvar_mtx(n_row = s[1], n_col = s[2], readtxt = tpath, n_header = 2)
-# })
-#    user   system  elapsed 
-#1315.509    7.882 1326.068 
-#saveRDS(resmv, file = "meanvar_MOCA.rds")
-
-#plot(resmv$mean, sqrt(resmv$var), col=rgb(0,0,0,0.1), cex=0.5, pch=16)
+plot(resmv$mean, sqrt(resmv$var), col=rgb(0,0,0,0.1), cex=0.5, pch=16)
 resmv <- readRDS("meanvar_MOCA.rds")
 
 wch = which(resmv$var>0)
@@ -29,8 +31,8 @@ wch = order(resmv$var ,decreasing = TRUE)[1:2000]
 cat(wch, file = "rowposMOCA.txt")
 
 system.time({
-  rowfilter_mtx(readtxt = tpath, writetxt = "MOCA_2000.mtx", rowind = wch)  
+  moltenNMF:::rowfilter_mtx(readtxt = tpath, writetxt = "MOCA_2000.mtx", rowind = wch)  
 })
-#    user   system  elapsed 
-#3687.166   21.206 3716.336 
+# ユーザ   システム       経過  
+# 1012.34      19.52    1043.49 
 

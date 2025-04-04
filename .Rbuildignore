@@ -11,3 +11,5 @@
 ^datapath.txt$
 ^.*\.bin$
 ^.*\.mtx$
+^.*\.txt$
+^.*\.rds$

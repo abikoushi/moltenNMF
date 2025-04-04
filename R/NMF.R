@@ -14,7 +14,7 @@ NMF2D_vb <- function(Y, rank,
   }
   if(is.null(Vini)){
   Vini <- list(matrix(rgamma(dims[1]*rank, 1, 10), dims[1], rank),
-                 t(apply(Y, 2, sample, size=rank)+0.1))
+               matrix(rgamma(dims[2]*rank, 1, 10), dims[2], rank))
   }
   if(!is.null(weight)){
     out = doVB_pois_2D_ww(Vini,
