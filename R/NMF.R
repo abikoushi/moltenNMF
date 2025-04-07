@@ -174,7 +174,7 @@ meanV_array <- function(out){
   return(V)
 }
 
-rearrange_cols <- function(Vm, axis=1, FUN = mean, normalize = TRUE, decreasing = TRUE){
+rearrange_cols <- function(Vm, axis = 1L, FUN = var, normalize = FALSE, decreasing = TRUE){
   if(normalize){
     for(i in 1:length(Vm)){
       Vm[[i]] <- sweep(Vm[[i]], 1, rowSums(Vm[[i]]), FUN = "/")      
