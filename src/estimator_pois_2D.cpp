@@ -55,7 +55,7 @@ void up_B_2D(arma::mat & beta,
             const double & b){
   //double lp = 0;
   //row k = 0; column k = 1
-  for(int k=0; k<beta.n_rows ;k++){
+  for(int k=0; k < (int) beta.n_rows; k++){
     arma::rowvec B0 = sumV(V, k);
     beta.row(k) = B0 + b;    
     //lp -= sum(B0);
@@ -66,7 +66,7 @@ void up_B_2D(arma::mat & beta,
              arma::field<arma::mat> & V,
              const arma::field<arma::vec> weight,
              const double & b){
-  for(int k=0; k<beta.n_rows ;k++){
+  for(int k=0; k < (int) beta.n_rows; k++){
     arma::rowvec B0 = sumV(V, k, weight);
     beta.row(k) = B0 + b;
   }
@@ -381,8 +381,6 @@ List doVB_pois_s_2D_ww(const arma::vec & y,
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
     //rho *= invS;
-    const double NS = N1 / ((double) bsize);
-    double invS = 1.0 / ( (double) bsize ); 
     for(int step = 0; step < (int) bags.n_cols; step++){
       arma::uvec bag = sort(bags.col(step));
       arma::vec Sy = y.rows(bag);

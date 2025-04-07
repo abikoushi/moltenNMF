@@ -16,7 +16,7 @@ void readmtx(arma::umat & X,
   int index = 0;
   int n = 0;
   while (std::getline(file, str)){
-      if(index == bag(n) + n_header){
+      if(index == ((int) bag(n)) + n_header){
         std::stringstream ss(str);
         std::vector<std::string> svec;
         while( ss.good() ){
@@ -25,7 +25,7 @@ void readmtx(arma::umat & X,
           svec.push_back(substr);
         }
         int dim = svec.size();
-        for(int k = 0; k<dim-1; k++){
+        for(int k = 0; k < dim-1; k++){
           int x;
           x = stoi(svec[k]);
           X(n,k) = x-1;
@@ -36,7 +36,7 @@ void readmtx(arma::umat & X,
         n++;
       }
       index++;
-      if(n>=bag.n_rows){
+      if(n >= (int) bag.n_rows){
         break;
       }
   }
@@ -53,7 +53,7 @@ List read_mtx(const std::string & readtxt,
 }
 
 void rankindex(arma::uvec & x, const arma::uvec & uid){
-  for(int i=0; i<uid.n_rows; i++){
+  for(int i=0; i < (int) uid.n_rows; i++){
     arma::uvec idx = find(uid(i) == x);
     x.rows(idx).fill(i);
   }

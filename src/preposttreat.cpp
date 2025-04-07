@@ -28,7 +28,7 @@ List obsfitloss_mtx(const std::string & readtxt, arma::mat fit, const int & n_he
   std::ifstream file(readtxt);
   std::string str;    
   int index = 0;
-  int n = 0;
+  // int n = 0;
   for(int i=0; i<n_header; i++){
     //skip header
     std::getline(file, str);
@@ -70,12 +70,12 @@ List rowmeanvar_mtx(const int & n_row, const int & n_col,
                     const std::string & readtxt,
                     const int & n_header) {
   int x;
-  int y;
+  // int y;
   double v;
   std::ifstream file(readtxt);
   std::string str;
   int index = 0;
-  int n = 0;
+  // int n = 0;
   arma::vec vout = arma::zeros<arma::vec>(n_row);
   arma::vec v2out = arma::zeros<arma::vec>(n_row);
   for(int i=0; i<n_header; i++){
@@ -92,7 +92,7 @@ List rowmeanvar_mtx(const int & n_row, const int & n_col,
       svec.push_back(substr);
     }
     x = stoi(svec[0]);
-    y = stoi(svec[1]);
+    // y = stoi(svec[1]);
     v = stod(svec[2]);
     vout(x-1) += v;
     v2out(x-1) += pow(v,2);

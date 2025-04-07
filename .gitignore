@@ -11,3 +11,4 @@ datapath.txt
 *.mtx
 *.txt
 *.rds
+*.Rdata

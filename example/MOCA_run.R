@@ -18,3 +18,5 @@ m_obj <- moltenNMF:::NMF2D_svb(Y, rank = rank,
 }, iterations = 1)
 
 save(bm2, m_obj, file = "resMOCA.Rdata")
+# bm2
+# 1.2d
