@@ -2,6 +2,8 @@ library(moltenNMF)
 library(Matrix)
 library(ggplot2)
 library(dplyr)
+
+
 path <- scan("datapath.txt", what = character())
 tpath <- path[2]
 Y = readMM(tpath)

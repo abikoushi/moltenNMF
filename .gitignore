@@ -12,3 +12,4 @@ datapath.txt
 *.txt
 *.rds
 *.Rdata
+*.png
