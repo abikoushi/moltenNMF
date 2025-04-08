@@ -12,8 +12,6 @@ cells = read_csv(path[3])
 cellname = colnames(readRDS(path[1]))
 head(cellname)
 
-
-
 head(cells$sample)
 #n_distinct(cells$development_stage)
 #moltenNMF:::matplot2(V = t(Vhat[[1]]), lwd = 0.005, colour = factor(cells$development_stage))

@@ -76,23 +76,13 @@ system.time2 <- function(expr){
 }
 #####
 
-# set_simpar <- function(nrow, ncol, L){
-#   x <- seq(-nrow/2, nrow/2, length.out=nrow)
-#   y <- seq(-ncol/2, ncol/2, length.out=ncol)
-#   B1 <- matrix(rnorm(4*L,0,1), 4, L)
-#   B2 <- matrix(rnorm(4*L,0,1), L, 4)
-#   V1 <- softplus(basefun(x)%*%B1)
-#   V2 <- softplus(B2%*%t(basefun(y)))
-#   list(mu=V1%*%V2, V1=V1,V2=V2, x=x, y=y)
-# }
-
 
 set_simpar <- function(nrow, ncol, L, logmu=0){
   V1 <- matrix(rlnorm(L*nrow, meanlog = 0, sdlog = seq(1, 0.1, length.out=L)), nrow = nrow, ncol = L, byrow = TRUE)
   V2 <- matrix(rlnorm(L*ncol, logmu, 1), nrow = L, ncol = ncol)
-  #ord = order(apply(V1, 2, var), decreasing=TRUE)
-  #V1 = V1[,ord]
-  #V2 = V2[ord,]
+  ord = order(apply(V1, 2, var), decreasing=TRUE)
+  V1 = V1[,ord]
+  V2 = V2[ord,]
   list(mu=V1%*%V2, V1=V1, V2=V2)
 }
 
@@ -119,38 +109,38 @@ repl <- 10
 df <- expand.grid(n_rows=n_rows,n_cols=n_cols, logmu=logmu, L_rank=L_rank)
 dim(df)
 
-i = 1
-L <- df$L_rank[i]
-nrow = df$n_rows[i]
-ncol = df$n_cols[i]
-
-set.seed(i)
-tpar <- set_simpar(nrow, ncol, L, logmu = 0)
+res_bm <- vector("list", nrow(df))
+res_cor <- vector("list", nrow(df))
+sparsity <- numeric(nrow(df))
+pb <- txtProgressBar(0, nrow(df), style = 3)
+for(i in 1:nrow(df)){
+  set.seed(i)
+  L <- df$L_rank[i]
+  nrow = df$n_rows[i]
+  ncol = df$n_cols[i]
+  maxit=1000
+tpar <- set_simpar(nrow, ncol, L, logmu = logmu[1])
 #hist(tpar$mu, breaks = "FD")
 #sp = with(tpar, mean(zeroprob_norm(mu, obs_sigma)))
 sp = with(tpar, mean(exp(-tpar$mu)))
-print(sp)
+sparsity[i] <- sp
 #Z = samplemat_norm(tpar, obs_sigma = 1)
 Z = samplemat_pois(tpar)
 Z = as(Z, "TsparseMatrix")
 
-maxit=1000
 rank = L
 t0 <- system.time2({
   decomp0 <- moltenNMF:::NMF2D_vb(Z, rank=rank, iter=maxit,
                                                display_progress = FALSE)
   })
-t0
 
 t1 <- system.time2({
   decomp1 <- NMF::nmf(as.matrix(Z), rank = rank, maxIter=maxit, eps=0)
 })
-t1
 
 t2 = system.time2({
   decomp2 <- nnmf(as.matrix(Z), k = rank, rel.tol = 0, max.iter = maxit, loss = "mkl", verbose=0, method = "lee")
 })
-t2
 
 t3 <- system.time2({
   rownames(Z) <- paste0("gene", 1:nrow(Z))
@@ -168,8 +158,6 @@ t3 <- system.time2({
 Vhat_t <- moltenNMF:::meanV_array(decomp0)
 Vhat_t <- moltenNMF:::rearrange_cols(Vhat_t, FUN = var, normalize = FALSE, decreasing = TRUE)
 
-moltenNMF:::matplot2(t(Vhat_t[[1]]))
-
 fit_0 <- Vhat_t[[1]]%*%t(Vhat_t[[2]])
 fit_1 <- NMF::basis(decomp1)%*%NMF::coef(decomp1)
 fit_2 <- decomp2$W%*%decomp2$H
@@ -184,9 +172,6 @@ Vhat_2 <- moltenNMF:::rearrange_cols(Vhat_2, FUN = var, normalize = FALSE, decre
 
 Vhat_3 <- list(extract_row_liger(liger_obj), t(getMatrix(liger_obj, slot = "H")[[1]]))
 Vhat_3 <- moltenNMF:::rearrange_cols(Vhat_3, FUN = var, normalize = FALSE, decreasing = TRUE)
-
-cbind(diagcor(Vhat_t[[1]], tpar$V1),diagcor(Vhat_1[[1]], tpar$V1), 
-      diagcor(Vhat_2[[1]], tpar$V1),diagcor(Vhat_3[[1]], tpar$V1))
 
 
 t0 = mutate(t0, poisloss = poisloss(as.matrix(Z), fit_0), 
@@ -210,24 +195,15 @@ t3 = mutate(t3, poisloss = poisloss(as.matrix(Z), fit_3),
             method="rliger")
 
 bm = rbind(t0,t1,t2,t3)
-bm
 
-#######
+rho <- cbind(diagcor(Vhat_t[[1]], tpar$V1),diagcor(Vhat_1[[1]], tpar$V1), 
+             diagcor(Vhat_2[[1]], tpar$V1),diagcor(Vhat_3[[1]], tpar$V1))
 
-
-
-results <- vector("list", nrow(df))
-pb <- txtProgressBar(0, nrow(df), style = 3)
-for(i in 1:nrow(df)){
-  set.seed(i)
-  A <- array(0, dim=c(3,3,repl))
-  for(j in 1:repl){
-    A[,,j] <- with(df, simNMF(n_rows[i], n_cols[i], dens[i], L_rank[i]))
-  }
-  results[[i]] <- A
+  res_bm[[i]] <- bm
+  res_cor[[i]] <- rho
   setTxtProgressBar(pb,i)
 }
 
-A <- simplify2array(results)
-#saveRDS(A, file = "vsNMF2.rds")
+
+save(res_bm, res_cor, sparsity, file = "vsNMF_batch.Rdata")
 
