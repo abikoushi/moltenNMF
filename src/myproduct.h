@@ -8,3 +8,9 @@ arma::vec myprodvec_sub(const int & n, const arma::uvec & xi, const arma::uvec &
 arma::mat myprod(const int & N, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam);
 
 arma::vec summyprod(const int & n, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam);
+
+// arma::mat mysum_t_ww(const int & N,
+//                      const arma::uvec & xi,
+//                      const arma::uvec & xp,
+//                      const arma::mat & lam,
+//                      const arma::vec & weight);

@@ -2,7 +2,8 @@
 product_m.formula <- function(formula, data = parent.frame(), V, aggregate = TRUE){
   X <- sparse_onehot(formula, data=data)
   if(aggregate){
-    res <- as.vector(rowSums(myprod(nrow(X), X@i, X@p, V)))
+    # res <- as.vector(rowSums(myprod(nrow(X), X@i, X@p, V)))
+    res <- summyprod(nrow(X), X@i, X@p, V)
   }else{
     res <- myprod(nrow(X), X@i, X@p, V)
   }
@@ -12,7 +13,8 @@ product_m.formula <- function(formula, data = parent.frame(), V, aggregate = TRU
 #' @export product_m.default
 product_m.default <- function(X, V, aggregate = TRUE){
   if(aggregate){
-    res <- as.vector(rowSums(myprod(nrow(X), X@i, X@p, V)))
+    # res <- as.vector(rowSums(myprod(nrow(X), X@i, X@p, V)))
+    res <- summyprod(nrow(X), X@i, X@p, V)
   }else{
     res <- myprod(nrow(X), X@i, X@p, V)
   }

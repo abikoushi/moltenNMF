@@ -43,6 +43,27 @@ bm2$time
 bm$mem_alloc
 bm2$mem_alloc
 
+Y1 = y[wch]
+X1 = slice_rows(X, wch)
+
+probX0 = colMeans(X[-wch,])
+N0 = nrow(X)-length(wch)
+
+out2 = moltenNMF:::mNMF_vb_sp(y = Y1, X = X1, N0 = N0, probX0 = probX0, L=2, 
+                       iter=1000,
+                       a=0.5, b=0.01,
+                       V=NULL,
+                       display_progress=TRUE,
+                       indices=NULL)
+plot(out2$ELBO, type = "l")
+
+V <- out2$shape/out2$rate
+f2 <- moltenNMF::product_m(X, V)
+plot(as.matrix(dat$Y), f2,  pch=1, col=rgb(0,0,0,0.2), xlab="fitted", ylab="obsereved")
+points(as.matrix(dat$Y), f_d,  pch=2, col=rgb(0,0,0.5,0.2), xlab="fitted", ylab="obsereved")
+abline(0, 1, col="grey", lty=2)
+
+##########
 y = as.integer(dat$Y)
 wch = which(y>0)
 Y = sparseVector(y[wch], wch, length = length(y))

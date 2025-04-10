@@ -166,6 +166,7 @@ NMF2D_svb_bin <- function(filepath_x,
                            display_progress = display_progress)
   return(out)
 }
+
 ###
 
 meanV_array <- function(out){
@@ -186,3 +187,5 @@ rearrange_cols <- function(Vm, axis = 1L, FUN = var, normalize = FALSE, decreasi
   }
   return(Vm)
 }
+
+###

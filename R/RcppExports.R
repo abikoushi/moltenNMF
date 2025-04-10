@@ -17,6 +17,10 @@ doVB_pois_sp <- function(N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display
     .Call(`_moltenNMF_doVB_pois_sp`, N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display_progress)
 }
 
+doVB_pois_sp2 <- function(N, yv, xi, xp, varind, probX0, N0, D, L, iter, a, b, V, display_progress) {
+    .Call(`_moltenNMF_doVB_pois_sp2`, N, yv, xi, xp, varind, probX0, N0, D, L, iter, a, b, V, display_progress)
+}
+
 doVB_pois_2D <- function(V, y, rowi, coli, dims, L, iter, a, b, display_progress) {
     .Call(`_moltenNMF_doVB_pois_2D`, V, y, rowi, coli, dims, L, iter, a, b, display_progress)
 }
@@ -55,22 +59,6 @@ doSVB_pois_sp <- function(N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, bsize,
 
 check_lr <- function(epoc, lr_param, lr_type) {
     .Call(`_moltenNMF_check_lr`, epoc, lr_param, lr_type)
-}
-
-myprod <- function(N, xi, xp, lam) {
-    .Call(`_moltenNMF_myprod`, N, xi, xp, lam)
-}
-
-myprodvec <- function(n, xi, xp, lam) {
-    .Call(`_moltenNMF_myprodvec`, n, xi, xp, lam)
-}
-
-myprodvec_sub <- function(n, xi, xp, start, end, lam) {
-    .Call(`_moltenNMF_myprodvec_sub`, n, xi, xp, start, end, lam)
-}
-
-mysum_t <- function(N, xi, xp, lam) {
-    .Call(`_moltenNMF_mysum_t`, N, xi, xp, lam)
 }
 
 summyprod <- function(n, xi, xp, lam) {
