@@ -207,3 +207,4 @@ rho <- cbind(diagcor(Vhat_t[[1]], tpar$V1),diagcor(Vhat_1[[1]], tpar$V1),
 
 save(res_bm, res_cor, sparsity, file = "vsNMF_batch.Rdata")
 
+#res_cor[[1]]

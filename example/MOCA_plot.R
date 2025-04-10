@@ -3,6 +3,33 @@ library(readr)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
+
+# poisloss <- function(obs, fit){
+#   -mean(obs*log(fit)-fit-lgamma(obs+1)) 
+# }
+# 
+# rmse <- function(obs, fit){
+#   sqrt(mean((as.matrix(obs) - fit)^2))
+# }
+
+fit_mnmf <- function(out){
+  Vhat_t <- moltenNMF:::meanV_array(out)
+  Vhat_t[[1]]%*%t(Vhat_t[[2]])
+}
+
+fit_liger <- function(liger_obj){
+  W = getMatrix(liger_obj, slot = "W")
+  V = getMatrix(liger_obj, slot = "V")
+  H = getMatrix(liger_obj, slot = "H")
+  as.matrix((W + V[[1]])%*%H[[1]])
+}
+
+extract_row_liger <- function(liger_obj){
+  W = getMatrix(liger_obj, slot = "W")
+  V = getMatrix(liger_obj, slot = "V")
+  as.matrix(W + V[[1]])
+}
+####
 #browseURL("https://oncoscape.v3.sttrcancer.org/atlas.gs.washington.edu.mouse.rna/downloads")
 
 load("resMOCA.Rdata")
