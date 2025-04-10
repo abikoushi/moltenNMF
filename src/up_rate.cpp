@@ -67,6 +67,51 @@ void up_B_sp(const int & N,
   }
 }
 
+void up_Bs(const int & N,
+           arma::mat & beta,
+           arma::mat & V,
+           const arma::uvec & xi,
+           const arma::uvec & xp,
+           const arma::uvec & varind,
+           const double & b){
+  int K = varind.n_rows - 1;
+  int L = V.n_cols;
+  for(int l=0;l<L;l++){
+    arma::vec vl = myprodvec(N, xi, xp, V.col(l));
+    for(int k=0; k<K; k++){
+      vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
+      arma::vec B = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl) + b;
+      beta.col(l).rows(varind(k), varind(k+1) - 1) = B;
+      vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
+    }
+  }
+}
+
+
+void up_Bs_sp(const int & N,
+             arma::mat & beta,
+             arma::mat & V,
+             const arma::uvec & xi,
+             const arma::uvec & xp,
+             const arma::uvec & varind,
+             const arma::vec & probX0,
+             const double & N0, const double & NS,
+             const double & b){
+  int K = varind.n_rows - 1;
+  int L = V.n_cols;
+  for(int l = 0; l < L; l++){
+    arma::vec vl = myprodvec(N, xi, xp, V.col(l));
+    for(int k=0; k < K; k++){
+      vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
+      arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl) + b;
+      arma::vec B0 = ZeroSampling(probX0, varind, vl, k);
+      arma::vec B = NS*B1 + N0*B0;
+      beta.col(l).rows(varind(k), varind(k+1) - 1) = B;
+      vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
+    }
+  }
+}
+
 // void up_B_sp(const int & N,
 //           arma::mat & beta,
 //           arma::mat & V,
