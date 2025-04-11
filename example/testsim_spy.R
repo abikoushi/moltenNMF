@@ -1,7 +1,7 @@
-library(moltenNMF)
 library(Matrix)
 library(dplyr)
 library(ggplot2)
+library(moltenNMF)
 
 set_data_mf <- function(L, nrow, ncol, mu=0){
   W <- matrix(rnorm(nrow*L,0,1),ncol=L)
@@ -49,7 +49,7 @@ X1 = slice_rows(X, wch)
 probX0 = colMeans(X[-wch,])
 N0 = nrow(X)-length(wch)
 
-out2 = moltenNMF:::mNMF_vb_sp(y = Y1, X = X1, N0 = N0, probX0 = probX0, L=2, 
+out2 = moltenNMF:::mNMF_vb_sp(y = Y1, X = X1, N = N0, probX0 = probX0, L=2, 
                        iter=1000,
                        a=0.5, b=0.01,
                        V=NULL,
@@ -62,6 +62,39 @@ f2 <- moltenNMF::product_m(X, V)
 plot(as.matrix(dat$Y), f2,  pch=1, col=rgb(0,0,0,0.2), xlab="fitted", ylab="obsereved")
 points(as.matrix(dat$Y), f_d,  pch=2, col=rgb(0,0,0.5,0.2), xlab="fitted", ylab="obsereved")
 abline(0, 1, col="grey", lty=2)
+
+
+####
+##SVB omit 0s
+y = as.integer(dat$Y)
+wch = which(y>0)
+Y1 = y[wch]
+X1 = slice_rows(X, wch)
+
+probX0 = colMeans(X[-wch,])
+N0 = nrow(X)-length(wch)
+
+system.time({
+  out_s <- moltenNMF:::mNMF_svb_sp(Y1, X = X1,
+                                   N = nrow(X), probX0 = probX0, L = 2,
+                                   n_epochs = 50, 
+                                   n_batches = 2000,
+                                   lr_param = c(15,0.9), 
+                                   lr_type = "exponential",
+                                   display_progress = TRUE)
+})
+# user  system elapsed 
+# 11.477   0.057  11.654 
+plot(out_s$ELBO, type="l")
+V <- out_s$shape/out_s$rate
+f <- moltenNMF::product_m(X, V)
+plot(as.matrix(dat$Y), f,  pch=2, col=rgb(0,0,0,0.5))
+points(as.matrix(dat$Y), f_d,  pch=1, col=rgb(1,0.5,0,0.5))
+abline(0, 1, col="grey", lty=2)
+
+# plot(as.numeric(log1p(dat$Y)), log1p(f_d),  pch=1, col=rgb(1,0.5,0,0.1))
+# points(as.numeric(log1p(dat$Y)), log1p(f),  pch=2, col=rgb(0,0.5,1,0.1))
+# abline(0, 1, col="grey", lty=2)
 
 ##########
 y = as.integer(dat$Y)
@@ -91,7 +124,6 @@ abline(0, 1, col="grey", lty=2)
 plot(as.numeric(log1p(dat$Y)), log1p(f_d),  pch=1, col=rgb(1,0.5,0,0.1))
 points(as.numeric(log1p(dat$Y)), log1p(f),  pch=2, col=rgb(0,0.5,1,0.1))
 abline(0, 1, col="grey", lty=2)
-
 
 ####
 #check param

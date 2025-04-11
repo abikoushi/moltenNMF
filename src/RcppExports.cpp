@@ -324,14 +324,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // doSVB_pois_sp2
-List doSVB_pois_sp2(const int& N, const arma::vec& yv, const arma::uvec& yi, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const arma::vec& probX0, const double& N0, const int& D, const int& L, const int& iter, const double& a, const double& b, arma::mat& V, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
-RcppExport SEXP _moltenNMF_doSVB_pois_sp2(SEXP NSEXP, SEXP yvSEXP, SEXP yiSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP probX0SEXP, SEXP N0SEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP VSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
+List doSVB_pois_sp2(const int& N, const arma::vec& yv, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const arma::vec& probX0, const double& N0, const int& D, const int& L, const int& iter, const double& a, const double& b, arma::mat& V, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
+RcppExport SEXP _moltenNMF_doSVB_pois_sp2(SEXP NSEXP, SEXP yvSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP probX0SEXP, SEXP N0SEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP VSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const int& >::type N(NSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type yv(yvSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type yi(yiSEXP);
     Rcpp::traits::input_parameter< const arma::uvec& >::type xi(xiSEXP);
     Rcpp::traits::input_parameter< const arma::uvec& >::type xp(xpSEXP);
     Rcpp::traits::input_parameter< const arma::uvec& >::type varind(varindSEXP);
@@ -347,7 +346,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const arma::vec& >::type lr_param(lr_paramSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type lr_type(lr_typeSEXP);
     Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(doSVB_pois_sp2(N, yv, yi, xi, xp, varind, probX0, N0, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress));
+    rcpp_result_gen = Rcpp::wrap(doSVB_pois_sp2(N, yv, xi, xp, varind, probX0, N0, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -512,7 +511,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_doVB_pois_offset_sp", (DL_FUNC) &_moltenNMF_doVB_pois_offset_sp, 14},
     {"_moltenNMF_doVB_pois_offset", (DL_FUNC) &_moltenNMF_doVB_pois_offset, 12},
     {"_moltenNMF_doSVB_pois_sp", (DL_FUNC) &_moltenNMF_doSVB_pois_sp, 16},
-    {"_moltenNMF_doSVB_pois_sp2", (DL_FUNC) &_moltenNMF_doSVB_pois_sp2, 18},
+    {"_moltenNMF_doSVB_pois_sp2", (DL_FUNC) &_moltenNMF_doSVB_pois_sp2, 17},
     {"_moltenNMF_check_lr", (DL_FUNC) &_moltenNMF_check_lr, 3},
     {"_moltenNMF_summyprod", (DL_FUNC) &_moltenNMF_summyprod, 4},
     {"_moltenNMF_NegBin_lp", (DL_FUNC) &_moltenNMF_NegBin_lp, 7},

@@ -103,10 +103,10 @@ void up_Bs_sp(const int & N,
     arma::vec vl = myprodvec(N, xi, xp, V.col(l));
     for(int k=0; k < K; k++){
       vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-      arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl) + b;
+      arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
       arma::vec B0 = ZeroSampling(probX0, varind, vl, k);
       arma::vec B = NS*B1 + N0*B0;
-      beta.col(l).rows(varind(k), varind(k+1) - 1) = B;
+      beta.col(l).rows(varind(k), varind(k+1) - 1) = B + b;
       vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
     }
   }

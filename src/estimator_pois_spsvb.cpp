@@ -132,7 +132,6 @@ List doSVB_pois_sp(const int & N,
 // [[Rcpp::export]]
 List doSVB_pois_sp2(const int & N,
                    const arma::vec & yv,
-                   const arma::uvec & yi,
                    const arma::uvec & xi,
                    const arma::uvec & xp,
                    const arma::uvec & varind,
@@ -148,40 +147,39 @@ List doSVB_pois_sp2(const int & N,
                    const arma::vec & lr_param,
                    const std::string & lr_type,
                    const bool & display_progress){
+  int N1 =  yv.n_rows;
   arma::mat logV = log(V);
   arma::mat alpha = arma::ones<arma::mat>(D, L);
   arma::mat beta(D, L);
   beta.fill(b);
   plus_Bs(N, beta, V, xi, xp, varind);
-  arma::vec R = arma::zeros<arma::vec>(N);
+  arma::vec R = arma::zeros<arma::vec>(N1);
   arma::vec ll = arma::zeros<arma::vec>(iter);
-  int N1 =  yi.n_rows;
   std::unique_ptr<lr> g;
   set_lr_method(g, lr_type);
   const double NS = ((double) N1) / ((double) bsize);
   Progress pb(iter, display_progress);
   for(int epoc = 0; epoc < iter; epoc++){
-    arma::umat bags = randpick_c(N, bsize);
+    arma::umat bags = randpick_c(N1, bsize);
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
     for(int step = 0; step < (int) bags.n_cols; step++){
-      arma::uvec S_yi;
       arma::vec S_yv;
       arma::uvec S_xp;
       arma::uvec S_xi;
-      filter_y(S_yv, S_yi, yv, yi, bags.col(step));
+      S_yv = yv.rows(bags.col(step));
       subset_spx(S_xi, S_xp, xi, xp, bags.col(step));
       arma::mat alpha_s = alpha;
-      arma::vec SR = R.rows(bags.col(step));
-      up_As_sp(alpha_s, SR, logV, S_yv, S_yi, S_xi, S_xp, a, NS);
       arma::mat beta_s = beta;
+      arma::vec SR = R.rows(bags.col(step));
+      up_As_sp2(alpha_s, SR, logV, S_yv, S_xi, S_xp, a, NS);
       up_Bs_sp(N, beta_s, V, S_xi, S_xp, varind, probX0, N0, NS, b);
       upEV(V, logV, alpha, beta);
       alpha = rho2 * alpha + rho * alpha_s;
       beta = rho2 * beta + rho * beta_s;
       upR(R, logV, xi, xp, bags.col(step));
     }
-    ll.row(epoc) += lowerbound_logML_pois_sp(alpha, beta, V, logV, R, yv, yi, a, b);      
+    ll.row(epoc) += lowerbound_logML_pois(alpha, beta, V, logV, R, yv, a, b);      
     pb.increment();
   }
   return List::create(Named("shape")=alpha,
