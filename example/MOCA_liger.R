@@ -39,4 +39,3 @@ bm_l2 = bench::mark({
 }, iterations = 1)
 
 save(bm_l2, liger_obj, file = "resMOCA_liger_2.Rdata")
-
