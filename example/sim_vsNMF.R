@@ -9,7 +9,7 @@ library(dplyr)
 ####
 maxcor <- function(A, B){
   cor_0 <- cor(A,B)
-  apply(cor_0, 1, max)  
+  apply(cor_0, 1, max)
 }
 
 diagcor <- function(A,B){
@@ -119,7 +119,7 @@ for(i in 1:nrow(df)){
   nrow = df$n_rows[i]
   ncol = df$n_cols[i]
   maxit=1000
-tpar <- set_simpar(nrow, ncol, L, logmu = logmu[1])
+tpar <- set_simpar(nrow, ncol, L, logmu = df$logmu[i])
 #hist(tpar$mu, breaks = "FD")
 #sp = with(tpar, mean(zeroprob_norm(mu, obs_sigma)))
 sp = with(tpar, mean(exp(-tpar$mu)))
@@ -207,4 +207,4 @@ rho <- cbind(diagcor(Vhat_t[[1]], tpar$V1),diagcor(Vhat_1[[1]], tpar$V1),
 
 save(res_bm, res_cor, sparsity, file = "vsNMF_batch.Rdata")
 
-#res_cor[[1]]
+
