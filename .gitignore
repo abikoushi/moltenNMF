@@ -14,3 +14,4 @@ datapath.txt
 *.Rdata
 *.png
 *.pdf
+*.csv
