@@ -17,7 +17,9 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
 
 dat <- set_data_mf(3, 99, 500)
 
-out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 500)
+system.time({
+  out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 500)
+})
 plot(out$ELBO[-1], type = "l")
 V = moltenNMF:::meanV_array(out)
 fit1 = V[[1]]%*%t(V[[2]])
@@ -29,17 +31,19 @@ print(p1)
 
 #####
 length(dat$Y)
+nnzero(dat$Y)
 system.time({
   out2 <- moltenNMF:::NMF2D_svb(dat$Y, rank = 3,
-                                n_epochs = 200, n_baches = as.integer(1000),
+                                n_epochs = 200, n_baches = as.integer(2000),
                                 prior_shape = 1, prior_rate = 1,
                                 lr_param = c(16, 0.8), lr_type = "exponential")  
 })
 # user  system elapsed 
 # 5.068   0.027   5.144 
 
+
 plot(out2$ELBO[-1], type="l")
-lines(out$ELBO[-1], type="l")
+#lines(out$ELBO[-1], type="l")
 
 head(out2$shape[[1]])
 head(out2$shape[[2]])

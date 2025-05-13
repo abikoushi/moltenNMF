@@ -117,7 +117,7 @@ double up_As_2D(arma::field<arma::mat> & alpha,
       //inclement sufficient statistics
       alpha(k).rows(X.col(k)) += r * NS;    
   }
-  return  NS*sum(y % log(R)-R); //lp
+  return  sum(y % log(R)); //lp
 }
 
 //////

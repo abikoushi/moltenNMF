@@ -57,7 +57,7 @@ void up_B_2D(arma::mat & beta,
   //row k = 0; column k = 1
   for(int k=0; k < (int) beta.n_rows; k++){
     arma::rowvec B0 = sumV(V, k);
-    beta.row(k) = B0 + b;    
+    beta.row(k) = B0 + b;
     //lp -= sum(B0);
   }
 }
@@ -152,6 +152,15 @@ double up_B_2D(const arma::field<arma::mat> & alpha,
   return lp;
 }
 
+double sumallprod(const arma::field<arma::mat> & V){
+  double out = 0;
+  for(arma::uword i = 0; i < V(0).n_rows; i++){
+    for(arma::uword j = 0; j < V(1).n_rows; j++){
+      out += dot(V(0).row(i), V(1).row(j));
+    }
+  }
+  return out;
+}
 
 double up_theta_2D(arma::field<arma::mat> & alpha,
                    arma::mat & beta,
@@ -252,7 +261,6 @@ List doVB_pois_s_2D(const arma::vec & y,
     arma::umat bags = randpick_c(N1, bsize);
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
-    //rho *= invS;
     for(int step = 0; step < (int) bags.n_cols; step++){
       arma::uvec bag = sort(bags.col(step));
       arma::vec Sy = y.rows(bag);
@@ -268,7 +276,8 @@ List doVB_pois_s_2D(const arma::vec & y,
       up_B_2D(beta_s, V, b);
       up_vpar(alpha, beta, V, logV, alpha_s, beta_s,uid, rho, rho2);
     }
-    lp(epoc) /= (double) bags.n_cols;
+    //lp(epoc) /= (double) bags.n_cols;
+    lp(epoc) -= accu(V(0))*accu(V(1));
     lp(epoc) += kld2(alpha, beta, a, b);
     pb.increment();
   }
