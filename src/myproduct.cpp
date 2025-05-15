@@ -56,15 +56,15 @@ arma::mat mysum_t(const int & N,
 }
 
 arma::mat mysum_t_rv(const int & N,
-                  const arma::uvec & xp,
-                  const arma::mat & lam) {
-  arma::mat out = arma::zeros<arma::mat>(N, lam.n_cols);
-  arma::uword M = lam.n_rows;
-  for(arma::uword i = 0; i < xp.n_rows - 1; i++){
-    arma::uword count = xp(i + 1) - xp(i);
+                  const arma::uvec & xp0,
+                  const arma::vec & fl) {
+  arma::vec out = arma::zeros<arma::mat>(N);
+  arma::uword M = fl.n_rows;
+  for(arma::uword i = 0; i < xp0.n_rows-1; i++){
+    arma::uword count = xp0(i+1)-xp0(i);
     if (count == 0) continue;
     arma::uvec indices = arma::randi<arma::uvec>(count, arma::distr_param(0, M - 1));
-    out.row(i) = sum(lam.rows(indices), 0);
+    out.row(i) = sum(fl.rows(indices));
   }
   return out;
 }

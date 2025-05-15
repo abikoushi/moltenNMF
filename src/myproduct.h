@@ -10,8 +10,8 @@ arma::mat myprod(const int & N, const arma::uvec & xi, const arma::uvec & xp, co
 arma::vec summyprod(const int & n, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam);
 
 arma::mat mysum_t_rv(const int & N,
-                     const arma::uvec & xp,
-                     const arma::mat & lam);
+                     const arma::uvec & xp0,
+                     const arma::vec & fl);
 
 // arma::mat mysum_t_ww(const int & N,
 //                      const arma::uvec & xi,

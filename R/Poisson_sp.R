@@ -35,7 +35,7 @@
 #   return(out)
 # }
 
-mNMF_vb_sp <- function(y, X, X0, L, 
+mNMF_vb_sp <- function(y, X, xp0, L, 
                        iter=1000,
                        a=0.5, b=0.01,
                        V=NULL,
@@ -52,7 +52,7 @@ mNMF_vb_sp <- function(y, X, X0, L,
                        yv = y,
                        xi = X@i, xp = X@p,
                        varind = indices,
-                       xi0 = X0@i, xp0 = X0@p,
+                       xp0 = xp0,
                        D = X@Dim[2],
                        L = L,
                        iter = iter,

@@ -17,9 +17,11 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
 
 dat <- set_data_mf(3, 99, 500)
 
+
 system.time({
   out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 500)
 })
+
 plot(out$ELBO[-1], type = "l")
 V = moltenNMF:::meanV_array(out)
 fit1 = V[[1]]%*%t(V[[2]])

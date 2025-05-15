@@ -55,7 +55,7 @@ X0 = X[-wch,]
 # 
 
 system.time({
-  out2 = moltenNMF:::mNMF_vb_sp(y = Y1, X = X1, X0 = X0, L=2,
+  out2 = moltenNMF:::mNMF_vb_sp(y = Y1, X = X1, xp0 = X0@p, L=2,
                                 iter=1000,
                                 a=0.5, b=0.01,
                                 V=NULL,
@@ -72,8 +72,8 @@ plot(c(as.matrix(dat$Y)), f2,  pch=1, col=rgb(0,0,0,0.1), xlab="fitted", ylab="o
 points(c(as.matrix(dat$Y)), f_d,  pch=2, col=rgb(0,0.5,1,0.1), xlab="fitted", ylab="obsereved", cex=0.5)
 abline(0, 1, col="grey", lty=2)
 
-mean(abs(c(as.matrix(dat$Y))-f2))
-mean(abs(c(as.matrix(dat$Y))-f_d))
+mean((c(as.matrix(dat$Y))-f2)^2)
+mean((c(as.matrix(dat$Y))-f_d)^2)
 
 # probX0 = colMeans(X[-wch,])
 # N0 = nrow(X)-length(wch)

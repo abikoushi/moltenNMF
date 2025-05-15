@@ -1,5 +1,18 @@
 #include <RcppArmadillo.h>
 #include "logexpfuns.h"
+#include <Rmath.h>      // R::digamma
+#include <armadillo>    // arma::vec
+#include <algorithm>    // std::transform
+
+/*
+arma::vec digamma_vec(const arma::vec& x) {
+  arma::vec out(x.n_elem);
+  std::transform(x.begin(), x.end(), out.begin(), [](double xi) {
+    return R::digamma(xi);
+  });
+  return out;
+}
+*/
 
 double xlogy(const double & x, const double & y){
   double res = 0.0;
@@ -35,18 +48,18 @@ arma::mat mat_digamma(arma::mat a){
 arma::vec vec_digamma(arma::vec a){
   int K = a.n_rows;
   arma::vec out(K);
-  for(int k=0;k<K;k++){
-    out[k] = R::digamma(a[k]);
+  for(int k=0; k<K; k++){
+    out(k) = R::digamma(a(k));
   }
   return out;
 }
 
 void up_log_gamma(arma::mat & logv, const arma::vec & a, const double & logb,
                   const int & l){
-  int D = logv.n_rows;
-  for(int d=0; d<D; d++){
+  for(arma::uword d = 0; d < logv.n_rows; d++){
     logv(d,l) = R::digamma(a(d)) - logb;
   }
+  //logv.col(l) = digamma_vec(a) - logb;
 }
 
 void up_log_gamma_uid(arma::mat & logv,
