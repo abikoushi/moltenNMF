@@ -65,6 +65,10 @@ doSVB_pois_sp2 <- function(N, yv, xi, xp, varind, probX0, N0, D, L, iter, a, b, 
     .Call(`_moltenNMF_doSVB_pois_sp2`, N, yv, xi, xp, varind, probX0, N0, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress)
 }
 
+doSVB_pois_sp3 <- function(N, yv, xi, xp, varind, xp0, N0, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress) {
+    .Call(`_moltenNMF_doSVB_pois_sp3`, N, yv, xi, xp, varind, xp0, N0, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress)
+}
+
 check_lr <- function(epoc, lr_param, lr_type) {
     .Call(`_moltenNMF_check_lr`, epoc, lr_param, lr_type)
 }
