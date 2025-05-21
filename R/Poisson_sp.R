@@ -35,7 +35,8 @@
 #   return(out)
 # }
 
-mNMF_vb_sp <- function(y, X, xp0, L, 
+mNMF_vb_sp <- function(y, X, L, 
+                       xp0,
                        iter=1000,
                        a=0.5, b=0.01,
                        V=NULL,
@@ -111,7 +112,7 @@ mNMF_vb_sp <- function(y, X, xp0, L,
 #   return(out)
 # }
 
-mNMF_svb_sp <- function(y, X, N, xp0, L,
+mNMF_svb_sp <- function(y, X, N, L,
                         n_batches,
                         n_epochs,
                         lr_param,
@@ -129,7 +130,7 @@ mNMF_svb_sp <- function(y, X, N, xp0, L,
   }
   out <- doSVB_pois_sp3(N, y,
                         X@i, X@p, varind = indices,
-                        xp0 = xp0, N0 = N - length(y),
+                        N0 = N - length(y),
                         D = X@Dim[2],
                         L=L, iter=n_epochs, a=a, b=b,
                         V=V,

@@ -105,8 +105,8 @@ N0 = nrow(X)-length(wch)
 
 system.time({
   out_s <- moltenNMF:::mNMF_svb_sp(Y1, X = X1,
-                                   N = nrow(X), probX0 = probX0, L = 2,
-                                   n_epochs = 50, 
+                                   N = nrow(X), L = 2,
+                                   n_epochs = 1, 
                                    n_batches = 2000,
                                    lr_param = c(15,0.9), 
                                    lr_type = "exponential",

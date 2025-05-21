@@ -55,16 +55,16 @@ points(f_s,  as.matrix(Y), pch=1, col=rgb(0,0.5,1,0.3), cex=1)
 abline(0, 1, col="grey", lty=2)
 
 
-pop = c(rep(1,10), rep(0,5))
-wch = numeric(10000)
-for(i in 1:10000){
-  s = sample(pop)
-  wch[i] = which.max(s==1)  
-}
-
-tab = table(wch)/10000
-plot(tab)
-points(1:10, dgeom(1:10-1, 10/15), type = "b")
+# pop = c(rep(1,10), rep(0,5))
+# wch = numeric(10000)
+# for(i in 1:10000){
+#   s = sample(pop)
+#   wch[i] = which.max(s==1)  
+# }
+# 
+# tab = table(wch)/10000
+# plot(tab)
+# points(1:10, dgeom(1:10-1, 10/15), type = "b")
 
 
 #######
@@ -88,8 +88,8 @@ X0 = X[-wch,]
 N0 = nrow(X)-length(wch)
 system.time({
   out_s <- moltenNMF:::mNMF_svb_sp(Y1, X = X1,
-                                   N = nrow(X), xp0 = X0@p, L = L,
-                                   n_epochs = 100,
+                                   N = nrow(X), L = L,
+                                   n_epochs = 200,
                                    n_batches = 100,
                                    lr_param = c(15,0.9),
                                    lr_type = "exponential",

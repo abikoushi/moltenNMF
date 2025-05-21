@@ -60,6 +60,17 @@ void up_Bs_sp2(const int & N,
                const double & N0, const double & NS,
                const double & b);
 
+void up_Bs_sp3(const int & N,
+               arma::mat & beta,
+               arma::mat & V,
+               const arma::uvec & xi,
+               const arma::uvec & xp,
+               const arma::uvec & varind,
+               const double & rho,
+               const double & N1S,
+               const double & NS,
+               const double & b);
+
 // void up_B_ww(const int & N,
 //              arma::mat & beta,
 //              arma::mat & V,

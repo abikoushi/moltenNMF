@@ -193,7 +193,6 @@ List doSVB_pois_sp3(const int & N,
                     const arma::uvec & xi,
                     const arma::uvec & xp,
                     const arma::uvec & varind,
-                    const arma::uvec & xp0,
                     const double & N0,
                     const int & D,
                     const int & L,
@@ -215,7 +214,9 @@ List doSVB_pois_sp3(const int & N,
   arma::vec ll = arma::zeros<arma::vec>(iter);
   std::unique_ptr<lr> g;
   set_lr_method(g, lr_type);
-  const double NS = ((double) N1) / ((double) bsize);
+  const double N1S = ((double) N1) / ((double) bsize);
+  const double NS = ((double) N) / ((double) bsize);
+  const double p1 = ((double) N1) / ((double) N);
   Progress pb(iter, display_progress);
   for(int epoc = 0; epoc < iter; epoc++){
     arma::umat bags = randpick_c(N1, bsize);
@@ -230,8 +231,10 @@ List doSVB_pois_sp3(const int & N,
       arma::mat alpha_s = alpha;
       arma::mat beta_s = beta;
       arma::vec SR = R.rows(bags.col(step));
-      up_As_sp2(alpha_s, SR, logV, S_yv, S_xi, S_xp, a, NS);
-      up_Bs_sp2(N, beta_s, V, S_xi, S_xp, varind, xp0, N0, NS, b);
+      up_As_sp2(alpha_s, SR, logV, S_yv, S_xi, S_xp, a, N1S);
+      //Rprintf("%d ", step);
+      up_Bs_sp3(N, beta_s, V, S_xi, S_xp, varind, p1, N1S, NS, b);
+      //Rprintf("done\n");
       upEV(V, logV, alpha, beta);
       alpha = rho2 * alpha + rho * alpha_s;
       beta = rho2 * beta + rho * beta_s;
