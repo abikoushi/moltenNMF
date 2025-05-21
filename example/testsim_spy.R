@@ -13,8 +13,8 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
   list(Y=Y, trueW=W, trueH=H)
 }
 
-dat <- set_data_mf(2, 102, 101)
-X <- moltenNMF::sparse_onehot(~row+col, data=expand.grid(row=1:102, col=1:101))
+dat <- set_data_mf(2, 502, 11)
+X <- moltenNMF::sparse_onehot(~row+col, data=expand.grid(row=1:502, col=1:11))
 
 bm = bench::mark({
   out_d <- moltenNMF:::mNMF_vb.default(as.integer(dat$Y), X = X, L = 2, iter=1000)
@@ -63,8 +63,8 @@ system.time({
                                 indices=NULL)  
 })
 
-#plot(out_d$ELBO[-1], type = "l")
-plot(out2$ELBO[-1], type = "l", col="red")
+# plot(out_d$ELBO[-1], type = "l")
+# plot(out2$ELBO[-1], type = "l", col="red")
 
 V <- out2$shape/out2$rate
 f2 <- moltenNMF::product_m(X, V)

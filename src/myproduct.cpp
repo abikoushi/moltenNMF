@@ -69,20 +69,6 @@ arma::mat mysum_t_rv(const int & N,
   return out;
 }
 
-// arma::mat mysum_t_ww(const int & N,
-//                   const arma::uvec & xi,
-//                   const arma::uvec & xp,
-//                   const arma::mat & lam,
-//                   const arma::vec & weight) {
-//   arma::mat out = arma::zeros<arma::mat>(N, lam.n_cols);
-//   for(int i = 0; i < ((int) xp.n_rows) - 1; i++){
-//     for(int j = xp(i); j < (int) xp(i + 1); j++){
-//       out.row(i) += weight(xi(j)) * lam.row(xi(j));
-//     }
-//   }
-//   return out;
-// }
-
 //////
 //export
 //////

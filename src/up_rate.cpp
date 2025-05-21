@@ -72,22 +72,62 @@ arma::vec randomsum(const int & D,
                     const arma::uvec & varind,
                     const arma::uvec & xp0,
                     const arma::uword & k){
-  int count = xp0(k+1)-xp0(k);
-  arma::vec fl = arma::ones<arma::vec>(count);
-  for(arma::uword i = 0; i < k; i++){
-       arma::uvec indices = arma::randi<arma::uvec>(count, arma::distr_param((int) varind(i), (int) varind(i+1) - 1));
-       fl %= Vl(indices);      
+  arma::vec out = arma::zeros<arma::mat>(D);
+  arma::uvec xp2 = xp0.rows(varind(k), varind(k+1));
+
+  for(arma::uword i = 0; i < (xp2.n_rows - 1); i++){
+    arma::uword M = xp2(i+1) - xp2(i); //N
+    if (M == 0) continue;
+    //int count = xp0(varind(k+1)) - xp0(varind(k));
+    arma::vec fl = arma::ones<arma::vec>(M);
+    for(arma::uword i = 0; i < k; i++){
+      arma::distr_param support = arma::distr_param((int) varind(i), (int) varind(i+1) - 1);
+      arma::uvec indices = arma::randi<arma::uvec>(M, support);
+      fl %= Vl.rows(indices);
+    }
+    //skip i==k
+    for(arma::uword i = k + 1; i < (varind.n_rows - 1); i++){
+      arma::distr_param support = arma::distr_param((int) varind(i), (int) varind(i+1) - 1);
+      arma::uvec indices = arma::randi<arma::uvec>(M, support);
+      fl %= Vl.rows(indices);
+    }
+    //i==k
+    //arma::distr_param support = arma::distr_param(0, M - 1);
+    //arma::uvec indices = arma::randi<arma::uvec>(M, support);
+    out.row(i) = sum(fl);
   }
-  //skip k
-  for(arma::uword i = k+1; i < (varind.n_rows - 1); i++){
-    arma::uvec indices = arma::randi<arma::uvec>(count, arma::distr_param((int) varind(i), (int) varind(i+1) - 1));
-    fl %= Vl(indices);      
-  }
-  arma::vec res = arma::zeros<arma::mat>(D);
-  res = mysum_t_rv(D, xp0.rows(varind(k), varind(k+1)), fl);
-  return res;
+  return out;
 }
 
+//geometric sampling
+arma::vec geomsum(const int & D,
+                    const arma::mat & Vl,
+                    const arma::uvec & varind,
+                    const double & rho,
+                    const arma::uword & k){
+  arma::vec out = arma::zeros<arma::mat>(D);
+  //arma::uvec xp2 = xp0.rows(varind(k), varind(k+1));
+    int count = R::rgeom(rho);
+    for(int j=0; j<count; j++){
+      arma::vec fl = arma::ones<arma::vec>(count);
+      for(arma::uword i = 0; i < k; i++){
+        arma::distr_param support = arma::distr_param((int) varind(i), (int) varind(i+1) - 1);
+        arma::uvec indices = arma::randi<arma::uvec>(count, support);
+        fl %= Vl.rows(indices);
+      }
+      //skip i==k
+      for(arma::uword i = k + 1; i < (varind.n_rows - 1); i++){
+        arma::distr_param support = arma::distr_param((int) varind(i), (int) varind(i+1) - 1);
+        arma::uvec indices = arma::randi<arma::uvec>(count, support);
+        fl %= Vl.rows(indices);
+      }
+      //i==k
+      arma::distr_param support = arma::distr_param(0, count - 1);
+      arma::uvec indices = arma::randi<arma::uvec>(1, support);
+      out.row(j) += fl.row(indices(0));
+    }
+  return out;
+}
 
 void up_B_sp2(const int & N,
              arma::mat & beta,
@@ -156,6 +196,30 @@ void up_Bs_sp(const int & N,
       arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
       arma::vec B0 = ZeroSampling(probX0, varind, vl, k);
       arma::vec B = NS*B1 + N0*B0;
+      beta.col(l).rows(varind(k), varind(k+1) - 1) = B + b;
+      vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
+    }
+  }
+}
+
+void up_Bs_sp3(const int & N,
+              arma::mat & beta,
+              arma::mat & V,
+              const arma::uvec & xi,
+              const arma::uvec & xp,
+              const arma::uvec & varind,
+              const arma::uvec & xp0,
+              const double & N1S, const double & NS,
+              const double & b){
+  int K = varind.n_rows - 1;
+  int L = V.n_cols;
+  for(int l = 0; l < L; l++){
+    arma::vec vl = myprodvec(N, xi, xp, V.col(l));
+    for(int k=0; k < K; k++){
+      vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
+      arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
+      arma::vec B0 = randomsum(varind(k+1) - varind(k), V.col(l), varind, xp0, k);
+      arma::vec B = N1S*B1 + NS*B0;
       beta.col(l).rows(varind(k), varind(k+1) - 1) = B + b;
       vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
     }

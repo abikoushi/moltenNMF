@@ -6,11 +6,12 @@ library(tidyr)
 #library(Rcpp)
 L <- 5L
 perm_L <- gtools::permutations(L,L)
-df <- as.data.frame(expand.grid(x=factor(1:3),
-                    row=factor(1:20),
-                    col=factor(1:20),
+df <- as.data.frame(expand.grid(x=factor(1:5),
+                                row=factor(1:10),
+                                col=factor(1:10),
                                 depth=factor(1:10)))
                                 
+dim(df)
 #X <- sparse_model_matrix_b(~ . -1, data=df)
 X <- sparse_onehot(~ ., data=df)
 # colnames(X)
@@ -25,16 +26,16 @@ Y <- rpois(N, lambda)
 
 system.time({
   out_d <- moltenNMF::mNMF_vb.default(Y, X = X,L = L,iter=100,
-                                   display_progress = FALSE)
+                                   display_progress = TRUE)
 })
 V_d <- out_d$shape/out_d$rate
 f_d <- moltenNMF::product_m(X, V_d)
-
 
 wch = which(Y>0)
 Y1 = Y[wch]
 X1 = slice_rows(X, wch)
 X0 = X[-wch,]
+diff(X0@p)
 system.time({
   out_s <- moltenNMF:::mNMF_vb_sp(Y1, X = X1,
                                   xp0 = X0@p, L = L,
@@ -46,12 +47,25 @@ f_s <- moltenNMF::product_m(X, V_s)
 
 plot(out_s$ELBO[-1],type="l")
 
-# plot(f_s,  as.matrix(Y), pch=1, col=rgb(0,0,0,0.2), cex=1)
-# abline(0, 1, col="grey", lty=2)
-plot(f_d, as.matrix(Y),  pch=1, col=rgb(0,0,0,0.9), cex=1, xlab="fitted")
-points(f_s,  as.matrix(Y), pch=1, col=rgb(0,0.5,1,0.9), cex=1)
+ # plot(f_s,  as.matrix(Y), pch=1, col=rgb(0,0,0,0.2), cex=1)
+ # abline(0, 1, col="grey", lty=2)
+plot(f_d, as.matrix(Y),  pch=1, col=rgb(0,0,0,0.3), cex=1, xlab="fitted")
+points(f_s,  as.matrix(Y), pch=1, col=rgb(0,0.5,1,0.3), cex=1)
 # points(as.matrix(Y), lambda,  pch=1, col=rgb(1,0.5,0,0.5), cex=0.5)
 abline(0, 1, col="grey", lty=2)
+
+
+pop = c(rep(1,10), rep(0,5))
+wch = numeric(10000)
+for(i in 1:10000){
+  s = sample(pop)
+  wch[i] = which.max(s==1)  
+}
+
+tab = table(wch)/10000
+plot(tab)
+points(1:10, dgeom(1:10-1, 10/15), type = "b")
+
 
 #######
 #SVB
@@ -77,9 +91,9 @@ system.time({
                                    N = nrow(X), xp0 = X0@p, L = L,
                                    n_epochs = 100,
                                    n_batches = 100,
-                                   lr_param = c(19,0.9),
+                                   lr_param = c(15,0.9),
                                    lr_type = "exponential",
-                                   display_progress = FALSE)
+                                   display_progress = TRUE)
 })
 V_s <- out_s$shape/out_s$rate
 f_s <- moltenNMF::product_m(X, V_s)
