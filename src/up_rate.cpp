@@ -2,8 +2,16 @@
 #include "myproduct.h"
 #include "logexpfuns.h"
 #include "up_rate.h"
+#include <random>
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
+
+int sample_index_cpp(int n) {
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  std::uniform_int_distribution<> dis(0, n - 1); // [0, n-1] の範囲
+  return dis(gen);
+}
 
 //rate parameters
 void up_B(const int & N,
@@ -91,10 +99,8 @@ arma::vec randomsum(const int & D,
       fl %= Vl.rows(indices);
     }
     //i==k
-    arma::distr_param support = arma::distr_param(0, D - 1);
-    arma::uvec indices = arma::randi<arma::uvec>(1, support);
-    out.row(indices(0)) += sum(fl);
-    //out.row(i) = sum(fl);
+    int index = sample_index_cpp(D);
+    out.row(index) += sum(fl);
   }
   return out;
 }
@@ -122,9 +128,8 @@ arma::vec geomsum(const int & D,
         fl %= Vl.rows(indices);
       }
       //i==k
-      arma::distr_param support = arma::distr_param(0, D - 1);
-      arma::uvec indices = arma::randi<arma::uvec>(1, support);
-      out.row(indices(0)) += sum(fl);
+      int index = sample_index_cpp(D);
+      out.row(index) += sum(fl);
     }
   return out;
 }

@@ -54,7 +54,6 @@ points(f_s,  as.matrix(Y), pch=1, col=rgb(0,0.5,1,0.3), cex=1)
 # points(as.matrix(Y), lambda,  pch=1, col=rgb(1,0.5,0,0.5), cex=0.5)
 abline(0, 1, col="grey", lty=2)
 
-
 # pop = c(rep(1,10), rep(0,5))
 # wch = numeric(10000)
 # for(i in 1:10000){
@@ -98,7 +97,7 @@ system.time({
 V_s <- out_s$shape/out_s$rate
 f_s <- moltenNMF::product_m(X, V_s)
 
-plot(f_d, as.matrix(Y), pch=1, col=rgb(0,0,0,0.5), cex=0.5)
+plot(f_d, as.matrix(Y), pch=1, col=rgb(0,0,0,0.5), cex=0.5, xlab = "fitted")
 points(f_s, as.matrix(Y),  pch=1, col=rgb(0,0.5,1,0.5), cex=0.5)
 points(as.matrix(Y), lambda,  pch=1, col=rgb(1,0.5,0,0.5), cex=0.5)
 abline(0, 1, col="grey", lty=2)
