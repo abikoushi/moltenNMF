@@ -17,14 +17,6 @@ doVB_pois_sp <- function(N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display
     .Call(`_moltenNMF_doVB_pois_sp`, N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display_progress)
 }
 
-doVB_pois_sp2 <- function(N, yv, xi, xp, varind, probX0, N0, D, L, iter, a, b, V, display_progress) {
-    .Call(`_moltenNMF_doVB_pois_sp2`, N, yv, xi, xp, varind, probX0, N0, D, L, iter, a, b, V, display_progress)
-}
-
-doVB_pois_sp3 <- function(N, yv, xi, xp, varind, xp0, D, L, iter, a, b, V, display_progress) {
-    .Call(`_moltenNMF_doVB_pois_sp3`, N, yv, xi, xp, varind, xp0, D, L, iter, a, b, V, display_progress)
-}
-
 doVB_pois_2D <- function(V, y, rowi, coli, dims, L, iter, a, b, display_progress) {
     .Call(`_moltenNMF_doVB_pois_2D`, V, y, rowi, coli, dims, L, iter, a, b, display_progress)
 }
@@ -55,14 +47,6 @@ doVB_pois_offset_sp <- function(N, yv, yi, xi, xp, varind, D, L, tau, iter, a, b
 
 doVB_pois_offset <- function(y, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress) {
     .Call(`_moltenNMF_doVB_pois_offset`, y, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress)
-}
-
-doSVB_pois_sp <- function(N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress) {
-    .Call(`_moltenNMF_doSVB_pois_sp`, N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress)
-}
-
-doSVB_pois_sp2 <- function(N, yv, xi, xp, varind, probX0, N0, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress) {
-    .Call(`_moltenNMF_doSVB_pois_sp2`, N, yv, xi, xp, varind, probX0, N0, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress)
 }
 
 doSVB_pois_sp3 <- function(N, yv, xi, xp, varind, N0, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress) {

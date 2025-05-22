@@ -9,7 +9,7 @@ using namespace Rcpp;
 int sample_index_cpp(int n) {
   std::random_device rd;
   std::mt19937 gen(rd());
-  std::uniform_int_distribution<> dis(0, n - 1); // [0, n-1] の範囲
+  std::uniform_int_distribution<> dis(0, n - 1);
   return dis(gen);
 }
 
@@ -38,74 +38,8 @@ void up_B(const int & N,
   }
 }
 
-arma::vec ZeroSampling(const arma::vec & probX0,
-                       const arma::uvec & varind,
-                       const arma::vec & vl,
-                       int k){
-  arma::vec b0 = probX0.rows(varind(k), varind(k+1)-1)%vl.rows(varind(k), varind(k+1)-1);
-  return b0;
-}
 
-void up_B_sp(const int & N,
-          arma::mat & beta,
-          arma::mat & V,
-          arma::mat & logV,
-          const arma::mat & alpha,
-          const arma::uvec & xi,
-          const arma::uvec & xp,
-          const arma::uvec & varind,
-          const arma::vec & probX0,
-          const double & N0,
-          const double & b){
-  int K = varind.n_rows - 1;
-  int L = V.n_cols;
-  for(int l = 0; l < L; l++){
-    arma::vec vl = myprodvec(N, xi, xp, V.col(l));
-    for(int k=0; k < K; k++){
-      vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-      arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl) + b;
-      arma::vec B0 = ZeroSampling(probX0, varind, vl, k);
-      B0 *= N0;
-      arma::vec B = B1 + B0;
-      beta.col(l).rows(varind(k), varind(k+1) - 1) = B;
-      V.col(l).rows(varind(k), varind(k+1) - 1) = alpha.col(l).rows(varind(k), varind(k+1) - 1)/B;
-      vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-    }
-    logV = mat_digamma(alpha) - log(beta);
-  }
-}
-
-
-arma::vec randomsum(const int & D,
-                    const arma::mat & Vl,
-                    const arma::uvec & varind,
-                    const arma::uvec & xp0,
-                    const arma::uword & k){
-  arma::vec out = arma::zeros<arma::mat>(D);
-  arma::uvec xp2 = xp0.rows(varind(k), varind(k+1));
-  for(arma::uword i = 0; i < (xp2.n_rows - 1); i++){
-    arma::uword M = xp2(i+1) - xp2(i); //N
-    if (M == 0) continue;
-    arma::vec fl = arma::ones<arma::vec>(M);
-    for(arma::uword i = 0; i < k; i++){
-      arma::distr_param support = arma::distr_param((int) varind(i), (int) varind(i+1) - 1);
-      arma::uvec indices = arma::randi<arma::uvec>(M, support);
-      fl %= Vl.rows(indices);
-    }
-    //skip i==k
-    for(arma::uword i = k + 1; i < (varind.n_rows - 1); i++){
-      arma::distr_param support = arma::distr_param((int) varind(i), (int) varind(i+1) - 1);
-      arma::uvec indices = arma::randi<arma::uvec>(M, support);
-      fl %= Vl.rows(indices);
-    }
-    //i==k
-    int index = sample_index_cpp(D);
-    out.row(index) += sum(fl);
-  }
-  return out;
-}
-
-//geometric sampling
+//geometric sampling for SVB
 arma::vec geomsum(const int & D,
                     const arma::mat & Vl,
                     const arma::uvec & varind,
@@ -134,80 +68,7 @@ arma::vec geomsum(const int & D,
   return out;
 }
 
-void up_B_sp2(const int & N,
-             arma::mat & beta,
-             arma::mat & V,
-             arma::mat & logV,
-             const arma::mat & alpha,
-             const arma::uvec & xi,
-             const arma::uvec & xp,
-             const arma::uvec & varind,
-             const arma::uvec & xp0,
-             const double & b){
-  int K = varind.n_rows - 1;
-  int L = V.n_cols;
-  for(int l = 0; l < L; l++){
-    arma::vec fl = myprodvec(N, xi, xp, V.col(l));
-    for(arma::uword k=0; k < K; k++){
-      fl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-      arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), fl) + b;
-      //arma::vec B0 = mysum_t_rv(varind(k+1) - varind(k), xp0.rows(varind(k), varind(k+1)), fl);
-      arma::vec B0 = randomsum(varind(k+1) - varind(k), V.col(l), varind, xp0, k);
-      arma::vec B = B1 + B0;
-      beta.col(l).rows(varind(k), varind(k+1) - 1) = B;
-      V.col(l).rows(varind(k), varind(k+1) - 1) = alpha.col(l).rows(varind(k), varind(k+1) - 1)/B;
-      fl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-    }
-    logV = mat_digamma(alpha) - log(beta);
-  }
-}
-
-void up_Bs(const int & N,
-           arma::mat & beta,
-           arma::mat & V,
-           const arma::uvec & xi,
-           const arma::uvec & xp,
-           const arma::uvec & varind,
-           const double & b){
-  int K = varind.n_rows - 1;
-  int L = V.n_cols;
-  for(int l=0;l<L;l++){
-    arma::vec vl = myprodvec(N, xi, xp, V.col(l));
-    for(int k=0; k<K; k++){
-      vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-      arma::vec B = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl) + b;
-      beta.col(l).rows(varind(k), varind(k+1) - 1) = B;
-      vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-    }
-  }
-}
-
-
 void up_Bs_sp(const int & N,
-             arma::mat & beta,
-             arma::mat & V,
-             const arma::uvec & xi,
-             const arma::uvec & xp,
-             const arma::uvec & varind,
-             const arma::vec & probX0,
-             const double & N0, const double & NS,
-             const double & b){
-  int K = varind.n_rows - 1;
-  int L = V.n_cols;
-  for(int l = 0; l < L; l++){
-    arma::vec vl = myprodvec(N, xi, xp, V.col(l));
-    for(int k=0; k < K; k++){
-      vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-      arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
-      arma::vec B0 = ZeroSampling(probX0, varind, vl, k);
-      arma::vec B = NS*B1 + N0*B0;
-      beta.col(l).rows(varind(k), varind(k+1) - 1) = B + b;
-      vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-    }
-  }
-}
-
-void up_Bs_sp3(const int & N,
               arma::mat & beta,
               arma::mat & V,
               const arma::uvec & xi,
@@ -225,30 +86,6 @@ void up_Bs_sp3(const int & N,
       arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
       arma::vec B0 = geomsum(varind(k+1) - varind(k), V.col(l), varind, rho, k);
       arma::vec B = N1S*B1 + NS*B0;
-      beta.col(l).rows(varind(k), varind(k+1) - 1) = B + b;
-      vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-    }
-  }
-}
-
-void up_Bs_sp2(const int & N,
-              arma::mat & beta,
-              arma::mat & V,
-              const arma::uvec & xi,
-              const arma::uvec & xp,
-              const arma::uvec & varind,
-              const arma::uvec & xp0,
-              const double & N0, const double & NS,
-              const double & b){
-  int K = varind.n_rows - 1;
-  int L = V.n_cols;
-  for(int l = 0; l < L; l++){
-    arma::vec vl = myprodvec(N, xi, xp, V.col(l));
-    for(int k=0; k < K; k++){
-      vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-      arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
-      arma::vec B0 = randomsum(varind(k+1) - varind(k), V.col(l), varind, xp0, k);
-      arma::vec B = NS*B1 + B0;
       beta.col(l).rows(varind(k), varind(k+1) - 1) = B + b;
       vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
     }
