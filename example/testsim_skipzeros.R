@@ -31,7 +31,23 @@ system.time({
 #  user  system elapsed 
 # 5.193   0.049   5.292
 
-plot(out_d$ELBO[-1],type = "l")
+wch = which(Y>0)
+Y1 = Y[wch]
+X1 = slice_rows(X, wch)
+dim(X1)
+system.time({
+  out_sb = moltenNMF:::mNMF_svb_batch(Y1, X1, L=L, N=nrow(X), iter=100)  
+})
+
+plot(out_sb$ELBO[-1],type = "l")
+V_d <- out_d$shape/out_d$rate
+f_d <- moltenNMF::product_m(X, V_d)
+V_sb <- out_sb$shape/out_sb$rate
+f_sb <- moltenNMF::product_m(X, V_d)
+plot(f_d, as.matrix(Y), pch=1, col=rgb(0,0,0,0.5), cex=0.5, xlab = "fitted")
+points(f_sb, as.matrix(Y),  pch=1, col=rgb(0,0.5,1,0.5), cex=0.5)
+abline(0, 1, col="grey", lty=2)
+
 #######
 #SVB
 #######
@@ -40,7 +56,7 @@ Y1 = Y[wch]
 X1 = slice_rows(X, wch)
 dim(X1)
 system.time({
-  out_s <- moltenNMF:::mNMF_svb_sp(Y1, X = X1,
+  out_s <- moltenNMF:::mNMF_svb(Y1, X = X1,
                                    N = nrow(X), L = L,
                                    n_epochs = 200,
                                    n_batches = 100,
@@ -53,8 +69,7 @@ plot(out_s$ELBO[-1], type="l")
 
 V_s <- out_s$shape/out_s$rate
 f_s <- moltenNMF::product_m(X, V_s)
-V_d <- out_d$shape/out_d$rate
-f_d <- moltenNMF::product_m(X, V_d)
+
 plot(f_d, as.matrix(Y), pch=1, col=rgb(0,0,0,0.5), cex=0.5, xlab = "fitted")
 points(f_s, as.matrix(Y),  pch=1, col=rgb(0,0.5,1,0.5), cex=0.5)
 points(as.matrix(Y), lambda,  pch=1, col=rgb(1,0.5,0,0.5), cex=0.5)
