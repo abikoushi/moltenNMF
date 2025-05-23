@@ -100,12 +100,12 @@ List doVB_pois_sp_skip(const int & N,
   Progress pb(iter, display_progress);
   for (int i=0; i<iter; i++) {
     up_A(alpha, R, logV, y, xi, xp, a);
-    up_Bs_sp(N, beta, V, xi, xp, varind, p1, 1.0, 1.0, b);
+    up_Bs(N, beta, V, logV, alpha, xi, xp, varind, p1, b);
     ll.row(i) = lowerbound_logML_pois(alpha, beta, V, logV, R, y, a, b);
     pb.increment();
   }
   ll -= sum(lgamma(y+1));
-  return List::create(Named("shape")=alpha,
-                      Named("rate")=beta,
-                      Named("ELBO")=ll);
+  return List::create(Named("shape") = alpha,
+                      Named("rate") = beta,
+                      Named("ELBO") = ll);
 }

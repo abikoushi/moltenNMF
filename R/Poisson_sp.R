@@ -47,7 +47,7 @@ mNMF_svb <- function(y, X, L,
   }
   if(!any(class(y) == "dsparseVector" | class(y) == "isparseVector")){
     stopifnot(!is.null(N))
-    out <- doSVB_pois_sp3(N, y,
+    out <- doSVB_pois_sp_skip(N, y,
                           X@i, X@p, varind = indices,
                           N0 = N - length(y),
                           D = X@Dim[2],
@@ -58,7 +58,7 @@ mNMF_svb <- function(y, X, L,
                           lr_type=lr_type,
                           display_progress=display_progress)    
   }else{
-    out <- doSVB_pois_sp3(y@length, y@x,
+    out <- doSVB_pois_sp_skip(y@length, y@x,
                          X@i, X@p, indices, X@Dim[2],
                          L=L, iter=n_epochs, a=a, b=b,
                          V=V,

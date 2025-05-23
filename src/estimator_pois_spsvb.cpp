@@ -72,7 +72,7 @@ void upR(arma::vec & R,
 
 
 // [[Rcpp::export]]
-List doSVB_pois_sp3(const int & N,
+List doSVB_pois_sp_skip(const int & N,
                     const arma::vec & yv,
                     const arma::uvec & xi,
                     const arma::uvec & xp,
