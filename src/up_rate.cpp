@@ -45,9 +45,10 @@ arma::vec geomsum(const int & D,
                     const double & rho,
                     const arma::uword & k){
   arma::vec out = arma::zeros<arma::mat>(D);
-  //arma::uvec xp2 = xp0.rows(varind(k), varind(k+1));
-    int M = R::rgeom(rho);
+  int M = R::rgeom(rho);
+  // sampling X with size M
     for(int j = 0; j < M; j++){
+      //product
       arma::vec fl = arma::ones<arma::vec>(M);
       for(arma::uword i = 0; i < k; i++){
         arma::distr_param support = arma::distr_param((int) varind(i), (int) varind(i+1) - 1);
@@ -60,6 +61,7 @@ arma::vec geomsum(const int & D,
         arma::uvec indices = arma::randi<arma::uvec>(M, support);
         fl %= Vl.rows(indices);
       }
+      //sum
       //i==k
       int index = sample_index_cpp(D);
       out.row(index) += sum(fl);
@@ -75,8 +77,9 @@ void up_Bs(const int & N,
               const arma::uvec & xi,
               const arma::uvec & xp,
               const arma::uvec & varind,
-              const double & rho,
-              const double & b){
+              const double & N1,
+              const double & b,
+              const double & rho){
   int K = varind.n_rows - 1;
   int L = V.n_cols;
   for(int l = 0; l < L; l++){
@@ -111,7 +114,7 @@ void up_Bs_sp(const int & N,
       vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
       arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
       arma::vec B0 = geomsum(varind(k+1) - varind(k), V.col(l), varind, rho, k);
-      arma::vec B = N1S*B1 + NS*B0;
+      arma::vec B = N1S*B1 + N1S*B0;
       beta.col(l).rows(varind(k), varind(k+1) - 1) = B + b;
       vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
     }

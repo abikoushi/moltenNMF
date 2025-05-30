@@ -17,8 +17,8 @@ doVB_pois_sp <- function(N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display
     .Call(`_moltenNMF_doVB_pois_sp`, N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display_progress)
 }
 
-doVB_pois_sp_skip <- function(N, y, xi, xp, varind, D, L, iter, a, b, V, display_progress) {
-    .Call(`_moltenNMF_doVB_pois_sp_skip`, N, y, xi, xp, varind, D, L, iter, a, b, V, display_progress)
+doVB_pois_sp_skip <- function(N, y, xi, xp, varind, D, L, iter, a, b, V, M, display_progress) {
+    .Call(`_moltenNMF_doVB_pois_sp_skip`, N, y, xi, xp, varind, D, L, iter, a, b, V, M, display_progress)
 }
 
 doVB_pois_2D <- function(V, y, rowi, coli, dims, L, iter, a, b, display_progress) {

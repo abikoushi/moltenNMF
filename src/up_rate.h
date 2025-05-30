@@ -16,8 +16,9 @@ void up_Bs(const int & N,
            const arma::uvec & xi,
            const arma::uvec & xp,
            const arma::uvec & varind,
-           const double & rho,
-           const double & b);
+           const double & N1,
+           const double & b,
+           const double & rho);
 
 void up_Bs_sp(const int & N,
                arma::mat & beta,
