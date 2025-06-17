@@ -8,8 +8,8 @@ tpath <- path[2]
 Y = readMM(tpath)
 #dim(Y)
 # log(0.95, base = 1-10^3/(2000*8337))
-rownames(Y) <- paste0("gene", 1:nrow(Y))  # 遺伝子名
-colnames(Y) <- paste0("cell", 1:ncol(Y))  # 細胞名
+rownames(Y) <- paste0("gene", 1:nrow(Y))
+colnames(Y) <- paste0("cell", 1:ncol(Y))
 liger_obj = createLiger( list(sample1=Y) )
 # liger_obj = rliger::normalize(liger_obj)
 # liger_obj = rliger::selectGenes(liger_obj)

@@ -89,7 +89,6 @@ List doVB_pois_sp_skip(const int & N,
                   const double & a,
                   const double & b,
                   arma::mat & V,
-                  const int & M,
                   const bool & display_progress){
   const double N1 = y.n_rows;
   arma::mat logV = log(V);

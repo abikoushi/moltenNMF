@@ -1,5 +1,4 @@
 mNMF_svb_batch <- function(y, X, L, N, iter,
-                           M = 0,
                            a = 1, b=1,
                            V=NULL,
                            display_progress=TRUE,
@@ -15,7 +14,6 @@ mNMF_svb_batch <- function(y, X, L, N, iter,
                           X@i, X@p, indices, X@Dim[2],
                           L = L, iter = iter, a = a, b = b,
                           V = V, 
-                          M = M,
                           display_progress=display_progress)
   rownames(out$shape) <- colnames(X)
   rownames(out$rate) <- colnames(X)

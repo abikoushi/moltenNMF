@@ -36,10 +36,10 @@ X1 = slice_rows(X, wch)
 dim(X)-dim(X1)
 
 system.time({
-  out_sb = moltenNMF:::mNMF_svb_batch(Y1, X1, L=L, N=nrow(X), M = 7, iter=100)  
+  out_sb = moltenNMF:::mNMF_svb_batch(Y1, X1, L=L, N=nrow(X), iter=100)  
 })
-#  user  system elapsed 
-# 3.414   0.049   3.493 
+# user  system elapsed 
+# 0.872   0.020   0.927
 plot(out_sb$ELBO[-1],type = "l")
 V_d <- out_d$shape/out_d$rate
 f_d <- moltenNMF::product_m(X, V_d)

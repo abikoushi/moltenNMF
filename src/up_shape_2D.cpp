@@ -86,7 +86,7 @@ double up_As_2D(arma::field<arma::mat> & alpha,
   r.each_col() /= R;
   r.each_col() %= y;
   alpha(k).rows(X.col(k)) += r * NS;
-  return sum(y % log(R)-R); //lp
+  return sum(y % log(R) - R); //lp
 }
 
 double up_As_2D(arma::field<arma::mat> & alpha,
