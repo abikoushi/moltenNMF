@@ -6,6 +6,7 @@
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
+//discrete uniform distribution 0,1,...,n-1
 int sample_index_cpp(int n) {
   std::random_device rd;
   std::mt19937 gen(rd());
@@ -40,10 +41,10 @@ void up_B(const int & N,
 
 //geometric sampling for SVB
 arma::vec geomsum(const int & D,
-                    const arma::mat & Vl,
-                    const arma::uvec & varind,
-                    const double & rho,
-                    const arma::uword & k){
+                  const arma::mat & Vl,
+                  const arma::uvec & varind,
+                  const double & rho,
+                  const arma::uword & k){
   arma::vec out = arma::zeros<arma::mat>(D);
   int M = R::rgeom(rho);
   // sampling X with size M

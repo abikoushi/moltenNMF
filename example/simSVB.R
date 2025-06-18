@@ -3,16 +3,8 @@ library(parallel)
 library(moltenNMF)
 library(Matrix)
 library(tidyr)
-L <- 5L
+library(dplyr)
 # 2-way
-
-settings = expand.grid(forgetting = c(0.9,1),
-                       delay = c(1,5,15),
-                       n_batches = c(500,1000,2000))
-
-settings[1,, drop=FALSE]$forgetting
-#[1] 18  3
-
 set_data_mf <- function(L, nrow, ncol, mu=0){
   W <- matrix(rnorm(nrow*L,0,1), ncol=L)
   H <- matrix(rnorm(L*ncol,0,1), nrow=L)
@@ -21,10 +13,17 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
   list(lambda=exp(W)%*%exp(H), trueW=exp(W), trueH=exp(H))
 }
 
-param <- set_data_mf(L,10,10)
+rearrange_winner_ord <- function(V,V_s){
+  cmat = cor(V, V_s)
+  ord =integer(ncol(V))
+  ord[1] = which.max(cmat[1,])
+  for(i in 2:L){
+    ord[i] = which(cmat[i,]==max(cmat[i,-ord[1:(i-1)]]))  
+  }
+  list(V=V_s[,ord], cor=diag(cmat[,ord]))
+}
 
-lambda <- param$lambda
-simfunc <- function(seed, Xmat, V, L, lambda){
+simfunc <- function(seed, V, L, lambda, settings){
   set.seed(seed)
   Y <- matrix(rpois(length(lambda),lambda),
               nrow(lambda), ncol(lambda))
@@ -34,34 +33,60 @@ simfunc <- function(seed, Xmat, V, L, lambda){
                                 prior_shape = 1, prior_rate = 1, iter=1000,
                                 display_progress = FALSE)
   V_d = moltenNMF:::meanV_array(out_d)
-  resV_d = rearrange_winner_ord(rbind(V[[1]],V[[2]]), rbind(param$trueW,t(param$trueH)))
+  resV_d = rearrange_winner_ord(rbind(V_d[[1]], V_d[[2]]), V)
   
 
-  out_s <- moltenNMF:::NMF2D_svb(Y, rank = L,
-                                n_epochs = 200,
-                                n_baches  = 2000,
-                                lr_param = c(15,0.9),
-                                lr_type = "exponential",
-                                display_progress = FALSE)
-  
-  V_s = moltenNMF:::meanV_array(out_s)
-  resV_s = rearrange_winner_ord(rbind(V_s[[1]],V_s[[2]]),
-                                rbind(param$trueW,t(param$trueH)))
-
-  return(cbind(resV_d$cor, resV_s$cor))
+  Vcor = vector("list", nrow(settings))
+  for(set in seq_len(nrow(settings))){
+    lr_param = c(settings$delay[set],
+                 settings$forgetting[set])
+    out_s <- moltenNMF:::NMF2D_svb(Y, rank = L,
+                                   n_epochs = 200,
+                                   n_baches  = settings$n_batches[set],
+                                   lr_param = lr_param,
+                                   lr_type = "exponential",
+                                   display_progress = FALSE)
+    V_s = moltenNMF:::meanV_array(out_s)
+    resV_s = rearrange_winner_ord(rbind(V_s[[1]],V_s[[2]]),
+                                  rbind(param$trueW,t(param$trueH)))
+    
+    Vcor[[set]] = resV_s$cor
+  }
+  list(svb=Vcor, bvb=resV_d$cor)
 }
 
 
+settings = expand.grid(forgetting = c(0.7,0.8,0.9),
+                       delay = c(1.5,5,15),
+                       n_batches = c(500,1000,2000))
+#dim(settings)
+#[1] 27  3
+L <- 5L
+param <- set_data_mf(L, 100, 100)
+lambda <- param$lambda
+ressim = simfunc(1, rbind(param$trueW,t(param$trueH)), L, lambda, settings)
+
+ressimdf = reshape2::melt(simplify2array(ressim$svb),
+               varnames = c("component","setid")) %>% 
+  left_join(mutate(settings, setid=row_number()))
+
+#saveRDS(ressimdf, "simnmf_500.rds")
+
+ggplot(ressimdf,aes(x=n_batches, y=value, group=component,colour=component))+
+  geom_line()+
+  facet_grid(forgetting~delay, labeller = label_both)+
+  scale_color_viridis_c()+
+  theme_bw()
 
 ###
 
-cmat = cor(V, V_s)
-ord =integer(ncol(V))
-ord[1] = which.max(cmat[1,])
-for(i in 2:L){
-  ord[i] = which(cmat[i,]==max(cmat[i,-ord[1:(i-1)]]))  
-}
-list(V=V_s[,ord], cor=diag(cmat[,ord]))
+# cmat = cor(V, V_s)
+# ord =integer(ncol(V))
+# ord[1] = which.max(cmat[1,])
+# for(i in 2:L){
+#   ord[i] = which(cmat[i,]==max(cmat[i,-ord[1:(i-1)]]))  
+# }
+# list(V=V_s[,ord], cor=diag(cmat[,ord]))
 
 
 # 3-way tensor

@@ -38,7 +38,7 @@ system.time({
   out2 <- moltenNMF:::NMF2D_svb(dat$Y, rank = 3,
                                 n_epochs = 200, n_baches = as.integer(2000),
                                 prior_shape = 1, prior_rate = 1,
-                                lr_param = c(16, 0.8), lr_type = "exponential")  
+                                lr_param = c(15, 0.8), lr_type = "exponential")  
 })
 # user  system elapsed 
 # 5.068   0.027   5.144 

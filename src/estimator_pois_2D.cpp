@@ -261,6 +261,7 @@ List doVB_pois_s_2D(const arma::vec & y,
     arma::umat bags = randpick_c(N1, bsize);
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
+    //rho /= bags.n_cols;
     for(int step = 0; step < (int) bags.n_cols; step++){
       arma::uvec bag = sort(bags.col(step));
       arma::vec Sy = y.rows(bag);
@@ -274,7 +275,7 @@ List doVB_pois_s_2D(const arma::vec & y,
       arma::mat beta_s = beta;
       lp(epoc) += up_As_2D(alpha_s, logV, Sy, SX, a, L, uid, NS);
       up_B_2D(beta_s, V, b);
-      up_vpar(alpha, beta, V, logV, alpha_s, beta_s,uid, rho, rho2);
+      up_vpar(alpha, beta, V, logV, alpha_s, beta_s, uid, rho, rho2);
     }
     //lp(epoc) /= (double) bags.n_cols;
     lp(epoc) -= accu(V(0))*accu(V(1));

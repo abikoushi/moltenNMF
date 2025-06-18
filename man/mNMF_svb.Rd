@@ -31,8 +31,15 @@ mNMF_svb_batch(y, X, L, N, iter,
   \item{L}{An integer specifying the number of latent components.}
   \item{n_batches}{Number of mini-batches per epoch.}
   \item{n_epochs}{Total number of epochs (iterations over the entire dataset).}
-  \item{lr_param}{Learning rate parameters used in the SVB updates. Typically a scalar or a list.}
-  \item{lr_type}{Type of learning rate schedule (\code{"poly"} or \code{"exp"}).}
+  \item{lr_param}{Learning rate parameters. For \code{exponential},
+      \deqn{\rho = (\mathtt{lr\_param[1]} + t)^{-\mathtt{lr\_param[2]}}}{
+    rho = (lr_param[1] + t)^(-lr_param[2])
+    }
+    where \eqn{t} is the current iteration number.
+    For \code{const}, it should be a constant learning rate value.
+    }
+  \item{lr_type}{A character string indicating the learning rate schedule.
+  Only \code{"exponential"} and \code{"const"} are currently implemented.}
   \item{N}{Total number of possible observations. Required if \code{y} is dense.}
   \item{a}{Shape parameter of the Gamma prior. Default is \code{1}.}
   \item{b}{Rate parameter of the Gamma prior. Default is \code{1}.}
