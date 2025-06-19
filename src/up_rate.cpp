@@ -14,6 +14,11 @@ int sample_index_cpp(int n) {
   return dis(gen);
 }
 
+arma::uvec sample_indices(const int & M, const int & start, const int & end){
+  arma::distr_param support = arma::distr_param(start, end);
+  return arma::randi<arma::uvec>(M, support);
+}
+
 //rate parameters
 void up_B(const int & N,
           arma::mat & beta,
@@ -46,20 +51,18 @@ arma::vec geomsum(const int & D,
                   const double & rho,
                   const arma::uword & k){
   arma::vec out = arma::zeros<arma::mat>(D);
-  int M = R::rgeom(rho);
+  int M = R::rgeom(rho); 
   // sampling X with size M
     for(int j = 0; j < M; j++){
       //product
       arma::vec fl = arma::ones<arma::vec>(M);
       for(arma::uword i = 0; i < k; i++){
-        arma::distr_param support = arma::distr_param((int) varind(i), (int) varind(i+1) - 1);
-        arma::uvec indices = arma::randi<arma::uvec>(M, support);
+        arma::uvec indices =sample_indices(M, varind(i), varind(i+1) - 1);
         fl %= Vl.rows(indices);
       }
       //skip i==k
       for(arma::uword i = k + 1; i < (varind.n_rows - 1); i++){
-        arma::distr_param support = arma::distr_param((int) varind(i), (int) varind(i+1) - 1);
-        arma::uvec indices = arma::randi<arma::uvec>(M, support);
+        arma::uvec indices = sample_indices(M, varind(i), varind(i+1) - 1);
         fl %= Vl.rows(indices);
       }
       //sum

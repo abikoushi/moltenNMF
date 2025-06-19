@@ -5,6 +5,8 @@ library(Matrix)
 library(tidyr)
 library(dplyr)
 
+moltenNMF:::sample_indices(4,2,3)
+
 L <- 5L
 df <- as.data.frame(expand.grid(x1=factor(1:50),
                                 x2=factor(1:50), 
