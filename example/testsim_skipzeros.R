@@ -27,8 +27,6 @@ system.time({
                                       a=1, b=1,
                                       display_progress = TRUE)
 })
-#  user  system elapsed 
-# 5.193   0.049   5.292
 
 wch = which(Y>0)
 Y1 = Y[wch]
@@ -37,24 +35,28 @@ X1 = slice_rows(X, wch)
 system.time({
   out_sb = moltenNMF:::mNMF_svb_batch(Y1, X1, L=L, N=nrow(X), iter=100)
 })
-# user  system elapsed
-# 0.872   0.020   0.927
+
+Y_sp = sparseVector(Y1, wch, length = length(Y)) 
+system.time({
+  out_sb2 = moltenNMF:::mNMF_svb_batch(Y_sp, X1, L=L, N=nrow(X), iter=100)
+})
 
 plot(out_sb$ELBO[-1],type = "l")
+points(out_sb2$ELBO[-1],type = "l", col="royalblue")
+
 V_d <- out_d$shape/out_d$rate
 f_d <- moltenNMF::product_m(X, V_d)
 V_sb <- out_sb$shape/out_sb$rate
 f_sb <- moltenNMF::product_m(X, V_sb)
+V_sb2 <- out_sb2$shape/out_sb2$rate
+f_sb2 <- moltenNMF::product_m(X, V_sb2)
+
 ggplot()+
   geom_point(aes(x=f_d, y=as.matrix(Y)), alpha=0.25, shape=1)+
   geom_point(aes(x=f_sb, y=as.matrix(Y)), alpha=0.25, colour="royalblue", shape=2)+
+  geom_point(aes(x=f_sb2, y=as.matrix(Y)), alpha=0.25, colour="cornflowerblue", shape=2)+
   geom_abline(intercept = 0, slope=1, linetype=2, colour="lightgrey")+
   theme_bw()
-
-head(out_d$rate)
-head(out_sb$rate)
-tail(out_d$rate)
-tail(out_sb$rate)
 
 #######
 #SVB
@@ -65,12 +67,22 @@ X1 = slice_rows(X, wch)
 dim(X1)
 system.time({
   out_s <- moltenNMF:::mNMF_svb(Y1, X = X1,
-                                   N = nrow(X), L = L,
-                                   n_epochs = 200,
-                                   n_batches = 100,
-                                   lr_param = c(15,0.9),
-                                   lr_type = "exponential",
-                                   display_progress = TRUE)
+                                N = nrow(X), L = L,
+                                n_epochs = 200,
+                                n_batches = 100,
+                                lr_param = c(15,0.9),
+                                lr_type = "exponential",
+                                display_progress = TRUE)
+})
+
+system.time({
+  out_s <- moltenNMF:::mNMF_svb(Y_sp, X = X1,
+                                N = nrow(X), L = L,
+                                n_epochs = 200,
+                                n_batches = 100,
+                                lr_param = c(15,0.9),
+                                lr_type = "exponential",
+                                display_progress = TRUE)
 })
 
 plot(out_s$ELBO[-1], type="l")

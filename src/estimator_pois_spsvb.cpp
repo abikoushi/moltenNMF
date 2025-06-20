@@ -77,7 +77,6 @@ List doSVB_pois_sp_skip(const int & N,
                     const arma::uvec & xi,
                     const arma::uvec & xp,
                     const arma::uvec & varind,
-                    const double & N0,
                     const int & D,
                     const int & L,
                     const int & iter,
@@ -88,7 +87,8 @@ List doSVB_pois_sp_skip(const int & N,
                     const arma::vec & lr_param,
                     const std::string & lr_type,
                     const bool & display_progress){
-  int N1 =  yv.n_rows;
+  const int N1 =  yv.n_rows;
+  const double N0 = N - N1;
   arma::mat logV = log(V);
   arma::mat alpha = arma::ones<arma::mat>(D, L);
   arma::mat beta(D, L);

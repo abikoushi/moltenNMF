@@ -1,4 +1,5 @@
-mNMF_svb_batch <- function(y, X, L, N, iter,
+mNMF_svb_batch <- function(y, X, L, iter,
+                           N = NULL,
                            a = 1, b=1,
                            V=NULL,
                            display_progress=TRUE,
@@ -10,11 +11,20 @@ mNMF_svb_batch <- function(y, X, L, N, iter,
   if(is.null(V)){
     V <- rinitV(ncol(X), L)
   }
+  if(!any(class(y) == "dsparseVector" | class(y) == "isparseVector")){
+    stopifnot(!is.null(N))
   out <- doVB_pois_sp_skip(N, y,
-                          X@i, X@p, indices, X@Dim[2],
-                          L = L, iter = iter, a = a, b = b,
-                          V = V, 
-                          display_progress=display_progress)
+                           X@i, X@p, indices, X@Dim[2],
+                           L = L, iter = iter, a = a, b = b,
+                           V = V, 
+                           display_progress=display_progress)
+  }else{
+    out <- doVB_pois_sp_skip(y@length, y@x,
+                             X@i, X@p, indices, X@Dim[2],
+                             L = L, iter = iter, a = a, b = b,
+                             V = V, 
+                             display_progress=display_progress)
+  }
   rownames(out$shape) <- colnames(X)
   rownames(out$rate) <- colnames(X)
   if(!is.null(attr(X, "term.labels"))){
@@ -48,18 +58,20 @@ mNMF_svb <- function(y, X, L,
   if(!any(class(y) == "dsparseVector" | class(y) == "isparseVector")){
     stopifnot(!is.null(N))
     out <- doSVB_pois_sp_skip(N, y,
-                          X@i, X@p, varind = indices,
-                          N0 = N - length(y),
-                          D = X@Dim[2],
-                          L=L, iter=n_epochs, a=a, b=b,
-                          V=V,
-                          bsize = n_batches,
-                          lr_param=lr_param,
-                          lr_type=lr_type,
-                          display_progress=display_progress)    
+                              X@i, X@p,
+                              varind = indices,
+                              D = X@Dim[2],
+                              L=L, iter=n_epochs, a=a, b=b,
+                              V=V,
+                              bsize = n_batches,
+                              lr_param=lr_param,
+                              lr_type=lr_type,
+                              display_progress=display_progress)    
   }else{
     out <- doSVB_pois_sp_skip(y@length, y@x,
-                         X@i, X@p, indices, X@Dim[2],
+                         X@i, X@p, 
+                         varind = indices,
+                         D = X@Dim[2],
                          L=L, iter=n_epochs, a=a, b=b,
                          V=V,
                          bsize = n_batches,
