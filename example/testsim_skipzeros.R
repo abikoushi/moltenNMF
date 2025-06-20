@@ -5,29 +5,27 @@ library(Matrix)
 library(tidyr)
 library(dplyr)
 
-moltenNMF:::sample_indices(4,2,3)
-
 L <- 5L
 df <- as.data.frame(expand.grid(x1=factor(1:50),
-                                x2=factor(1:50), 
-                                x3=factor(1:3)))
-sum(df$x)
+                                x2=factor(1:50),
+                                b1=factor(1:2))) %>% 
+  mutate(b2= factor(rbinom(n(),1,0.5)))
 dim(df)
-X <- sparse_onehot(~ ., data=df)
-# colnames(X)
+X <- sparse_onehot(~ ., data=df, binary_dummy = TRUE)
+colnames(X)
 N <- nrow(X)
 D <- ncol(X)
 set.seed(2754)
 V <- matrix(rgamma(L*D, 0.5, 0.5),D,L)
 ord = order(apply(V,2,var), decreasing = TRUE)
-V = V[,ord]
+V = V[,ord] #reorder by variance
 lambda <- product_m.default(X,V)
 Y <- rpois(N, lambda)
 
 system.time({
   out_d <- moltenNMF::mNMF_vb.default(Y, X = X,L = L,iter=100,
                                       a=1, b=1,
-                                   display_progress = TRUE)
+                                      display_progress = TRUE)
 })
 #  user  system elapsed 
 # 5.193   0.049   5.292
@@ -35,13 +33,13 @@ system.time({
 wch = which(Y>0)
 Y1 = Y[wch]
 X1 = slice_rows(X, wch)
-dim(X)-dim(X1)
 
 system.time({
-  out_sb = moltenNMF:::mNMF_svb_batch(Y1, X1, L=L, N=nrow(X), iter=100)  
+  out_sb = moltenNMF:::mNMF_svb_batch(Y1, X1, L=L, N=nrow(X), iter=100)
 })
-# user  system elapsed 
+# user  system elapsed
 # 0.872   0.020   0.927
+
 plot(out_sb$ELBO[-1],type = "l")
 V_d <- out_d$shape/out_d$rate
 f_d <- moltenNMF::product_m(X, V_d)
@@ -85,7 +83,6 @@ points(f_s, as.matrix(Y),  pch=1, col=rgb(0,0.5,1,0.5), cex=0.5)
 points(as.matrix(Y), lambda,  pch=1, col=rgb(1,0.5,0,0.5), cex=0.5)
 abline(0, 1, col="grey", lty=2)
 
-
 cor(V,V_s)
 cor(V,V_d)
 
@@ -102,6 +99,7 @@ rearrange_winner_ord <- function(V,V_s){
 
 reV_s = rearrange_winner_ord(V,V_s)
 reV_d = rearrange_winner_ord(V,V_d)
-plot(V, reV_d$V)
-points(V, reV_s$V, col="royalblue", pch=2)
+# plot(V, reV_d$V)
+# points(V, reV_s$V, col="royalblue", pch=2)
 plot(V, reV_s$V, col="royalblue", pch=2)
+

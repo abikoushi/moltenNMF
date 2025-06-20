@@ -6,17 +6,14 @@
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]
 
-//discrete uniform distribution 0,1,...,n-1
-int sample_index_cpp(int n) {
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  std::uniform_int_distribution<> dis(0, n - 1);
-  return dis(gen);
-}
-
 arma::uvec sample_indices(const int & M, const int & start, const int & end){
-  arma::distr_param support = arma::distr_param(start, end);
-  return arma::randi<arma::uvec>(M, support);
+  arma::uvec res(M);
+  res.fill(start);
+  if(start < end){
+    arma::distr_param support = arma::distr_param(start, end);
+    res = arma::randi<arma::uvec>(M, support);
+  }
+  return res;
 }
 
 //rate parameters
@@ -46,28 +43,31 @@ void up_B(const int & N,
 
 //geometric sampling for SVB
 arma::vec geomsum(const int & D,
-                  const arma::mat & Vl,
+                  const arma::vec & Vl,
                   const arma::uvec & varind,
                   const double & rho,
                   const arma::uword & k){
   arma::vec out = arma::zeros<arma::mat>(D);
   int M = R::rgeom(rho); 
+  static std::mt19937 gen(std::random_device{}());
+  std::uniform_int_distribution<> dis_idx(0, D - 1);
+  arma::vec fl(M);
   // sampling X with size M
     for(int j = 0; j < M; j++){
+      fl.fill(1.0);
       //product
-      arma::vec fl = arma::ones<arma::vec>(M);
       for(arma::uword i = 0; i < k; i++){
-        arma::uvec indices =sample_indices(M, varind(i), varind(i+1) - 1);
-        fl %= Vl.rows(indices);
+        arma::uvec indices = sample_indices(M, varind(i), varind(i+1) - 1);
+        fl %= Vl(indices);
       }
       //skip i==k
       for(arma::uword i = k + 1; i < (varind.n_rows - 1); i++){
         arma::uvec indices = sample_indices(M, varind(i), varind(i+1) - 1);
-        fl %= Vl.rows(indices);
+        fl %= Vl(indices);
       }
       //sum
       //i==k
-      int index = sample_index_cpp(D);
+      int index = dis_idx(gen); //discrete uniform random number
       out.row(index) += sum(fl);
     }
   return out;
