@@ -31,6 +31,14 @@ size_mtx <- function(file_path){
   size
 }
 
+rowmeanvar_mtx <- function(file_path, n_header=2){
+  size = size_mtx(file_path = file_path)
+  rowmeanvar_txt(n_row = size[1],
+                 n_col = size[2],
+                 file_path,
+                 n_header = n_header)
+}
+
 writebin_spmat <- function(object, filepath_x, filepath_y,
                            index_decrement=0L){
   if(all(class(object) != "dgTMatrix")){

@@ -61,49 +61,16 @@ simfunc <- function(seed, V, L, lambda, settings){
 settings = expand.grid(forgetting = c(0.7,0.8,0.9),
                        delay = c(1.5,5,15),
                        n_batches = c(500,1000,2000))
-#dim(settings)
+dim(settings)
 #[1] 27  3
 L <- 5L
 ncols = c(100, 500, 1000)
 for(i in 1:3){
   param <- set_data_mf(L, 100, ncols[i])
-  ressim = simfunc(1, rbind(param$trueW,t(param$trueH)), L, param$lambda, settings)
-  ressimdf = reshape2::melt(simplify2array(ressim$svb),
-                            varnames = c("component","setid")) %>% 
-    left_join(mutate(settings, setid=row_number()))
+  ressim = simfunc(1, rbind(param$trueW, t(param$trueH)), L, param$lambda, settings)
   saveRDS(ressimdf, paste0("simnmf_",ncols[i],".rds"))  
 }
 
-ressimdf1 <- readRDS("simnmf_100.rds")
-ressimdf2 <- readRDS("simnmf_500.rds")
-ressimdf3 <- readRDS("simnmf_1000.rds")
 
-p1 = ggplot(ressimdf1, aes(x=n_batches, y=value, 
-                           group=factor(component),
-                           colour=factor(component)))+
-  geom_line()+
-  facet_grid(forgetting~delay, labeller = label_both)+
-  scale_color_viridis_d()+
-  labs(title  = paste("number of columns:", ncols[1]), colour="component")+
-  theme_classic(20)+
-print(p1)
 
-p2 = ggplot(ressimdf2, aes(x=n_batches, y=value,
-                           group=factor(component), colour=factor(component)))+
-  geom_line()+
-  facet_grid(forgetting~delay, labeller = label_both)+
-  scale_color_viridis_d()+
-  labs(title  = paste("number of columns:", ncols[2]), colour="component")+
-  theme_classic(20)
-print(p2)
-
-p3 = ggplot(ressimdf3, aes(x=n_batches, y=value,
-                           group=factor(component), colour=factor(component)))+
-  geom_line()+
-  facet_grid(forgetting~delay, labeller = label_both)+
-  scale_color_viridis_d()+
-  labs(title  = paste("number of columns:", ncols[3]), colour="component")+
-  theme_classic(20)
-print(p3)
-pp = gridExtra::grid.arrange(p1, p2, p3, nrow=3)
-ggsave("simNMF.pdf", plot = pp, width = 20, height = 20)
+saveRDS(ressimdf, paste0("simnmf_",ncols[i],".rds"))

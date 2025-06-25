@@ -90,28 +90,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// doVB_pois_sp_skip
-List doVB_pois_sp_skip(const int& N, const arma::vec& y, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const int& iter, const double& a, const double& b, arma::mat& V, const bool& display_progress);
-RcppExport SEXP _moltenNMF_doVB_pois_sp_skip(SEXP NSEXP, SEXP ySEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP VSEXP, SEXP display_progressSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const int& >::type N(NSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type xi(xiSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type xp(xpSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type varind(varindSEXP);
-    Rcpp::traits::input_parameter< const int& >::type D(DSEXP);
-    Rcpp::traits::input_parameter< const int& >::type L(LSEXP);
-    Rcpp::traits::input_parameter< const int& >::type iter(iterSEXP);
-    Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
-    Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
-    Rcpp::traits::input_parameter< arma::mat& >::type V(VSEXP);
-    Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(doVB_pois_sp_skip(N, y, xi, xp, varind, D, L, iter, a, b, V, display_progress));
-    return rcpp_result_gen;
-END_RCPP
-}
 // doVB_pois_2D
 List doVB_pois_2D(arma::field<arma::mat> V, const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const arma::uvec& dims, const int& L, const int& iter, const double& a, const double& b, const bool& display_progress);
 RcppExport SEXP _moltenNMF_doVB_pois_2D(SEXP VSEXP, SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP dimsSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP display_progressSEXP) {
@@ -426,9 +404,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rowmeanvar_mtx
-List rowmeanvar_mtx(const int& n_row, const int& n_col, const std::string& readtxt, const int& n_header);
-RcppExport SEXP _moltenNMF_rowmeanvar_mtx(SEXP n_rowSEXP, SEXP n_colSEXP, SEXP readtxtSEXP, SEXP n_headerSEXP) {
+// rowmeanvar_txt
+List rowmeanvar_txt(const int& n_row, const int& n_col, const std::string& readtxt, const int& n_header);
+RcppExport SEXP _moltenNMF_rowmeanvar_txt(SEXP n_rowSEXP, SEXP n_colSEXP, SEXP readtxtSEXP, SEXP n_headerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -436,7 +414,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int& >::type n_col(n_colSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type readtxt(readtxtSEXP);
     Rcpp::traits::input_parameter< const int& >::type n_header(n_headerSEXP);
-    rcpp_result_gen = Rcpp::wrap(rowmeanvar_mtx(n_row, n_col, readtxt, n_header));
+    rcpp_result_gen = Rcpp::wrap(rowmeanvar_txt(n_row, n_col, readtxt, n_header));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -471,7 +449,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_doVB_negbin", (DL_FUNC) &_moltenNMF_doVB_negbin, 11},
     {"_moltenNMF_doVB_pois", (DL_FUNC) &_moltenNMF_doVB_pois, 11},
     {"_moltenNMF_doVB_pois_sp", (DL_FUNC) &_moltenNMF_doVB_pois_sp, 13},
-    {"_moltenNMF_doVB_pois_sp_skip", (DL_FUNC) &_moltenNMF_doVB_pois_sp_skip, 12},
     {"_moltenNMF_doVB_pois_2D", (DL_FUNC) &_moltenNMF_doVB_pois_2D, 10},
     {"_moltenNMF_doVB_pois_2D_ww", (DL_FUNC) &_moltenNMF_doVB_pois_2D_ww, 11},
     {"_moltenNMF_doVB_pois_s_2D", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D, 14},
@@ -488,7 +465,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_PoissonGamma_rng", (DL_FUNC) &_moltenNMF_PoissonGamma_rng, 6},
     {"_moltenNMF_NegbinGamma_rng", (DL_FUNC) &_moltenNMF_NegbinGamma_rng, 7},
     {"_moltenNMF_obsfitloss_mtx", (DL_FUNC) &_moltenNMF_obsfitloss_mtx, 3},
-    {"_moltenNMF_rowmeanvar_mtx", (DL_FUNC) &_moltenNMF_rowmeanvar_mtx, 4},
+    {"_moltenNMF_rowmeanvar_txt", (DL_FUNC) &_moltenNMF_rowmeanvar_txt, 4},
     {"_moltenNMF_rowfilter_mtx", (DL_FUNC) &_moltenNMF_rowfilter_mtx, 3},
     {"_moltenNMF_read_mtx", (DL_FUNC) &_moltenNMF_read_mtx, 3},
     {NULL, NULL, 0}

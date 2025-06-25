@@ -17,10 +17,6 @@ doVB_pois_sp <- function(N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display
     .Call(`_moltenNMF_doVB_pois_sp`, N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display_progress)
 }
 
-doVB_pois_sp_skip <- function(N, y, xi, xp, varind, D, L, iter, a, b, V, display_progress) {
-    .Call(`_moltenNMF_doVB_pois_sp_skip`, N, y, xi, xp, varind, D, L, iter, a, b, V, display_progress)
-}
-
 doVB_pois_2D <- function(V, y, rowi, coli, dims, L, iter, a, b, display_progress) {
     .Call(`_moltenNMF_doVB_pois_2D`, V, y, rowi, coli, dims, L, iter, a, b, display_progress)
 }
@@ -85,8 +81,8 @@ obsfitloss_mtx <- function(readtxt, fit, n_header) {
     .Call(`_moltenNMF_obsfitloss_mtx`, readtxt, fit, n_header)
 }
 
-rowmeanvar_mtx <- function(n_row, n_col, readtxt, n_header) {
-    .Call(`_moltenNMF_rowmeanvar_mtx`, n_row, n_col, readtxt, n_header)
+rowmeanvar_txt <- function(n_row, n_col, readtxt, n_header) {
+    .Call(`_moltenNMF_rowmeanvar_txt`, n_row, n_col, readtxt, n_header)
 }
 
 rowfilter_mtx <- function(readtxt, writetxt, rowind) {

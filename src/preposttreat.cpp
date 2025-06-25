@@ -66,7 +66,8 @@ List obsfitloss_mtx(const std::string & readtxt, arma::mat fit, const int & n_he
 ////
 
 // [[Rcpp::export]]
-List rowmeanvar_mtx(const int & n_row, const int & n_col,
+List rowmeanvar_txt(const int & n_row,
+                    const int & n_col,
                     const std::string & readtxt,
                     const int & n_header) {
   int x;
@@ -107,8 +108,8 @@ List rowmeanvar_mtx(const int & n_row, const int & n_col,
 
 // [[Rcpp::export]]
 void rowfilter_mtx(const std::string & readtxt,
-                const std::string & writetxt,
-                const arma::vec & rowind){
+                   const std::string & writetxt,
+                   const arma::vec & rowind){
   int x;
   std::ifstream file(readtxt);
   std::string str;

@@ -49,24 +49,35 @@ simfunc <- function(seed, Xmat, V, L, lambda, settings){
 
 settings = expand.grid(forgetting = c(0.7,0.8,0.9),
                        delay = c(1.5,5,15),
-                       n_batches = c(500,1000,2000))
+                       n_batches = c(500,1000,2000),
+                       rep = 1:10)
 
 ncols = c(100, 500, 1000)
 L <- 5L
-df <- as.data.frame(expand.grid(row=factor(1:10),
+df <- as.data.frame(expand.grid(row=factor(1:50),
                                 col=factor(1:ncols[1]),
-                                depth=factor(1:10)))
-dim(df)
-X <- sparse_onehot(~ ., data=df)
+                                depth=factor(1:2)))
 
+X <- sparse_onehot(~ ., data=df)
 N <- nrow(X)
 D <- ncol(X)
 set.seed(1111);V <- matrix(rgamma(L*D, 0.5, 0.5),D,L)
 ord = order(apply(V, 2, var), decreasing = TRUE)
 V = V[,ord]
 lambda <- product_m.default(X, V)
-
 res = simfunc(1, Xmat=X, V=V, L=L, lambda=lambda, settings = settings)
 
-plot(res$svb[[1]], res$bvb)
-abline(0,1,lty=2)
+# ressimdf = reshape2::melt(simplify2array(res$svb),
+#                           varnames = c("component","setid")) %>% 
+#   left_join(mutate(settings, setid=row_number()))
+# 
+# p1 = ggplot(ressimdf, aes(x=n_batches, y=value, 
+#                            group=factor(component),
+#                            colour=factor(component)))+
+#   geom_line()+
+#   facet_grid(forgetting~delay, labeller = label_both)+
+#   scale_color_viridis_d()+
+#   labs(title  = paste("number of columns:", ncols[1]), colour="component")+
+#   theme_classic(20)
+# 
+# print(p1)

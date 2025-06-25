@@ -77,36 +77,38 @@ List doVB_pois_sp(const int & N,
                       Named("ELBO")=ll);
 }
 
-// [[Rcpp::export]]
-List doVB_pois_sp_skip(const int & N,
-                  const arma::vec & y,
-                  const arma::uvec & xi,
-                  const arma::uvec & xp,
-                  const arma::uvec & varind,
-                  const int & D,
-                  const int & L,
-                  const int & iter,
-                  const double & a,
-                  const double & b,
-                  arma::mat & V,
-                  const bool & display_progress){
-  const double N1 = y.n_rows;
-  arma::mat logV = log(V);
-  arma::mat alpha = arma::ones<arma::mat>(D, L);
-  arma::mat beta  = arma::ones<arma::mat>(D, L);
-  arma::vec R = arma::zeros<arma::vec>(N);
-  const double rho = N1 / N;
-  //const double N0 = (double) N - N1;
-  arma::vec ll(iter);
-  Progress pb(iter, display_progress);
-  for (int i=0; i<iter; i++) {
-    up_A(alpha, R, logV, y, xi, xp, a);
-    up_Bs(N, beta, V, logV, alpha, xi, xp, varind, N1, b, rho);
-    ll.row(i) = lowerbound_logML_pois(alpha, beta, V, logV, R, y, a, b);
-    pb.increment();
-  }
-  ll -= sum(lgamma(y+1));
-  return List::create(Named("shape") = alpha,
-                      Named("rate") = beta,
-                      Named("ELBO") = ll);
-}
+
+// List doVB_pois_sp_skip(const int & N,
+//                   const arma::vec & y,
+//                   const arma::uvec & xi,
+//                   const arma::uvec & xp,
+//                   const arma::uvec & varind,
+//                   const int & D,
+//                   const int & L,
+//                   const int & iter,
+//                   const double & a,
+//                   const double & b,
+//                   arma::mat & V,
+//                   const bool & display_progress){
+//   const double N1 = y.n_rows;
+//   arma::mat logV = log(V);
+//   arma::mat alpha = arma::ones<arma::mat>(D, L);
+//   arma::mat beta  = arma::ones<arma::mat>(D, L);
+//   beta.fill(b);
+//   plus_Bs(N, beta, V, xi, xp, varind);
+//   arma::vec R = arma::zeros<arma::vec>(N);
+//   const double rho = N1 / N;
+//   //const double N0 = (double) N - N1;
+//   arma::vec ll(iter);
+//   Progress pb(iter, display_progress);
+//   for (int i=0; i<iter; i++) {
+//     up_A(alpha, R, logV, y, xi, xp, a);
+//     up_Bs(N, beta, V, logV, alpha, xi, xp, varind, N1, b, rho);
+//     ll.row(i) = lowerbound_logML_pois(alpha, beta, V, logV, R, y, a, b);
+//     pb.increment();
+//   }
+//   ll -= sum(lgamma(y+1));
+//   return List::create(Named("shape") = alpha,
+//                       Named("rate") = beta,
+//                       Named("ELBO") = ll);
+// }

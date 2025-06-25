@@ -31,3 +31,9 @@ void up_Bs_sp(const int & N,
                const double & NS,
                const double & b);
 
+void plus_Bs(const int & N,
+             arma::mat & beta,
+             arma::mat & V,
+             const arma::uvec & xi,
+             const arma::uvec & xp,
+             const arma::uvec & varind);

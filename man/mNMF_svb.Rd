@@ -1,6 +1,5 @@
 \name{mNMF_svb}
 \alias{mNMF_svb}
-\alias{mNMF_svb_batch}
 \title{
 Estimate the model of molten NMF using stochastic variational Bayes
 }
@@ -18,12 +17,6 @@ mNMF_svb(y, X, L,
          V = NULL,
          display_progress = TRUE,
          indices = NULL)
-         
-mNMF_svb_batch(y, X, L, N, iter,
-               a = 1, b=1,
-               V=NULL,
-               display_progress=TRUE,
-               indices=NULL)
 }
 \arguments{
   \item{y}{A sparse vector of observed counts, either of class \code{dsparseVector} or \code{isparseVector}, or a dense numeric vector.}
