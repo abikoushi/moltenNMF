@@ -2,6 +2,7 @@
 #include "myproduct.h"
 #include "up_shape.h"
 using namespace Rcpp;
+#include "TimerLogger.h"
 
 // update shape parameters
 void up_A(arma::mat & alpha,
@@ -53,8 +54,7 @@ void up_As_sp(arma::mat & alpha,
              const double & NS){
   arma::mat r =  myprod(R.n_rows, xi, xp, exp(loglambda)); //(N, L)
   R = sum(r, 1);
-  alpha = NS*mysum_t(alpha.n_rows, xi, xp, r.each_col() % elementwise_div(yv, yi, R)); //D,L
-  alpha += a;
+  alpha = NS*mysum_t(alpha.n_rows, xi, xp, r.each_col() % elementwise_div(yv, yi, R)) + a;
 }
 
 void up_As_sp2(arma::mat & alpha,
@@ -65,8 +65,8 @@ void up_As_sp2(arma::mat & alpha,
               const arma::uvec & xp,
               const double & a,
               const double & NS){
+  //TimerLogger total_timer("upA_total");
   arma::mat r =  myprod(R.n_rows, xi, xp, exp(loglambda)); //(N, L)
   R = sum(r, 1);
-  alpha = NS*mysum_t(alpha.n_rows, xi, xp, r.each_col() % (yv/R)); //D,L
-  alpha += a;
+  alpha = NS*mysum_t(alpha.n_rows, xi, xp, r.each_col() % (yv/R)) + a;
 }

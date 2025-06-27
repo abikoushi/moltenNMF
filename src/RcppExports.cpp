@@ -274,8 +274,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // doSVB_pois_sp_skip
-List doSVB_pois_sp_skip(const int& N, const arma::vec& yv, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const int& iter, const double& a, const double& b, arma::mat& V, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
-RcppExport SEXP _moltenNMF_doSVB_pois_sp_skip(SEXP NSEXP, SEXP yvSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP VSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
+List doSVB_pois_sp_skip(const int& N, const arma::vec& yv, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const int& iter, const double& a, const double& b, arma::mat& V, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const int& M_max, const bool& display_progress);
+RcppExport SEXP _moltenNMF_doSVB_pois_sp_skip(SEXP NSEXP, SEXP yvSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP VSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP M_maxSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -293,8 +293,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int& >::type bsize(bsizeSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type lr_param(lr_paramSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type lr_type(lr_typeSEXP);
+    Rcpp::traits::input_parameter< const int& >::type M_max(M_maxSEXP);
     Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(doSVB_pois_sp_skip(N, yv, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress));
+    rcpp_result_gen = Rcpp::wrap(doSVB_pois_sp_skip(N, yv, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, M_max, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -457,7 +458,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_doVB_pois_s_2D_bin", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D_bin, 13},
     {"_moltenNMF_doVB_pois_offset_sp", (DL_FUNC) &_moltenNMF_doVB_pois_offset_sp, 14},
     {"_moltenNMF_doVB_pois_offset", (DL_FUNC) &_moltenNMF_doVB_pois_offset, 12},
-    {"_moltenNMF_doSVB_pois_sp_skip", (DL_FUNC) &_moltenNMF_doSVB_pois_sp_skip, 15},
+    {"_moltenNMF_doSVB_pois_sp_skip", (DL_FUNC) &_moltenNMF_doSVB_pois_sp_skip, 16},
     {"_moltenNMF_check_lr", (DL_FUNC) &_moltenNMF_check_lr, 3},
     {"_moltenNMF_summyprod", (DL_FUNC) &_moltenNMF_summyprod, 4},
     {"_moltenNMF_NegBin_lp", (DL_FUNC) &_moltenNMF_NegBin_lp, 7},

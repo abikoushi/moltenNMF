@@ -33,3 +33,6 @@ double sumouterprod_mat(const arma::mat & V,
                         const int & l,
                         const arma::field<arma::vec> & prob,
                         const arma::vec & freq);
+
+arma::vec summyprod(const int & n, const arma::uvec & xi,
+                    const arma::uvec & xp, const arma::mat & lam);

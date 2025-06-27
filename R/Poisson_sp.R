@@ -46,6 +46,7 @@ mNMF_svb <- function(y, X, L,
                      N = NULL,
                      a = 1, b=1,
                      V=NULL,
+                     M_max = 10,
                      display_progress=TRUE,
                      indices=NULL){
   stopifnot(grepl(".gCMatrix",class(X)))
@@ -66,6 +67,7 @@ mNMF_svb <- function(y, X, L,
                               bsize = n_batches,
                               lr_param=lr_param,
                               lr_type=lr_type,
+                              M_max = M_max,
                               display_progress=display_progress)    
   }else{
     out <- doSVB_pois_sp_skip(y@length, y@x,
@@ -77,6 +79,7 @@ mNMF_svb <- function(y, X, L,
                          bsize = n_batches,
                          lr_param=lr_param,
                          lr_type=lr_type,
+                         M_max = M_max,
                          display_progress=display_progress)
   }
   rownames(out$shape) <- colnames(X)

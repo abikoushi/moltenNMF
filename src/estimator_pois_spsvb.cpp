@@ -9,49 +9,61 @@
 #include "rand.h"
 #include <progress.hpp>
 #include <progress_bar.hpp>
+//#include "TimerLogger.h"
 // [[Rcpp::depends(RcppProgress)]]
 // [[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
 
-/////
-//SVB
-/////
-//rate parameters
-void minus_Bs(const int & N,
-             arma::mat & beta,
-             arma::mat & V,
-             const arma::uvec & xi,
-             const arma::uvec & xp,
-             const arma::uvec & varind){
-  int K = varind.n_rows - 1;
+////
+//update variational parameters
+////
+void up_theta_sp(const int & N,
+                 arma::mat & alpha,
+              arma::mat & beta,
+              arma::vec & R,
+              const arma::mat & V,
+              const arma::mat & logV,
+              const arma::vec & y,
+              const arma::uvec & xi,
+              const arma::uvec & xp,
+              const arma::uvec & varind,
+              const double & rho,
+              const double & N1S,
+              const double & a,
+              const double & b,
+              const int & M_max){
+  //TimerLogger up_theta_total("up_theta");
+  int K = (varind.n_rows - 1);
   int L = V.n_cols;
-  for(int l=0;l<L;l++){
-    arma::vec vl = myprodvec(N, xi, xp, V.col(l));
-    for(int k=0; k<K; k++){
-      vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
-      arma::vec B = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
-      beta.col(l).rows(varind(k), varind(k+1) - 1) -= B;
-      vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
+  arma::mat r =  myprod(y.n_rows, xi, xp, exp(logV));
+  R = sum(r, 1);
+  alpha = N1S*mysum_t(alpha.n_rows, xi, xp, r.each_col()%(y/R)) + a;
+  arma::vec vl(y.n_rows);
+  for(int l = 0; l < L; l++){
+    vl = r.col(l);
+    for(int k=0; k < K; k++){
+      vl /= myprodvec_sub(y.n_rows, xi, xp, varind(k), varind(k+1), V.col(l)); // # N
+      arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
+      arma::vec B0 = geomsum(varind(k+1) - varind(k), V.col(l), varind, rho, k, M_max);
+      arma::vec B = N1S*B1 + N1S*B0;
+      beta.col(l).rows(varind(k), varind(k+1) - 1) = B + b;
+      vl %= myprodvec_sub(y.n_rows, xi, xp, varind(k), varind(k+1), V.col(l));
     }
   }
 }
 
 void upEV(arma::mat & V, arma::mat & logV,
-          const arma::mat & alpha, const arma::mat & beta){
-  V = alpha/beta;
-  logV = mat_digamma(alpha) - log(beta);
+          const arma::mat & alpha,
+          const arma::mat & beta,
+          const arma::uvec & up){
+  //TimerLogger up_V_total("up_V");
+  V.rows(up) = alpha.rows(up)/beta.rows(up);
+  logV.rows(up) = mat_digamma(alpha.rows(up)) - log(beta.rows(up));
 }
 
-void upR(arma::vec & R,
-         const arma::mat & loglambda,
-         const arma::uvec & xi,
-         const arma::uvec & xp,
-         const arma::uvec uid){
-    arma::mat r =  myprod(R.n_rows, xi, xp, exp(loglambda)); //(N, L)
-    R.rows(uid) = sum(r.rows(uid), 1);
-} 
-
-
+/////
+//SVB main
+/////
 // [[Rcpp::export]]
 List doSVB_pois_sp_skip(const int & N,
                     const arma::vec & yv,
@@ -67,6 +79,7 @@ List doSVB_pois_sp_skip(const int & N,
                     const int & bsize,
                     const arma::vec & lr_param,
                     const std::string & lr_type,
+                    const int & M_max,
                     const bool & display_progress){
   const int N1 =  yv.n_rows;
   const double N0 = N - N1;
@@ -91,17 +104,21 @@ List doSVB_pois_sp_skip(const int & N,
       arma::vec S_yv;
       arma::uvec S_xp;
       arma::uvec S_xi;
-      S_yv = yv.rows(bags.col(step));
-      subset_spx(S_xi, S_xp, xi, xp, bags.col(step));
+      arma::uvec uid = bags.col(step);
+      S_yv = yv.rows(uid);
+      arma::uvec up;
+      subset_spx(S_xi, S_xp, xi, xp, uid, up);
       arma::mat alpha_s = alpha;
       arma::mat beta_s = beta;
-      arma::vec SR = R.rows(bags.col(step));
-      up_As_sp2(alpha_s, SR, logV, S_yv, S_xi, S_xp, a, N1S);
-      up_Bs_sp(N, beta_s, V, S_xi, S_xp, varind, p1, N1S, NS, b);
-      upEV(V, logV, alpha, beta);
-      alpha = rho2 * alpha + rho * alpha_s;
-      beta = rho2 * beta + rho * beta_s;
-      upR(R, logV, xi, xp, bags.col(step));
+      arma::vec SR = R.rows(uid);
+      up_theta_sp(N, alpha_s, beta_s, 
+                  SR, V, logV,
+                  S_yv, S_xi, S_xp, varind,
+                  p1, N1S, a, b, M_max);
+      R(uid) = SR;
+      alpha.rows(up) = rho2 * alpha.rows(up) + rho * alpha_s.rows(up);
+      beta.rows(up) = rho2 * beta.rows(up) + rho * beta_s.rows(up);
+      upEV(V, logV, alpha, beta, up);
     }
     ll.row(epoc) += lowerbound_logML_pois(alpha, beta, V, logV, R, yv, a, b);      
     pb.increment();

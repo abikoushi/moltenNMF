@@ -1,32 +1,82 @@
-library(parallel)
 library(moltenNMF)
 library(Matrix)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
 
-L <- 3L
+L <- 4L
 df1 <- as.data.frame(expand.grid(x1=factor(1:50),
-                                x2=factor(1:50)))
+                                x2=factor(1:50),
+                                x3=1))
 
 df2 <- as.data.frame(expand.grid(x1=factor(51:110),
-                                x2=factor(51:110)))
+                                x2=factor(51:110),
+                                x3=1:2))
 
 df = mutate(rbind(df1,df2))
-
 
 X <- sparse_onehot(~ ., data=df)
 
 N <- nrow(X)
 D <- ncol(X)
-set.seed(575)
+set.seed(56)
 V <- matrix(rgamma(L*D, 0.5, 0.5), D, L)
 ord = order(apply(V,2,var), decreasing = TRUE)
 V = V[,ord] #reorder by variance
 lambda <- product_m.default(X,V)
 Y <- rpois(N, lambda)
+#######
+#SVB
+#######
+wch = which(Y>0)
+Y1 = Y[wch]
+X1 = slice_rows(X, wch)
+length(Y1)
+range(unique(X1@p))
+dim(X1)
+#rho = length(Y1)/nrow(X)
+#1/rho
+#(1-rho)/(rho^2)
+#length(Y1)
 
-mean(Y==0)
+system.time({
+  out_s <- moltenNMF:::mNMF_svb(Y1, X = X1,
+                                N = nrow(X), L = L,
+                                n_epochs = 200,
+                                n_batches = 100,
+                                lr_param = c(15,0.9),
+                                lr_type = "exponential",
+                                M_max = 10,
+                                display_progress = TRUE)
+})
+
+# system.time({
+#   out_s2 <- moltenNMF:::mNMF_svb(Y_sp, X = X1,
+#                                 N = nrow(X), L = L,
+#                                 n_epochs = 200,
+#                                 n_batches = 100,
+#                                 lr_param = c(15,0.9),
+#                                 lr_type = "exponential",
+#                                 display_progress = TRUE)
+# })
+
+plot(out_s$ELBO[-1], type="l")
+#lines(out_s2$ELBO[-1], type="l", col="royalblue")
+
+V_s <- out_s$shape/out_s$rate
+f_s <- moltenNMF::product_m(X, V_s)
+
+ggplot(data = NULL)+
+  geom_abline(slope = 1, intercept = 0, colour="lightgrey")+
+  geom_bin2d(aes(x=c(as.matrix(Y)), y=c(lambda), fill = after_stat(log1p(count))), alpha = 0.2)+
+  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.05, size=0.01)+
+  scale_fill_viridis_c()+
+  theme_bw(16)
+
+
+####
+#batch
+####
 
 system.time({
   out_d <- moltenNMF::mNMF_vb.default(Y, X = X,L = L,iter=500,
@@ -36,7 +86,6 @@ system.time({
 
 
 wch = which(Y>0)
-Y1 = Y[wch]
 Y_sp = sparseVector(Y1, wch, length = length(Y)) 
 system.time({
   out_sb = moltenNMF:::mNMF_vb.default(Y_sp, X, L=L, iter=100)
@@ -66,53 +115,14 @@ f_sb <- moltenNMF::product_m(X, V_sb)
 # f_sb2 <- moltenNMF::product_m(X, V_sb2)
 
 ggplot()+
-  geom_point(aes(x=f_d, y=as.matrix(Y)), alpha=0.25, shape=1)+
+  geom_point(aes(x=f_s, y=as.matrix(Y)), alpha=0.25, shape=1)+
   geom_point(aes(x=f_sb, y=as.matrix(Y)), alpha=0.25, colour="royalblue", shape=2)+
   geom_abline(intercept = 0, slope=1, linetype=2, colour="lightgrey")+
   theme_bw()
 
-#######
-#SVB
-#######
-wch = which(Y>0)
-Y1 = Y[wch]
-X1 = slice_rows(X, wch)
-length(Y1)
-
-rho = length(Y1)/nrow(X)
-max(rgeom(100, rho))
-
-system.time({
-  out_s <- moltenNMF:::mNMF_svb(Y1, X = X1,
-                                N = nrow(X), L = L,
-                                n_epochs = 200,
-                                n_batches = 100,
-                                lr_param = c(15,0.8),
-                                lr_type = "exponential",
-                                display_progress = TRUE)
-})
-
-# system.time({
-#   out_s2 <- moltenNMF:::mNMF_svb(Y_sp, X = X1,
-#                                 N = nrow(X), L = L,
-#                                 n_epochs = 200,
-#                                 n_batches = 100,
-#                                 lr_param = c(15,0.9),
-#                                 lr_type = "exponential",
-#                                 display_progress = TRUE)
-# })
-
-plot(out_s$ELBO[-1], type="l")
-#lines(out_s2$ELBO[-1], type="l", col="royalblue")
-
-V_s <- out_s$shape/out_s$rate
-f_s <- moltenNMF::product_m(X, V_s)
 
 
-plot(as.matrix(Y),f_s,cex=0.5)
-abline(0, 1, col="grey", lty=2)
-
-plot(f_d, as.matrix(Y), pch=1, col=rgb(0,0,0,0.5), cex=0.5, xlab = "fitted")
+plot(f_sb, as.matrix(Y), pch=1, col=rgb(0,0,0,0.5), cex=0.5, xlab = "fitted")
 points(f_s, as.matrix(Y),  pch=1, col=rgb(0,0.5,1,0.5), cex=0.5)
 points(as.matrix(Y), lambda,  pch=1, col=rgb(1,0.5,0,0.5), cex=0.5)
 abline(0, 1, col="grey", lty=2)

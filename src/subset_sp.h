@@ -1,6 +1,6 @@
 void subset_spx(arma::uvec & xi2, arma::uvec & xp2,
                 const arma::uvec & xi, const arma::uvec & xp,
-                const arma::uvec & uid);
+                const arma::uvec & uid, arma::uvec & up);
 
 arma::uvec subset_xp(const arma::uvec & xi, const arma::uvec & xp,
                      const arma::uvec & uid);

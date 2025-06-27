@@ -49,8 +49,8 @@ doVB_pois_offset <- function(y, xi, xp, varind, D, L, tau, iter, a, b, V, displa
     .Call(`_moltenNMF_doVB_pois_offset`, y, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress)
 }
 
-doSVB_pois_sp_skip <- function(N, yv, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress) {
-    .Call(`_moltenNMF_doSVB_pois_sp_skip`, N, yv, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, display_progress)
+doSVB_pois_sp_skip <- function(N, yv, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, M_max, display_progress) {
+    .Call(`_moltenNMF_doSVB_pois_sp_skip`, N, yv, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, M_max, display_progress)
 }
 
 check_lr <- function(epoc, lr_param, lr_type) {

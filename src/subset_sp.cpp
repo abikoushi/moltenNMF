@@ -3,21 +3,24 @@
 
 void subset_spx(arma::uvec & xi2, arma::uvec & xp2,
                 const arma::uvec & xi, const arma::uvec & xp,
-                const arma::uvec & uid) {
+                const arma::uvec & uid, arma::uvec & up) {
   xp2 = xp;
+  std::vector<arma::uword> vector_up;
   std::vector<arma::uword> result;
   int count_p = 0;
-  for(int i = 0; i < ((int) xp.n_rows) -1; i++){
-    for(int j = xp(i); j < (int) xp(i+1); j++){
+  for(arma::uword i = 0; i < (xp.n_rows - 1); i++){
+    for(arma::uword j = xp(i); j < xp(i+1); j++){
       if(any(xi(j) == uid)){
         count_p += 1;
         arma::uvec newxi = find(xi(j) == uid);
         result.push_back(newxi(0));
+        vector_up.push_back(i);
       }
     }
     xp2(i+1) = count_p;
   }
   xi2 = arma::conv_to<arma::uvec>::from(result);
+  up = unique(arma::conv_to<arma::uvec>::from(vector_up));
 }
 
 arma::uvec subset_xp(const arma::uvec & xi, const arma::uvec & xp,
