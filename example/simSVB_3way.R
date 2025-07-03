@@ -81,7 +81,8 @@ system.time({
                                 lr_type = "exponential",
                                 display_progress = FALSE)  
 })
-
+#    user  system elapsed 
+# 203.555   0.224 203.792 
 plot(out_s$ELBO[-1], type = "l")
 
 V_s <- out_s$shape/out_s$rate
@@ -89,10 +90,11 @@ f_s <- moltenNMF::product_m(X, V_s)
 #plot(c(as.matrix(Y)), c(f_s))
 ggplot(data = NULL)+
   geom_abline(slope = 1, intercept = 0, colour="lightgrey")+
-  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.25, size=0.1)+
+  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.1, size=1)+
   geom_bin_2d(aes(x=c(as.matrix(Y)), y=c(lambda),fill=after_stat(log10(count))), alpha=0.25)+
   scale_fill_viridis_c()+
   theme_bw(16)
+
 # ressimdf = reshape2::melt(simplify2array(res$svb),
 #                           varnames = c("component","setid")) %>% 
 #   left_join(mutate(settings, setid=row_number()))

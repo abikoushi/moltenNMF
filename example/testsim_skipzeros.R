@@ -7,7 +7,7 @@ library(ggplot2)
 L <- 4L
 df1 <- as.data.frame(expand.grid(x1=factor(1:50),
                                 x2=factor(1:50),
-                                x3=1))
+                                x3=0))
 
 df2 <- as.data.frame(expand.grid(x1=factor(51:110),
                                 x2=factor(51:110),
@@ -19,7 +19,7 @@ X <- sparse_onehot(~ ., data=df)
 
 N <- nrow(X)
 D <- ncol(X)
-set.seed(56)
+set.seed(5756)
 V <- matrix(rgamma(L*D, 0.5, 0.5), D, L)
 ord = order(apply(V,2,var), decreasing = TRUE)
 V = V[,ord] #reorder by variance
@@ -68,11 +68,10 @@ f_s <- moltenNMF::product_m(X, V_s)
 
 ggplot(data = NULL)+
   geom_abline(slope = 1, intercept = 0, colour="lightgrey")+
-  geom_bin2d(aes(x=c(as.matrix(Y)), y=c(lambda), fill = after_stat(log1p(count))), alpha = 0.2)+
-  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.05, size=0.01)+
+  geom_bin2d(aes(x=c(as.matrix(Y)), y=c(lambda), fill = after_stat(log10(count))), alpha = 0.2)+
+  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.5, size=0.01)+
   scale_fill_viridis_c()+
   theme_bw(16)
-
 
 ####
 #batch
@@ -91,18 +90,6 @@ system.time({
   out_sb = moltenNMF:::mNMF_vb.default(Y_sp, X, L=L, iter=100)
 })
 
-# X1 = slice_rows(X, wch)
-# 
-# colSums(X1)
-# system.time({
-#   out_sb = moltenNMF:::mNMF_svb_batch(Y1, X1, L=L, N=nrow(X), iter=100)
-# })
-
-
-# system.time({
-#   out_sb2 = moltenNMF:::mNMF_svb_batch(Y_sp, X1, L=L, N=nrow(X), iter=100)
-# })
-
 plot(out_d$ELBO[-1],type = "l")
 plot(out_sb$ELBO[-1],type = "l", col="royalblue")
 
@@ -111,8 +98,6 @@ V_d <- out_d$shape/out_d$rate
 f_d <- moltenNMF::product_m(X, V_d)
 V_sb <- out_sb$shape/out_sb$rate
 f_sb <- moltenNMF::product_m(X, V_sb)
-# V_sb2 <- out_sb2$shape/out_sb2$rate
-# f_sb2 <- moltenNMF::product_m(X, V_sb2)
 
 ggplot()+
   geom_point(aes(x=f_s, y=as.matrix(Y)), alpha=0.25, shape=1)+
@@ -120,12 +105,6 @@ ggplot()+
   geom_abline(intercept = 0, slope=1, linetype=2, colour="lightgrey")+
   theme_bw()
 
-
-
-plot(f_sb, as.matrix(Y), pch=1, col=rgb(0,0,0,0.5), cex=0.5, xlab = "fitted")
-points(f_s, as.matrix(Y),  pch=1, col=rgb(0,0.5,1,0.5), cex=0.5)
-points(as.matrix(Y), lambda,  pch=1, col=rgb(1,0.5,0,0.5), cex=0.5)
-abline(0, 1, col="grey", lty=2)
 
 cor(V,V_s)
 cor(V,V_d)
@@ -143,8 +122,6 @@ rearrange_winner_ord <- function(V,V_s){
 
 reV_s = rearrange_winner_ord(V,V_s)
 plot(log(V), log(reV_s$V), pch=substr(row.names(V_s),2,2))
-
-
 
 reV_d = rearrange_winner_ord(V,V_d)
 plot(log(V), log(reV_d$V))
