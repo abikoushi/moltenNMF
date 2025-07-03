@@ -44,15 +44,16 @@ void up_theta_sp(const int & N,
   int M = std::min(M_max, n0);
   double MR = (double) n0 / (double) M;
   arma::vec vl0(M);
+  arma::umat U(M, K);
   ///
   for(int l = 0; l < L; l++){
     vl = r.col(l);
-    vl0 = geomprod_all(M, V.col(l), varind);
+    vl0 = geomprod_all(M, V.col(l), varind, U);
     for(int k=0; k < K; k++){
       vl /= myprodvec_sub(y.n_rows, xi, xp, varind(k), varind(k+1), V.col(l)); // # N
       arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
       //arma::vec B0 = geomsum(varind(k+1) - varind(k), V.col(l), varind, rho, k, M_max);
-      arma::vec B0 = geomsum_k(varind(k+1) - varind(k), M, MR, vl0, V.col(l), varind, k);
+      arma::vec B0 = geomsum_k(varind(k+1) - varind(k), M, MR, vl0, V.col(l), varind, k, U);
       arma::vec B = N1S*B1 + N1S*B0;
       beta.col(l).rows(varind(k), varind(k+1) - 1) = B + b;
       vl %= myprodvec_sub(y.n_rows, xi, xp, varind(k), varind(k+1), V.col(l));

@@ -42,7 +42,7 @@ dim(X1)
 system.time({
   out_s <- moltenNMF:::mNMF_svb(Y1, X = X1,
                                 N = nrow(X), L = L,
-                                n_epochs = 200,
+                                n_epochs = 100,
                                 n_batches = 100,
                                 lr_param = c(15,0.9),
                                 lr_type = "exponential",
