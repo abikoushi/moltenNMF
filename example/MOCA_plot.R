@@ -125,3 +125,5 @@ p = ggplot(top10, aes(x=reorder(gene_short_name,value), y=value))+
   coord_flip()
 
 ggsave(plot = p, filename = "top10gene.pdf", width = 20, height = 15)
+
+###
