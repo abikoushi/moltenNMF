@@ -81,6 +81,10 @@ obsfitloss_mtx <- function(readtxt, fit, n_header) {
     .Call(`_moltenNMF_obsfitloss_mtx`, readtxt, fit, n_header)
 }
 
+obsfitloss_2d_mtx <- function(readtxt, V1, V2, n_header) {
+    .Call(`_moltenNMF_obsfitloss_2d_mtx`, readtxt, V1, V2, n_header)
+}
+
 rowmeanvar_txt <- function(n_row, n_col, readtxt, n_header) {
     .Call(`_moltenNMF_rowmeanvar_txt`, n_row, n_col, readtxt, n_header)
 }

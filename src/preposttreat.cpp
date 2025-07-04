@@ -61,6 +61,63 @@ List obsfitloss_mtx(const std::string & readtxt, arma::mat fit, const int & n_he
                       Named("MSE")=MSE);
 }
 
+// [[Rcpp::export]]
+List obsfitloss_2d_mtx(const std::string & readtxt,
+                       const arma::mat & V1,
+                       const arma::mat & V2,
+                       const int & n_header){
+  double of = 0.0;
+  double ologf = 0.0;
+  double o2 = 0.0;
+  int x;
+  int y;
+  double v;
+  std::ifstream file(readtxt);
+  std::string str;
+  int index = 0;
+  // int n = 0;
+  for(int i=0; i<n_header; i++){
+    //skip header
+    std::getline(file, str);
+    index++;
+  }
+  while(std::getline(file, str)){
+    //index++;
+    std::stringstream ss(str);
+    std::vector<std::string> svec;
+    while( ss.good() ){
+      std::string substr;
+      getline(ss, substr, ' ');
+      svec.push_back(substr);
+    }
+    // Rprintf("%d ", index);
+    x = stoi(svec[0]);
+    y = stoi(svec[1]);
+    v = stod(svec[2]);
+    x--;
+    y--;
+    double fit = arma::dot(V1.row(x), V2.row(y));
+    of += y*fit;
+    ologf += y*log(fit);
+    o2 += pow(y,2);
+  }
+  double f2=0.0;
+  double sumf =0.0;
+  for(arma::uword i=0; i < V1.n_rows; i++){
+    for(arma::uword j=0; j < V2.n_rows; j++){
+      double fit = arma::dot(V1.row(i), V2.row(j));
+      f2 += pow(fit,2);
+      sumf += fit;
+    } 
+  }
+  double N = V1.n_rows * V2.n_rows;
+  double MSE = (o2+f2-2*of)/N;
+  double pois =  (sumf - ologf)/N;
+  return List::create(Named("Poisson")=pois,
+                      Named("MSE")=MSE);
+}
+
+ 
 ////
 //pre-
 ////
