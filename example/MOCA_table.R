@@ -44,6 +44,8 @@ system.time({
 
 saveRDS(fit_l, file = "fit_l.rds")
 
+kable(log10(rbind(simplify2array(fit_p),simplify2array(fit_l))), format = "latex")
+###
 
 load("resMOCA_liger.Rdata")
 load("resMOCA_liger_2.Rdata")
