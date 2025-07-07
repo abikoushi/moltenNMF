@@ -6,16 +6,17 @@ library(ggplot2)
 
 L <- 4L
 df1 <- as.data.frame(expand.grid(x1=factor(1:50),
-                                x2=factor(1:50),
-                                x3=0))
+                                x2=factor(1:50)))
 
 df2 <- as.data.frame(expand.grid(x1=factor(51:110),
-                                x2=factor(51:110),
-                                x3=1:2))
-
+                                x2=factor(51:110)))
 df = mutate(rbind(df1,df2))
 
-X <- sparse_onehot(~ ., data=df)
+X0 <- sparse_onehot(~ ., data=df)
+
+H=matrix(rbinom(nrow(X)*10,1,0.1),nrow(X))
+
+X = append_new(X0,H)
 
 N <- nrow(X)
 D <- ncol(X)
@@ -105,11 +106,6 @@ ggplot()+
   geom_abline(intercept = 0, slope=1, linetype=2, colour="lightgrey")+
   theme_bw()
 
-
-cor(V,V_s)
-cor(V,V_d)
-
-
 rearrange_winner_ord <- function(V,V_s){
   cmat = cor(V, V_s)
   ord =integer(ncol(V))
@@ -120,9 +116,13 @@ rearrange_winner_ord <- function(V,V_s){
   list(V=V_s[,ord], cor=diag(cmat[,ord]))
 }
 
+ba05 = rgb(0,0,0,0.5)
 reV_s = rearrange_winner_ord(V,V_s)
-plot(log(V), log(reV_s$V), pch=substr(row.names(V_s),2,2))
+plot(log(V), log(reV_s$V), pch=1, col=ba05)
+abline(0,1, col="lightgrey")
 
 reV_d = rearrange_winner_ord(V,V_d)
-plot(log(V), log(reV_d$V))
+plot(log(V), log(reV_d$V), col=ba05)
+abline(0,1, col="lightgrey")
 
+rownames(V_s)
