@@ -21,7 +21,9 @@ system.time({
 
 saveRDS(fit_p, file = "fit_p.rds")
 
-load("resMOCA_liger.Rdata")
+
+
+load("resMOCA_liger_2.Rdata")
 
 extract_row_liger <- function(liger_obj){
   W = getMatrix(liger_obj, slot = "W")
@@ -35,21 +37,48 @@ extract_col_liger <- function(liger_obj){
   as.matrix(H)
 }
 
-V1 = extract_col_liger(liger_obj)
+V1 = extract_row_liger(liger_obj)
 V2 = extract_col_liger(liger_obj)
+dim(V1)
+dim(V2)
+
+wch = 22571
+V12 = matrix(0, 26183, 30)
+V12[1:(wch-1),] = V1[1:(wch-1),]
+V12[(wch+1):26183,] = V1[wch:26182,]
 
 system.time({
-  fit_l = moltenNMF:::obsfitloss_2d_mtx(readtxt = tpath, V1 = V1, V2 = V2, n_header = 2)  
+  fit_l = moltenNMF:::obsfitloss_2d_mtx(readtxt = tpath, V1 = V12, V2 = V2, n_header = 2)  
 })
-#ユーザ   システム       経過  
-#27560.62      65.27   27985.14 
-saveRDS(fit_l, file = "fit_l0.rds")
+ 
+saveRDS(fit_l, file = "fit_l.rds")
 
-fit_l2 = readRDS("fit_l.rds")
+fit_l
 
-fit_l$MSE > fit_l2$MSE
+load("resMOCA_liger.Rdata")
 
-kable(log10(rbind(simplify2array(fit_p),simplify2array(fit_l))), format = "latex")
+V1 = extract_row_liger(liger_obj)
+V2 = extract_col_liger(liger_obj)
+dim(V1)
+dim(V2)
+
+wch = 22571
+V12 = matrix(0, 26183, 30)
+V12[1:(wch-1),] = V1[1:(wch-1),]
+V12[(wch+1):26183,] = V1[wch:26182,]
+
+system.time({
+  fit_l0 = moltenNMF:::obsfitloss_2d_mtx(readtxt = tpath, V1 = V12, V2 = V2, n_header = 2)  
+})
+
+saveRDS(fit_l0, file = "fit_l0.rds")
+
+fit_p = readRDS("fit_p.rds")
+
+kable(rbind(simplify2array(fit_p),
+            simplify2array(fit_l0),
+            simplify2array(fit_l)), format = "latex")
+
 ###
 
 load("resMOCA_liger.Rdata")

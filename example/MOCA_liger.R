@@ -5,8 +5,11 @@ library(dplyr)
 
 path <- scan("datapath.txt", what = character())
 tpath <- path[2]
+#moltenNMF:::size_mtx(tpath)
 Y = readMM(tpath)
-#dim(Y)
+which(rowSums(Y)==0)
+#[1] 22571
+
 # log(0.95, base = 1-10^3/(2000*8337))
 rownames(Y) <- paste0("gene", 1:nrow(Y))
 colnames(Y) <- paste0("cell", 1:ncol(Y))
