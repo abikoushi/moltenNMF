@@ -90,16 +90,15 @@ List obsfitloss_2d_mtx(const std::string & readtxt,
       getline(ss, substr, ' ');
       svec.push_back(substr);
     }
-    // Rprintf("%d ", index);
     x = stoi(svec[0]);
     y = stoi(svec[1]);
     v = stod(svec[2]);
     x--;
     y--;
     double fit = arma::dot(V1.row(x), V2.row(y));
-    of += y*fit;
-    ologf += y*log(fit);
-    o2 += pow(y,2);
+    of += v*fit;
+    ologf += v*log(fit);
+    o2 += pow(v,2);
   }
   double f2=0.0;
   double sumf =0.0;

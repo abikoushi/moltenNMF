@@ -105,6 +105,7 @@ p = ggplot(Vcell, aes(x=factor, y=value, group=sample))+
 print(p)
 ggsave(plot = p, filename = "MOCA_Vcell_stage_liger.png", width = 9, height = 9)
 
+#####
 
 Vhat = moltenNMF:::meanV_array(m_obj)
 Vhat = moltenNMF:::rearrange_cols(Vhat, axis = 2, normalize = TRUE, decreasing = TRUE)
@@ -113,13 +114,21 @@ Vcell =  mutate(data.frame(Vhat[[2]]),sample = cellname) %>%
   pivot_longer(X1:X30, names_to = "factor") %>% 
   mutate(factor = as.integer(gsub("X", "", factor)))
 
-p = ggplot(Vcell, aes(x=factor, y=value, group=sample))+
-  geom_line(aes(colour=development_stage), linewidth=0.01)+
+Vcell_sum = group_by(Vcell, factor, Main_cell_type, development_stage) %>% 
+  summarise(value = mean(value)) %>% 
+  group_by(factor, development_stage) %>% 
+  slice_max(order_by = value, n=1)
+
+Vcell_sum
+
+p = ggplot(Vcell, aes(x=factor, y=value, colour=Main_cell_type))+
+  geom_line(aes(group=sample), linewidth=0.01, show.legend = FALSE)+
+  geom_label_repel(data = Vcell_sum, aes(label=Main_cell_type), show.legend = FALSE)+
+  facet_grid(row = vars(development_stage),labeller = label_both)+
   guides(colour=guide_legend(override.aes = list(linewidth=1)))+
-  scale_color_viridis_c() + 
   labs(x="component", title = "proposed") + 
   scale_x_continuous(n.breaks = 6)+
   theme_bw(base_size = 16)
-#print(p)
-ggsave(plot = p, filename = "MOCA_Vcell_stage.png", width = 9, height = 9)
+print(p)
+ggsave(plot = p, filename = "miss.png", width = 9, height = 9)
 

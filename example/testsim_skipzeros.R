@@ -50,7 +50,8 @@ system.time({
                                 M_max = 10,
                                 display_progress = TRUE)
 })
-
+# ユーザ   システム       経過  
+# 425.62       3.78     433.83
 # system.time({
 #   out_s2 <- moltenNMF:::mNMF_svb(Y_sp, X = X1,
 #                                 N = nrow(X), L = L,
@@ -70,7 +71,7 @@ f_s <- moltenNMF::product_m(X, V_s)
 ggplot(data = NULL)+
   geom_abline(slope = 1, intercept = 0, colour="lightgrey")+
   geom_bin2d(aes(x=c(as.matrix(Y)), y=c(lambda), fill = after_stat(log10(count))), alpha = 0.2)+
-  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.5, size=0.01)+
+  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.5, size=0.5)+
   scale_fill_viridis_c()+
   theme_bw(16)
 

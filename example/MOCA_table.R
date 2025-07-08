@@ -21,7 +21,7 @@ system.time({
 
 saveRDS(fit_p, file = "fit_p.rds")
 
-load("resMOCA_liger_2.Rdata")
+load("resMOCA_liger.Rdata")
 
 extract_row_liger <- function(liger_obj){
   W = getMatrix(liger_obj, slot = "W")
@@ -41,8 +41,13 @@ V2 = extract_col_liger(liger_obj)
 system.time({
   fit_l = moltenNMF:::obsfitloss_2d_mtx(readtxt = tpath, V1 = V1, V2 = V2, n_header = 2)  
 })
+#ユーザ   システム       経過  
+#27560.62      65.27   27985.14 
+saveRDS(fit_l, file = "fit_l0.rds")
 
-saveRDS(fit_l, file = "fit_l.rds")
+fit_l2 = readRDS("fit_l.rds")
+
+fit_l$MSE > fit_l2$MSE
 
 kable(log10(rbind(simplify2array(fit_p),simplify2array(fit_l))), format = "latex")
 ###

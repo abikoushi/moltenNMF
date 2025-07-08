@@ -79,10 +79,10 @@ system.time({
                                 n_epochs = 10,
                                 lr_param = lr_param,
                                 lr_type = "exponential",
-                                display_progress = FALSE)  
+                                display_progress = TRUE)
 })
-#    user  system elapsed 
-# 203.555   0.224 203.792 
+# ユーザ   システム       経過  
+# 36.70       0.25      37.96
 plot(out_s$ELBO[-1], type = "l")
 
 V_s <- out_s$shape/out_s$rate
