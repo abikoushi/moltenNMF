@@ -8,8 +8,9 @@ arma::mat myprod(const int & N,
                  const arma::mat & lam) {
   arma::mat out = arma::ones<arma::mat>(N, lam.n_cols);
   for(arma::uword i = 0; i < xp.n_rows - 1; i++){
+    arma::rowvec li = lam.row(i);
     for(arma::uword j = xp(i); j < xp(i+1); j++){
-      out.row(xi(j)) %= lam.row(i);
+      out.row(xi(j)) %= li;
     }
   }
   return out;
@@ -18,7 +19,7 @@ arma::mat myprod(const int & N,
 arma::vec myprodvec(const int & n,
                     const arma::uvec & xi, const arma::uvec & xp,
                     const arma::vec & lam) {
-  arma::vec out = arma::ones<arma::vec>(n);
+  arma::vec out(n, arma::fill::ones);
   for(arma::uword i = 0; i < xp.n_rows - 1; i++){
     double li = lam(i);
     for(arma::uword j = xp(i); j < xp(i+1); j++){

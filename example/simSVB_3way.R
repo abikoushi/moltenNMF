@@ -81,8 +81,7 @@ system.time({
                                 lr_type = "exponential",
                                 display_progress = TRUE)
 })
-# ユーザ   システム       経過  
-# 36.70       0.25      37.96
+
 plot(out_s$ELBO[-1], type = "l")
 
 V_s <- out_s$shape/out_s$rate

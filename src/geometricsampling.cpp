@@ -9,8 +9,7 @@ arma::vec geomprod_all(const int & M,
                        const arma::vec & Vl,
                        const arma::uvec & varind,
                        arma::umat & U){
-  arma::vec fl(M); // sampling X with size M
-  fl.fill(1.0);
+  arma::vec fl(M, arma::fill::ones); // sampling X with size M
   for(arma::uword i = 0; i < (varind.n_rows - 1); i++){
     arma::uvec indices;
     if (varind(i) == varind(i+1) - 1) {
@@ -34,14 +33,14 @@ arma::vec geomsum_k(const int & D,
                     const arma::uvec & varind,
                     const arma::uword & k,
                     const arma::umat & U){
-  arma::vec out = arma::zeros<arma::vec>(D);
+  arma::vec out(D, arma::fill::zeros);
   if (M == 0) {
     return out;
   }
-  //arma::uvec out_indices = arma::randi<arma::uvec>(M, arma::distr_param(0, D - 1));
   arma::uvec out_indices = U.col(k) - varind(k);
   for(int j=0; j < M; j++){
-    out(out_indices(j)) += MR * sum(fl/Vl(out_indices(j)));
+    arma::uword oj = out_indices(j);
+    out(oj) += MR * sum(fl/Vl(oj));
   }
   return out;
 }

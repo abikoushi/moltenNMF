@@ -8,13 +8,13 @@ L <- 4L
 df1 <- as.data.frame(expand.grid(x1=factor(1:50),
                                 x2=factor(1:50)))
 
-df2 <- as.data.frame(expand.grid(x1=factor(51:110),
-                                x2=factor(51:110)))
+df2 <- as.data.frame(expand.grid(x1=factor(51:111),
+                                x2=factor(51:111)))
 df = mutate(rbind(df1,df2))
 
 X0 <- sparse_onehot(~ ., data=df)
 
-H=matrix(rbinom(nrow(X)*10,1,0.1),nrow(X))
+H=matrix(rbinom(nrow(X0)*10,1,0.2),nrow(X0))
 
 X = append_new(X0,H)
 
@@ -50,8 +50,7 @@ system.time({
                                 M_max = 10,
                                 display_progress = TRUE)
 })
-# ユーザ   システム       経過  
-# 425.62       3.78     433.83
+
 # system.time({
 #   out_s2 <- moltenNMF:::mNMF_svb(Y_sp, X = X1,
 #                                 N = nrow(X), L = L,
@@ -71,7 +70,7 @@ f_s <- moltenNMF::product_m(X, V_s)
 ggplot(data = NULL)+
   geom_abline(slope = 1, intercept = 0, colour="lightgrey")+
   geom_bin2d(aes(x=c(as.matrix(Y)), y=c(lambda), fill = after_stat(log10(count))), alpha = 0.2)+
-  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.5, size=0.5)+
+  #geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.5, size=0.5)+
   scale_fill_viridis_c()+
   theme_bw(16)
 
