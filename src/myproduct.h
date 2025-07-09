@@ -1,5 +1,3 @@
-arma::mat mysum_t(const int & N, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam);
-
 arma::vec myprodvec(const int & n, const arma::uvec & xi, const arma::uvec & xp, const arma::vec & lam);
 
 arma::vec myprodvec_sub(const int & n, const arma::uvec & xi, const arma::uvec & xp,
@@ -9,9 +7,16 @@ arma::mat myprod(const int & N, const arma::uvec & xi, const arma::uvec & xp, co
 
 arma::vec summyprod(const int & n, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam);
 
-arma::mat mysum_t_rv(const int & N,
-                     const arma::uvec & xp0,
-                     const arma::vec & fl);
+arma::mat mysum_t(const int & N, const arma::uvec & xi, const arma::uvec & xp, const arma::mat & lam);
+
+arma::mat mysum_t_vec(const int & N,
+                      const arma::uvec & xi,
+                      const arma::uvec & xp,
+                      const arma::vec & lam);
+
+// arma::mat mysum_t_rv(const int & N,
+//                      const arma::uvec & xp0,
+//                      const arma::vec & fl);
 
 // arma::mat mysum_t_ww(const int & N,
 //                      const arma::uvec & xi,

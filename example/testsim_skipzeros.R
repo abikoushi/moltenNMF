@@ -8,7 +8,7 @@ L <- 4L
 df1 <- as.data.frame(expand.grid(x1=factor(1:50),
                                 x2=factor(1:50)))
 
-df2 <- as.data.frame(expand.grid(x1=factor(51:111),
+df2 <- as.data.frame(expand.grid(x1=factor(51:101),
                                 x2=factor(51:111)))
 df = mutate(rbind(df1,df2))
 
@@ -20,7 +20,7 @@ X = append_new(X0,H)
 
 N <- nrow(X)
 D <- ncol(X)
-set.seed(5756)
+set.seed(515)
 V <- matrix(rgamma(L*D, 0.5, 0.5), D, L)
 ord = order(apply(V,2,var), decreasing = TRUE)
 V = V[,ord] #reorder by variance
@@ -70,7 +70,7 @@ f_s <- moltenNMF::product_m(X, V_s)
 ggplot(data = NULL)+
   geom_abline(slope = 1, intercept = 0, colour="lightgrey")+
   geom_bin2d(aes(x=c(as.matrix(Y)), y=c(lambda), fill = after_stat(log10(count))), alpha = 0.2)+
-  #geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.5, size=0.5)+
+  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.5, size=0.5)+
   scale_fill_viridis_c()+
   theme_bw(16)
 

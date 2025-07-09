@@ -18,19 +18,19 @@ using namespace Rcpp;
 ////
 void up_theta_sp(const int & N,
                  arma::mat & alpha,
-              arma::mat & beta,
-              arma::vec & R,
-              const arma::mat & V,
-              const arma::mat & logV,
-              const arma::vec & y,
-              const arma::uvec & xi,
-              const arma::uvec & xp,
-              const arma::uvec & varind,
-              const double & rho,
-              const double & N1S,
-              const double & a,
-              const double & b,
-              const int & M_max){
+                 arma::mat & beta,
+                 arma::vec & R,
+                 const arma::mat & V,
+                 const arma::mat & logV,
+                 const arma::vec & y,
+                 const arma::uvec & xi,
+                 const arma::uvec & xp,
+                 const arma::uvec & varind,
+                 const double & rho,
+                 const double & N1S,
+                 const double & a,
+                 const double & b,
+                 const int & M_max){
   //TimerLogger up_theta_total("up_theta");
   int K = (varind.n_rows - 1);
   int L = V.n_cols;
@@ -55,7 +55,7 @@ void up_theta_sp(const int & N,
       int end = varind(k+1);
       int dsub = end - start;
       arma::vec rsub = myprodvec_sub(y.n_rows, xi, xp, start, end, vl); // # N
-      arma::vec B1 = mysum_t(dsub, xi, xp.rows(start, end), rl/rsub);
+      arma::vec B1 = mysum_t_vec(dsub, xi, xp.rows(start, end), rl/rsub);
       arma::vec B0 = geomsum_k(dsub, M, MR, vl0, vl, varind, k, U);
       arma::vec B = N1S*(B1 + B0);
       beta.col(l).rows(start, end - 1) = B + b;
