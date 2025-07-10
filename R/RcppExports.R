@@ -53,6 +53,10 @@ doSVB_pois_sp_skip <- function(N, yv, xi, xp, varind, D, L, iter, a, b, V, bsize
     .Call(`_moltenNMF_doSVB_pois_sp_skip`, N, yv, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, M_max, display_progress)
 }
 
+doSVB_pois_sp_skip_batch <- function(N, yv, xi, xp, varind, D, L, iter, a, b, V, lr_param, lr_type, M_max, display_progress) {
+    .Call(`_moltenNMF_doSVB_pois_sp_skip_batch`, N, yv, xi, xp, varind, D, L, iter, a, b, V, lr_param, lr_type, M_max, display_progress)
+}
+
 check_lr <- function(epoc, lr_param, lr_type) {
     .Call(`_moltenNMF_check_lr`, epoc, lr_param, lr_type)
 }

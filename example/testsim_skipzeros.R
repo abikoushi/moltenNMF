@@ -51,26 +51,30 @@ system.time({
                                 display_progress = TRUE)
 })
 
-# system.time({
-#   out_s2 <- moltenNMF:::mNMF_svb(Y_sp, X = X1,
-#                                 N = nrow(X), L = L,
-#                                 n_epochs = 200,
-#                                 n_batches = 100,
-#                                 lr_param = c(15,0.9),
-#                                 lr_type = "exponential",
-#                                 display_progress = TRUE)
-# })
+system.time({
+  out_s2 <- moltenNMF:::mNMF_svb_batch(Y1, X = X1,
+                                N = nrow(X), L = L,
+                                n_epochs = 500,
+                                lr_param = c(0.9,0.5),
+                                lr_type = "exponential",
+                                display_progress = TRUE)
+})
 
-plot(out_s$ELBO[-1], type="l")
-#lines(out_s2$ELBO[-1], type="l", col="royalblue")
+plot(out_s$ELBO[-1], type="l", xlim = c(0,500))
+lines(out_s2$ELBO[-1], type="l", col="royalblue")
 
 V_s <- out_s$shape/out_s$rate
 f_s <- moltenNMF::product_m(X, V_s)
 
+
+V_s2 <- out_s2$shape/out_s2$rate
+f_s2 <- moltenNMF::product_m(X, V_s2)
+
 ggplot(data = NULL)+
   geom_abline(slope = 1, intercept = 0, colour="lightgrey")+
   geom_bin2d(aes(x=c(as.matrix(Y)), y=c(lambda), fill = after_stat(log10(count))), alpha = 0.2)+
-  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.5, size=0.5)+
+  #geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.5, size=0.5)+
+  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s2)), alpha=0.5, size=0.5, colour="blue")+
   scale_fill_viridis_c()+
   theme_bw(16)
 

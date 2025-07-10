@@ -136,3 +136,52 @@ List doSVB_pois_sp_skip(const int & N,
                       Named("rate")=beta,
                       Named("ELBO")=ll);
 }
+
+// [[Rcpp::export]]
+List doSVB_pois_sp_skip_batch(const int & N,
+                        const arma::vec & yv,
+                        const arma::uvec & xi,
+                        const arma::uvec & xp,
+                        const arma::uvec & varind,
+                        const int & D,
+                        const int & L,
+                        const int & iter,
+                        const double & a,
+                        const double & b,
+                        arma::mat & V,
+                        const arma::vec & lr_param,
+                        const std::string & lr_type,
+                        const int & M_max,
+                        const bool & display_progress){
+  const int N1 =  yv.n_rows;
+  arma::mat logV = log(V);
+  arma::mat alpha = arma::ones<arma::mat>(D, L);
+  arma::mat beta(D, L);
+  beta.fill(b);
+  plus_Bs(N, beta, V, xi, xp, varind);
+  arma::vec R = arma::zeros<arma::vec>(N1);
+  arma::vec ll = arma::zeros<arma::vec>(iter);
+  std::unique_ptr<lr> g;
+  set_lr_method(g, lr_type);
+  const double p1 = ((double) N1) / ((double) N);
+  Progress pb(iter, display_progress);
+  for(int epoc = 0; epoc < iter; epoc++){
+    double nu = g -> lr_t(epoc, lr_param);
+    double nu2 = 1.0 - nu;
+      arma::mat alpha_s = alpha;
+      arma::mat beta_s = beta;
+      up_theta_sp(N, alpha_s, beta_s,
+                  R, V, logV,
+                  yv, xi, xp, varind,
+                  p1, 1.0, a, b, M_max);
+      alpha = nu2 * alpha + nu * alpha_s;
+      beta = nu2 * beta + nu * beta_s;
+      V = alpha/beta;
+      logV = mat_digamma(alpha) - log(beta);
+    ll.row(epoc) += lowerbound_logML_pois(alpha, beta, V, logV, R, yv, a, b);      
+    pb.increment();
+  }
+  return List::create(Named("shape")=alpha,
+                      Named("rate")=beta,
+                      Named("ELBO")=ll);
+}
