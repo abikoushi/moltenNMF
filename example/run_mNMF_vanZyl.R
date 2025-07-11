@@ -11,14 +11,21 @@ Y = readRDS("listY.rds")
 Y = do.call("c", Y)
 X = append_new(X, Hlist)
 
+# system.time({
+#   out <- moltenNMF:::mNMF_svb(y = Y, X = X,
+#                               L = 15L,
+#                               n_batches=2000L,
+#                               n_epochs=10,
+#                               lr_type="exponential",
+#                               lr_param=c(15,0.9))
+# })
+
 system.time({
-  out <- moltenNMF:::mNMF_svb(y = Y, X = X,
-                              L = 15L,
-                              n_batches=2000L,
+  out <- moltenNMF:::mNMF_svb_batch(y = Y, X = X,
+                              L = 20L,
                               n_epochs=10,
                               lr_type="exponential",
-                              lr_param=c(15,0.9))
+                              lr_param=c(1.5,0.7))
 })
 
-saveRDS(out, file="out_L15.rds")
-
+saveRDS(out, file="out_L20.rds")
