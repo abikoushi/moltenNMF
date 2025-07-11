@@ -5,11 +5,11 @@ library(dplyr)
 library(ggplot2)
 
 L <- 4L
-df1 <- as.data.frame(expand.grid(x1=factor(1:50),
-                                x2=factor(1:50)))
+df1 <- as.data.frame(expand.grid(x1=factor(1:100),
+                                x2=factor(1:100)))
 
-df2 <- as.data.frame(expand.grid(x1=factor(51:101),
-                                x2=factor(51:111)))
+df2 <- as.data.frame(expand.grid(x1=factor(101:201),
+                                x2=factor(201:211)))
 df = mutate(rbind(df1,df2))
 
 X0 <- sparse_onehot(~ ., data=df)
@@ -20,7 +20,7 @@ X = append_new(X0,H)
 
 N <- nrow(X)
 D <- ncol(X)
-set.seed(515)
+set.seed(55)
 V <- matrix(rgamma(L*D, 0.5, 0.5), D, L)
 ord = order(apply(V,2,var), decreasing = TRUE)
 V = V[,ord] #reorder by variance
@@ -45,7 +45,7 @@ system.time({
                                 N = nrow(X), L = L,
                                 n_epochs = 100,
                                 n_batches = 100,
-                                lr_param = c(15,0.9),
+                                lr_param = c(1,0.9),
                                 lr_type = "exponential",
                                 M_max = 10,
                                 display_progress = TRUE)
@@ -55,7 +55,7 @@ system.time({
   out_s2 <- moltenNMF:::mNMF_svb_batch(Y1, X = X1,
                                 N = nrow(X), L = L,
                                 n_epochs = 500,
-                                lr_param = c(0.9,0.5),
+                                lr_param = c(1,0.9),
                                 lr_type = "exponential",
                                 display_progress = TRUE)
 })
@@ -73,8 +73,8 @@ f_s2 <- moltenNMF::product_m(X, V_s2)
 ggplot(data = NULL)+
   geom_abline(slope = 1, intercept = 0, colour="lightgrey")+
   geom_bin2d(aes(x=c(as.matrix(Y)), y=c(lambda), fill = after_stat(log10(count))), alpha = 0.2)+
-  #geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.5, size=0.5)+
-  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s2)), alpha=0.5, size=0.5, colour="blue")+
+  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s)), alpha=0.5, size=0.5,colour="orangered")+
+  geom_point(aes(x=c(as.matrix(Y)), y=c(f_s2)), alpha=0.5, size=0.5, colour="cornflowerblue")+
   scale_fill_viridis_c()+
   theme_bw(16)
 
