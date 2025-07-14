@@ -3,6 +3,69 @@ library(Matrix)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
+rearrange_winner_ord <- function(V,V_s){
+  cmat = cor(V, V_s)
+  ord =integer(ncol(V))
+  ord[1] = which.max(cmat[1,])
+  for(i in 2:L){
+    ord[i] = which(cmat[i,]==max(cmat[i,-ord[1:(i-1)]]))  
+  }
+  list(V=V_s[,ord], cor=diag(cmat[,ord]))
+}
+
+i = 3
+L <- 5L
+ncols = c(100, 500, 1000)
+df <- as.data.frame(expand.grid(row=factor(1:100),
+                                col=factor(1:ncols[i]),
+                                depth=factor(1:2)))
+X <- sparse_onehot(~ ., data=df)
+N <- nrow(X)
+D <- ncol(X)
+set.seed(1234);V <- matrix(rlnorm(L*D, 0, 1),D,L)
+ord = order(apply(log(V), 2, var), decreasing = TRUE)
+V = V[,ord]
+lambda <- product_m.default(X, V)  
+Y <- rpois(N, lambda)
+
+wch = which(Y>0)
+Y1 = Y[wch]
+X1 = slice_rows(X, wch)
+
+system.time({
+  out_s <- moltenNMF:::mNMF_svb_batch(Y1, X = X1,
+                                N = nrow(X), L = L,
+                                n_epochs = 100,
+                                lr_param = c(10,0.9),
+                                lr_type = "exponential",
+                                M_max = 100,
+                                display_progress = TRUE)
+})
+
+length(Y1)/2
+system.time({
+  out_s <- moltenNMF:::mNMF_svb(Y1, X = X1,
+                                N = nrow(X), L = L,
+                                n_batches = 10000,
+                                n_epochs = 200,
+                                lr_param = c(15,0.9),
+                                lr_type = "exponential",
+                                M_max = 100,
+                                display_progress = TRUE)
+})
+
+plot(out_s$ELBO[-1], type = "l")
+
+# corVs = rearrange_winner_ord(log(V),
+#                              V_s = digamma(out_s$shape) - log(out_s$rate))
+corVs = rearrange_winner_ord(V,
+                             V_s = out_s$shape/out_s$rate)
+corVs$cor
+plot(log(V),log(corVs$V))
+
+plot(corVs$V[,5])
+
+####
 
 L <- 4L
 df1 <- as.data.frame(expand.grid(x1=factor(1:100),

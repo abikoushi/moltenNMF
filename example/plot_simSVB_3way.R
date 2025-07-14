@@ -6,9 +6,9 @@ library(tidyr)
 library(dplyr)
 library(gridExtra)
 
-ressim1 <- readRDS("simnmf_100.rds")
-ressim2 <- readRDS("simnmf_500.rds")
-ressim3 <- readRDS("simnmf_1000.rds")
+ressim1 <- readRDS("simSVB3d_100.rds")
+ressim2 <- readRDS("simSVB3d_500.rds")
+ressim3 <- readRDS("simSVB3d_1000.rds")
 
 settings = expand.grid(forgetting = c(0.7,0.8,0.9),
                        delay = c(1.5,5,15),
@@ -83,4 +83,4 @@ p3 = ggplot(ressimdf3, aes(x=component, y=value))+
   theme_classic(20)
 print(p3)
 pp = gridExtra::grid.arrange(p1, p2, p3, nrow=3)
-ggsave("sim2way.pdf", plot = pp, width = 20, height = 20)
+ggsave("sim3way.pdf", plot = pp, width = 20, height = 20)
