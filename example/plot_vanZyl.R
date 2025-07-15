@@ -23,7 +23,7 @@ df = mutate(df, species=if_else(grepl("^H",sample),"Human", sample)) %>%
 
 ggplot(df, aes(x=X1, y=X2, colour=species))+
   geom_point(alpha = 0.1) +
-  guides(colour=guide_legend(override.aes = list(alpha=1))) +
+  guides(colour=guide_legend(override.aes = list(alpha=1, size=2))) +
   theme_bw()
 
-#plot(df, pch=".")
+ggsave(filename = "test_species.png")

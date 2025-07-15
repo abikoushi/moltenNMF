@@ -11,21 +11,28 @@ Y = readRDS("listY.rds")
 Y = do.call("c", Y)
 X = append_new(X, Hlist)
 
-# system.time({
-#   out <- moltenNMF:::mNMF_svb(y = Y, X = X,
-#                               L = 15L,
-#                               n_batches=2000L,
-#                               n_epochs=10,
-#                               lr_type="exponential",
-#                               lr_param=c(15,0.9))
-# })
+(nnzero(Y))
 
 system.time({
-  out <- moltenNMF:::mNMF_svb_batch(y = Y, X = X,
+  out <- moltenNMF:::mNMF_svb(y = Y, X = X,
                               L = 20L,
+                              n_batches=2e7L,
                               n_epochs=10,
                               lr_type="exponential",
-                              lr_param=c(1.5,0.7))
+                              lr_param=c(15,0.9))
 })
+
+#  ユーザ   システム       経過  
+# 6885.12     462.28    7412.15 
+
+plot(out$ELBO[-1], type="l")
+
+# system.time({
+#   out <- moltenNMF:::mNMF_svb_batch(y = Y, X = X,
+#                               L = 20L,
+#                               n_epochs=10,
+#                               lr_type="exponential",
+#                               lr_param=c(1.5,0.7))
+# })
 
 saveRDS(out, file="out_L20.rds")
