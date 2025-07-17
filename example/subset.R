@@ -1,4 +1,9 @@
 library(Matrix)
+i <- c(1,3:8); j <- c(2,9,6:10); x <- 7 * (1:7)
+(A <- sparseMatrix(i, j, x = x))  ##  8 x 10 "dgCMatrix"
+writeMM(obj = A, file = "examplematrix.mtx")
+moltenNMF:::size_mtx("examplematrix.mtx")
+
 y = rpois(1000,0.1)
 y = as(y, "sparseVector")
 yv=y@x
