@@ -122,7 +122,7 @@ List obsfitloss_2d_mtx(const std::string & readtxt,
 ////
 
 // [[Rcpp::export]]
-List rowmeanvar_txt(const int & n_row,
+List rowmeanvar_mtx(const int & n_row,
                     const int & n_col,
                     const std::string & readtxt,
                     const int & n_header) {

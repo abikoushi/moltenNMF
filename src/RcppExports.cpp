@@ -444,9 +444,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rowmeanvar_txt
-List rowmeanvar_txt(const int& n_row, const int& n_col, const std::string& readtxt, const int& n_header);
-RcppExport SEXP _moltenNMF_rowmeanvar_txt(SEXP n_rowSEXP, SEXP n_colSEXP, SEXP readtxtSEXP, SEXP n_headerSEXP) {
+// rowmeanvar_mtx
+List rowmeanvar_mtx(const int& n_row, const int& n_col, const std::string& readtxt, const int& n_header);
+RcppExport SEXP _moltenNMF_rowmeanvar_mtx(SEXP n_rowSEXP, SEXP n_colSEXP, SEXP readtxtSEXP, SEXP n_headerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -454,7 +454,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const int& >::type n_col(n_colSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type readtxt(readtxtSEXP);
     Rcpp::traits::input_parameter< const int& >::type n_header(n_headerSEXP);
-    rcpp_result_gen = Rcpp::wrap(rowmeanvar_txt(n_row, n_col, readtxt, n_header));
+    rcpp_result_gen = Rcpp::wrap(rowmeanvar_mtx(n_row, n_col, readtxt, n_header));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -507,7 +507,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_NegbinGamma_rng", (DL_FUNC) &_moltenNMF_NegbinGamma_rng, 7},
     {"_moltenNMF_obsfitloss_mtx", (DL_FUNC) &_moltenNMF_obsfitloss_mtx, 3},
     {"_moltenNMF_obsfitloss_2d_mtx", (DL_FUNC) &_moltenNMF_obsfitloss_2d_mtx, 4},
-    {"_moltenNMF_rowmeanvar_txt", (DL_FUNC) &_moltenNMF_rowmeanvar_txt, 4},
+    {"_moltenNMF_rowmeanvar_mtx", (DL_FUNC) &_moltenNMF_rowmeanvar_mtx, 4},
     {"_moltenNMF_rowfilter_mtx", (DL_FUNC) &_moltenNMF_rowfilter_mtx, 3},
     {"_moltenNMF_read_mtx", (DL_FUNC) &_moltenNMF_read_mtx, 3},
     {NULL, NULL, 0}
