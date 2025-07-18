@@ -25,6 +25,13 @@ Assumes the text file is in "i j v" format with a 2-line header:
 No return value. A new file is written to \code{writetxt}.
 }
 \examples{
-# Keep only rows 1, 5, and 10
-rowfilter_mtx("obs.mtx", "filtered.txt", c(1, 5, 10))
+## Not run:
+library(Matrix)
+i <- c(1,3:8); j <- c(2,9,6:10); x <- 7 * (1:7)
+(A <- sparseMatrix(i, j, x = x))  ##  8 x 10 "dgCMatrix"
+writeMM(obj = A, file = "obs.mtx")
+# Keep only rows 1, 5
+rowfilter_mtx("obs.mtx", "filtered.mtx", c(1, 5))
+readMM("filtered.mtx")
+## End(**Not run**)
 }

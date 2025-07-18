@@ -122,7 +122,7 @@ List obsfitloss_2d_mtx(const std::string & readtxt,
 ////
 
 // [[Rcpp::export]]
-List rowmeanvar_mtx(const int & n_row,
+List rowmeanvar_txt(const int & n_row,
                     const int & n_col,
                     const std::string & readtxt,
                     const int & n_header) {
@@ -185,7 +185,6 @@ void rowfilter_mtx(const std::string & readtxt,
   }
   std::string s0 = std::to_string(rowind.n_rows);
   s0 =  s0 + " " + svec[1];
-  //myfile << "#size: "+ s0 + " " + svec[1] + " " + "\n";
   //filtering
   int nonzero = 0;
   std::vector<std::string> out;
@@ -203,7 +202,6 @@ void rowfilter_mtx(const std::string & readtxt,
         arma::uvec newx = find(rowind==x);
         std::string s0 = std::to_string(newx(0)+1);
         out.push_back(s0 + " " + svec[1] + " " + svec[2] + "\n");
-        //myfile << s0 + " " + svec[1] + " " + svec[2] + "\n";
       }
   }
   //writing

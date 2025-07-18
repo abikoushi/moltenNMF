@@ -26,10 +26,11 @@ A list with the following elements:
   \item{MSE}{Mean Squared Error over all entries.}
 }
 \examples{
-# Suppose "obs.txt" contains: row col value
+## Not run:
 fit <- matrix(runif(100), nrow=10)
-loss <- obsfitloss_mtx("obs.txt", fit, n_header=2)
+loss <- obsfitloss_mtx("obs.mtx", fit, n_header=2)
 print(loss)
+## End(**Not run**)
 }
 \seealso{
 \code{\link{obsfitloss_2d_mtx}}

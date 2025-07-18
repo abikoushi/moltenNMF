@@ -29,6 +29,8 @@ export("simmilar_top_n")
 
 export("slice_rows")
 export("append_new")
-export("size_mtx")
 
+export("size_mtx")
+export("rowmeanvar_mtx")
+export("rowfilter_mtx")
 # export("uriboimage")

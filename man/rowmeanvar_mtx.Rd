@@ -5,12 +5,10 @@
 Computes the mean and variance of each row from a sparse matrix stored in a text file.
 }
 \usage{
-rowmeanvar_mtx(n_row, n_col, readtxt, n_header)
+rowmeanvar_mtx(file_path, n_header=2)
 }
 \arguments{
-  \item{n_row}{Total number of rows in the full matrix.}
-  \item{n_col}{Total number of columns in the full matrix.}
-  \item{readtxt}{Path to the text file containing non-zero entries in "i j v" format.}
+  \item{file_path}{Path to the text file containing non-zero entries in "i j v" format.}
   \item{n_header}{Number of header lines to skip.}
 }
 \details{
@@ -26,8 +24,11 @@ A list containing:
   \item{var}{A numeric vector of row variances.}
 }
 \examples{
-rowmeanvar_mtx(n_row = 100, n_col = 500, readtxt = "obs.mtx", n_header = 2)
-}
-\seealso{
-\code{\link{rowfilter_mtx}}
+## Not run:
+library(Matrix)
+i <- c(1,3:8); j <- c(2,9,6:10); x <- 7 * (1:7)
+(A <- sparseMatrix(i, j, x = x))  ##  8 x 10 "dgCMatrix"
+writeMM(obj = A, file = "obs.mtx")
+rowmeanvar_mtx("obs.mtx")
+## End(**Not run**)
 }
