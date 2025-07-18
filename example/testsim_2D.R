@@ -19,7 +19,7 @@ dat <- set_data_mf(3, 99, 500)
 
 
 system.time({
-  out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 500)
+  out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)
 })
 # ユーザ   システム       経過  
 #   6.15       0.50       2.37 

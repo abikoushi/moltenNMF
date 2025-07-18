@@ -166,26 +166,3 @@ NMF2D_svb_bin <- function(filepath_x,
                            display_progress = display_progress)
   return(out)
 }
-
-###
-
-meanV_array <- function(out){
-  V <- lapply(1:length(out$shape), function(i)sweep(out$shape[[i]], 2, out$rate[i,],"/"))
-  names(V) <- names(out$shape)
-  return(V)
-}
-
-rearrange_cols <- function(Vm, axis = 1L, FUN = var, normalize = FALSE, decreasing = TRUE){
-  if(normalize){
-    for(i in 1:length(Vm)){
-      Vm[[i]] <- sweep(Vm[[i]], 1, rowSums(Vm[[i]]), FUN = "/")      
-    }
-  }
-  ord = order(apply(Vm[[axis]], 2, FUN = FUN), decreasing = decreasing)
-  for(i in 1:length(Vm)){
-    Vm[[i]] <- Vm[[i]][, ord]
-  }
-  return(Vm)
-}
-
-###

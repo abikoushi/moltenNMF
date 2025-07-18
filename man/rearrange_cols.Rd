@@ -17,3 +17,6 @@ rearrange_cols(Vm, axis = 1L, FUN = var, normalize = FALSE, decreasing = TRUE)
 \value{
   List of reordered factor matrices.
 }
+\example{
+####
+}

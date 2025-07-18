@@ -32,17 +32,16 @@ wch = which(Y>0)
 Y1 = Y[wch]
 X1 = slice_rows(X, wch)
 
-system.time({
-  out_s <- moltenNMF:::mNMF_svb_batch(Y1, X = X1,
-                                N = nrow(X), L = L,
-                                n_epochs = 100,
-                                lr_param = c(10,0.9),
-                                lr_type = "exponential",
-                                M_max = 100,
-                                display_progress = TRUE)
-})
+# system.time({
+#   out_s <- moltenNMF:::mNMF_svb_batch(Y1, X = X1,
+#                                 N = nrow(X), L = L,
+#                                 n_epochs = 100,
+#                                 lr_param = c(10,0.9),
+#                                 lr_type = "exponential",
+#                                 M_max = 100,
+#                                 display_progress = TRUE)
+# })
 
-length(Y1)/2
 system.time({
   out_s <- moltenNMF:::mNMF_svb(Y1, X = X1,
                                 N = nrow(X), L = L,
@@ -54,7 +53,10 @@ system.time({
                                 display_progress = TRUE)
 })
 
+
+is.list(out_s$shape/out_s$rate)
 plot(out_s$ELBO[-1], type = "l")
+#str(out_s)
 
 # corVs = rearrange_winner_ord(log(V),
 #                              V_s = digamma(out_s$shape) - log(out_s$rate))
