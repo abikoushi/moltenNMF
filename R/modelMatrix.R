@@ -88,7 +88,7 @@ append_new <- function(x, new, onehot = NULL, newterm = NULL){
   }
   if(is.null(newterm)){
     newterm = paste(as.character(substitute(new)), collapse = "")
-    print(newterm)
+    #print(newterm)
   }
   ###
   ind = attr(x, "indices")

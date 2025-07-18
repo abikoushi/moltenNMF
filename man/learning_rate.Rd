@@ -2,7 +2,7 @@
 \alias{learning_rate}
 \title{Apply a Learning Rate Schedule}
 \description{
-  Applies a learning rate transformation to each element of a numeric vector using a specified schedule.
+Calculates the learning rate at a specified step using the specified schedule.
 }
 \usage{
 learning_rate(x, lr_param, lr_type)
@@ -12,6 +12,10 @@ learning_rate(x, lr_param, lr_type)
   \item{lr_param}{Parameters used to define the learning rate schedule.}
   \item{lr_type}{Type of learning rate schedule ("exponential" or "constanat").}
 }
-\value{
-  A numeric vector of learning rates corresponding to input \code{x}.
+\examples{
+curve(learning_rate(x, lr_param = c(15,0.7), lr_type = "exponential"),
+      xlim = c(1,10))
+
+curve(learning_rate(x, lr_param = c(0.05), lr_type = "const"),
+      xlim = c(1,10))
 }

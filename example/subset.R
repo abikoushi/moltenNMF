@@ -8,6 +8,14 @@ readMM("filtered.mtx")
 moltenNMF:::rowmeanvar_mtx("obs.mtx", n_header = 2)
 
 
+
+curve(moltenNMF:::learning_rate(x, lr_param = c(15,0.7), lr_type = "exponential"),
+      xlim = c(1,10))
+
+curve(moltenNMF:::learning_rate(x, lr_param = c(0.05), lr_type = "const"),
+      xlim = c(1,10))
+
+###
 y = rpois(1000,0.1)
 y = as(y, "sparseVector")
 yv=y@x
