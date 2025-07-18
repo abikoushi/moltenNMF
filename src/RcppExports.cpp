@@ -155,30 +155,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// doVB_pois_s_2D_t1
-List doVB_pois_s_2D_t1(const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const int& L, const int& iter, const double& a, const double& b, const double& N1, const int& Nr, const int& Nc, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
-RcppExport SEXP _moltenNMF_doVB_pois_s_2D_t1(SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP N1SEXP, SEXP NrSEXP, SEXP NcSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::vec& >::type y(ySEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type rowi(rowiSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type coli(coliSEXP);
-    Rcpp::traits::input_parameter< const int& >::type L(LSEXP);
-    Rcpp::traits::input_parameter< const int& >::type iter(iterSEXP);
-    Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
-    Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
-    Rcpp::traits::input_parameter< const double& >::type N1(N1SEXP);
-    Rcpp::traits::input_parameter< const int& >::type Nr(NrSEXP);
-    Rcpp::traits::input_parameter< const int& >::type Nc(NcSEXP);
-    Rcpp::traits::input_parameter< const int& >::type bsize(bsizeSEXP);
-    Rcpp::traits::input_parameter< const arma::vec& >::type lr_param(lr_paramSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type lr_type(lr_typeSEXP);
-    Rcpp::traits::input_parameter< const bool& >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(doVB_pois_s_2D_t1(y, rowi, coli, L, iter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress));
-    return rcpp_result_gen;
-END_RCPP
-}
 // doVB_pois_s_2D_ww
 List doVB_pois_s_2D_ww(const arma::vec& y, const arma::uvec& rowi, const arma::uvec& coli, const int& L, const int& iter, const arma::field<arma::vec>& weight, const double& a, const double& b, const double& N1, const int& Nr, const int& Nc, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const bool& display_progress);
 RcppExport SEXP _moltenNMF_doVB_pois_s_2D_ww(SEXP ySEXP, SEXP rowiSEXP, SEXP coliSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP weightSEXP, SEXP aSEXP, SEXP bSEXP, SEXP N1SEXP, SEXP NrSEXP, SEXP NcSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP display_progressSEXP) {
@@ -492,7 +468,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_doVB_pois_2D", (DL_FUNC) &_moltenNMF_doVB_pois_2D, 10},
     {"_moltenNMF_doVB_pois_2D_ww", (DL_FUNC) &_moltenNMF_doVB_pois_2D_ww, 11},
     {"_moltenNMF_doVB_pois_s_2D", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D, 14},
-    {"_moltenNMF_doVB_pois_s_2D_t1", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D_t1, 14},
     {"_moltenNMF_doVB_pois_s_2D_ww", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D_ww, 15},
     {"_moltenNMF_doVB_pois_s_2D_bin", (DL_FUNC) &_moltenNMF_doVB_pois_s_2D_bin, 13},
     {"_moltenNMF_doVB_pois_offset_sp", (DL_FUNC) &_moltenNMF_doVB_pois_offset_sp, 14},

@@ -60,34 +60,6 @@ void up_latentV_uid(arma::field<arma::mat> & V,
   V(k) = Vk;
 }
 
-//update variational posterior
-void up_vpar(const double rho,
-             const double & rho2,
-             const arma::field<arma::uvec> & uid,
-             arma::field<arma::mat> & alpha,
-             const arma::field<arma::mat> & alpha_s,
-             arma::mat & beta,
-             const arma::mat & beta_s){
-  int K = beta.n_rows;
-  beta = rho2 * beta + rho * beta_s;
-  for(int j = 0; j < K; j++){
-    alpha(j).rows(uid(j)) = rho2 * alpha(j).rows(uid(j)) + rho * alpha_s(j).rows(uid(j));
-  }
-}
-
-void up_vpar(const double rho,
-             const double & rho2,
-             arma::field<arma::mat> & alpha,
-             const arma::field<arma::mat> & alpha_s,
-             arma::mat & beta,
-             const arma::mat & beta_s){
-  int K = beta.n_rows;
-  beta = rho2 * beta + rho * beta_s;
-  for(int j = 0; j < K; j++){
-    alpha(j) = rho2 * alpha(j) + rho * alpha_s(j);
-  }
-}
-
 
 arma::rowvec sumV_uid(const arma::field<arma::mat> V, 
                       const arma::field<arma::uvec> uid,
@@ -136,6 +108,7 @@ void minus_sumV(arma::mat & beta,
   beta.row(k) -= sumV_uid(V, uid, k, weight);
 }
 
+//update variational posterior
 void up_vpar(arma::field<arma::mat> & alpha,
              arma::mat & beta,
              arma::field<arma::mat> & V,

@@ -21,6 +21,8 @@ dat <- set_data_mf(3, 99, 500)
 system.time({
   out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 500)
 })
+# ユーザ   システム       経過  
+#   6.15       0.50       2.37 
 
 plot(out$ELBO[-1], type = "l")
 V = moltenNMF:::meanV_array(out)
@@ -32,17 +34,17 @@ p1 = ggplot(data = NULL, aes(x=c(fit1), y=c(as.matrix(dat$Y))))+
 print(p1)
 
 #####
-length(dat$Y)
-nnzero(dat$Y)
+# length(dat$Y)
+# nnzero(dat$Y)
 system.time({
   out2 <- moltenNMF:::NMF2D_svb(dat$Y, rank = 3,
                                 n_epochs = 200, n_baches = as.integer(2000),
                                 prior_shape = 1, prior_rate = 1,
-                                lr_param = c(15, 0.8), lr_type = "exponential")  
+                                lr_param = c(15, 0.8),
+                                lr_type = "exponential")  
 })
-# user  system elapsed 
-# 5.068   0.027   5.144 
-
+#ユーザ   システム       経過  
+#  2.80       0.22       2.33 
 
 plot(out2$ELBO[-1], type="l")
 #lines(out$ELBO[-1], type="l")
@@ -53,18 +55,20 @@ out2$rate
 
 V = moltenNMF:::meanV_array(out2)
 V = moltenNMF:::rearrange_cols(V, normalize = FALSE)
+
+
 moltenNMF:::matplot2(V = t(V[[1]]))
 
 fit2 = V[[1]]%*%t(V[[2]])
-ax_lim = c(0, max(max(dat$Y), max(fit2)))
-
 p2 = ggplot(data = NULL, aes(x=c(fit2), y=c(as.matrix(dat$Y))))+
   geom_bin2d(aes(fill = after_stat(log10(count))))+
   geom_abline(intercept = 0, slope = 1, linetype=2, colour="grey")
 print(p2)
 
-writeMM(obj = dat$Y, file = "testdat2d.mtx")
 
+
+###
+writeMM(obj = dat$Y, file = "testdat2d.mtx")
 moltenNMF:::obsfitloss_mtx("testdat2d.mtx", fit = fit1, n_header = 2)
 dim(fit2)
 # mean((dat$Y-fit1)^2)

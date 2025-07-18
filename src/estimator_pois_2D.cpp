@@ -13,10 +13,7 @@ using namespace Rcpp;
 
 arma::rowvec sumV(const arma::field<arma::mat> V, 
                   const int k){
-  int not_k = 1;
-  if(k==1){
-    not_k = 0;
-  }
+  int not_k = 1 - k;
   arma::rowvec SumV = sum(V(not_k), 0);
   return SumV;
 }
@@ -24,10 +21,7 @@ arma::rowvec sumV(const arma::field<arma::mat> V,
 arma::rowvec sumV(const arma::field<arma::mat> V, 
                   const int k,
                   const arma::field<arma::vec> weight){
-  int not_k = 1;
-  if(k==1){
-    not_k = 0;
-  }
+  int not_k = 1 - k;
   arma::mat Vk = V(not_k);
   Vk.each_col() %= weight(not_k);
   arma::rowvec SumV = sum(Vk, 0);
@@ -55,7 +49,7 @@ void up_B_2D(arma::mat & beta,
             const double & b){
   //double lp = 0;
   //row k = 0; column k = 1
-  for(int k=0; k < (int) beta.n_rows; k++){
+  for(arma::uword k=0; k < beta.n_rows; k++){
     arma::rowvec B0 = sumV(V, k);
     beta.row(k) = B0 + b;
     //lp -= sum(B0);
@@ -66,7 +60,7 @@ void up_B_2D(arma::mat & beta,
              arma::field<arma::mat> & V,
              const arma::field<arma::vec> weight,
              const double & b){
-  for(int k=0; k < (int) beta.n_rows; k++){
+  for(arma::uword k=0; k < beta.n_rows; k++){
     arma::rowvec B0 = sumV(V, k, weight);
     beta.row(k) = B0 + b;
   }
@@ -262,7 +256,7 @@ List doVB_pois_s_2D(const arma::vec & y,
     double rho = g -> lr_t(epoc, lr_param);
     double rho2 = 1.0 - rho;
     //rho /= bags.n_cols;
-    for(int step = 0; step < (int) bags.n_cols; step++){
+    for(arma::uword step = 0; step < bags.n_cols; step++){
       arma::uvec bag = sort(bags.col(step));
       arma::vec Sy = y.rows(bag);
       arma::umat SX(bag.n_rows, 2);
@@ -289,7 +283,6 @@ List doVB_pois_s_2D(const arma::vec & y,
 }
 
 // use only 1 sample in each updates
-// [[Rcpp::export]]
 List doVB_pois_s_2D_t1(const arma::vec & y,
                     const arma::uvec & rowi,
                     const arma::uvec & coli,
