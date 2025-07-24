@@ -85,14 +85,20 @@ mNMF_vb(x)
 \code{\link{mrNMF_vb}}
 }
 \examples{
-### see vignette
+
+Titanicdf <- as.data.frame(Titanic)
+set.seed(794)
+out2 <- mNMF_vb(Freq~Survived+Class+Sex+Age, data=Titanicdf, L=2, iter=500)
+
+#Check convergence
+plot(out2$ELBO, type = "l", xlab="iter", ylab="ELBO") 
+
+#Check goodness-of-fit
+V <- out2$shape/out2$rate
+yhat <- product_m(~Survived+Class+Sex+Age, data=Titanicdf,V)
+plot(log1p(yhat), log1p(Titanicdf$Freq), ylab = "fit", xlab = "obs", xlim = c(-0.5,7), ylim=c(-0.5,7))
+abline(0, 1, lty=2, col="steelblue")
+
+#see also: 
+#https://github.com/abikoushi/moltenNMF/blob/main/Rmd/moltenNMF.md
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory (show via RShowDoc("KEYWORDS")):
-% \keyword{ ~kwd1 }
-% \keyword{ ~kwd2 }
-% Use only one keyword per line.
-% For non-standard keywords, use \concept instead of \keyword:
-% \concept{ ~cpt1 }
-% \concept{ ~cpt2 }
-% Use only one concept per line.

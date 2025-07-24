@@ -34,3 +34,5 @@ export("size_mtx")
 export("rowmeanvar_mtx")
 export("rowfilter_mtx")
 # export("uriboimage")
+
+export("meanV")

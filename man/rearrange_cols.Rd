@@ -19,4 +19,5 @@ rearrange_cols(Vm, axis = 1L, FUN = var, normalize = FALSE, decreasing = TRUE)
 }
 \examples{
 ###
+
 }

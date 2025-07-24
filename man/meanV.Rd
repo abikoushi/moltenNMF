@@ -12,22 +12,9 @@ meanV(out,  logarithm = FALSE)
   \item{logarithm}{If \code{TRUE}, return the mean of the logarithms, which is different from the logarithm of the mean.}
 }
 \examples{
-library(Matrix)
-set_data_mf <- function(L, nrow, ncol, mu=0){
-  W <- matrix(rnorm(nrow*L,0,1), ncol=L)
-  H <- matrix(rnorm(L*ncol,0,1), nrow=L)
-  W <- sweep(W,1,rowMeans(W)-mu)
-  H <- sweep(H,2,colMeans(H)-mu)
-  Y <- matrix(rpois(nrow*ncol, exp(W)\%*\%exp(H)), nrow, ncol)
-  Y <- as(Y, "TsparseMatrix")
-  list(Y=Y, trueW=W, trueH=H)
-}
-
-dat <- set_data_mf(3, 99, 500)
-
-system.time({
-  out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)
-})
-
-V = meanV(out)
+Titanicdf <- as.data.frame(Titanic)
+set.seed(794)
+out2 <- mNMF_vb(Freq~Survived+Class+Sex+Age, data=Titanicdf, L=2, iter=500)
+head( meanV(out2) ) #equivalent to follows:
+head(out2$shape/out2$rate)
 }
