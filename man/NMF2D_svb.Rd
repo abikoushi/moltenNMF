@@ -38,3 +38,26 @@ NMF2D_svb(Y, rank, n_epochs, n_baches,
 \seealso{
   \code{\link{NMF2D_vb}}, \code{\link{NMF2D_svb_bin}}
 }
+\examples{
+library(Matrix)
+
+set_data_mf <- function(L, nrow, ncol, mu=0){
+  W <- matrix(rnorm(nrow*L,0,1), ncol=L)
+  H <- matrix(rnorm(L*ncol,0,1), nrow=L)
+  W <- sweep(W,1,rowMeans(W)-mu)
+  H <- sweep(H,2,colMeans(H)-mu)
+  Y <- matrix(rpois(nrow*ncol, exp(W)\%*\%exp(H)), nrow, ncol)
+  Y <- as(Y, "TsparseMatrix")
+  list(Y=Y, trueW=W, trueH=H)
+}
+
+dat <- set_data_mf(3, 99, 500)
+system.time({
+  out2 <- moltenNMF:::NMF2D_svb(dat$Y, rank = 3,
+                                n_epochs = 200, n_baches = as.integer(2000),
+                                prior_shape = 1, prior_rate = 1,
+                                lr_param = c(15, 0.8),
+                                lr_type = "exponential")
+})
+plot(out2$ELBO[-1], type="l")
+}

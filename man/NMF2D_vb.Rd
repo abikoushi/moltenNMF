@@ -27,7 +27,7 @@ NMF2D_vb(Y, rank, iter = 100, weight = NULL,
   A list containing posterior shape and rate parameters for each factor matrix.
 }
 \seealso{
-  \code{\link{NMF2D_svb}}, \code{\link{meanV_array}}, \code{\link{rearrange_cols}}
+  \code{\link{NMF2D_svb}}
 }
 \examples{
 library(Matrix)
