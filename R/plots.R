@@ -1,5 +1,5 @@
-matbarplot <- function(m, xgroup=NULL,
-                       col=hcl.colors, ...){
+matbarplot <- function(m, xgroup = NULL,
+                       col = hcl.colors, ...){
   L <- ncol(m)
   cols <- col(L)
   bp <- barplot(t(m), col = cols,
@@ -20,7 +20,7 @@ matbarplot <- function(m, xgroup=NULL,
   }
 }
 
-matplot2 <- function(V,
+matlineplot <- function(V,
                      xlab = "",
                      ylab = "",
                      palette = "black",

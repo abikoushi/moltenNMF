@@ -14,7 +14,6 @@ matbarplot(m,
   col=hcl.colors,
   ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{m}{
 matrix for plot

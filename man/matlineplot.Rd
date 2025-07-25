@@ -1,5 +1,5 @@
-\name{matplot2}
-\alias{matplot2}
+\name{matlineplot}
+\alias{matlineplot}
 \title{Customized Matrix Plot with Optional Legend}
 \description{
   A wrapper around \code{matplot} to visualize matrices with customizable colors, line styles, and an optional legend.
@@ -40,14 +40,13 @@ matplot2(V,
   The function enhances the default \code{matplot} behavior by allowing grouped color schemes and optional legends. Useful for plotting factorized matrices (e.g., NMF components).
 }
 \value{
-  No return value. Called for its side effect (a plot).
+  No return value. Call for a plot.
 }
 \seealso{
+  \code{\link{matbarplot}},
   \code{\link{matplot}}, \code{\link{legend}}, \code{\link{par}}
 }
 \examples{
-set.seed(1)
-V <- matrix(runif(50), nrow=10)
-rownames(V) <- paste0("T", 1:10)
-matplot2(V, palette=rainbow(5), colour=rep(1:5, each=2))
+M_iris = as.matrix(iris[,-5])
+matlineplot(t(M_iris), palette=hcl.colors(3), colour=iris$Species)
 }

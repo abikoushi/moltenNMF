@@ -4,8 +4,8 @@ library(ggplot2)
 library(moltenNMF)
 
 set_data_mf <- function(L, nrow, ncol, mu=0){
-  W <- matrix(rnorm(nrow*L,0,1),ncol=L)
-  H <- matrix(rnorm(L*ncol,0,1),nrow=L)
+  W <- matrix(rnorm(nrow*L, 0, 1),ncol=L)
+  H <- matrix(rnorm(L*ncol, 0, 1),nrow=L)
   W <- sweep(W,1,rowMeans(W)-mu)
   H <- sweep(H,2,colMeans(H)-mu)
   Y <- matrix(rpois(nrow*ncol, exp(W)%*%exp(H)), nrow, ncol)
