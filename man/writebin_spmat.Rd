@@ -17,5 +17,5 @@ writebin_spmat(object, filepath_x, filepath_y, index_decrement = 0L)
   The function writes the non-zero values to \code{filepath_y} using \code{writeBin}, and the row/column indices (interleaved) to \code{filepath_x}. If the matrix is not in triplet format, it is converted.
 }
 \seealso{
-  \code{\link{Matrix}}, \code{\link{writeBin}}
+  \code{\link{NMF2d_svb_bin}}, \code{\link{writeBin}}
 }

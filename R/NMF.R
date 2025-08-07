@@ -149,9 +149,7 @@ NMF2D_svb_bin <- function(filepath_x,
                          n_baches,
                          lr_param,
                          lr_type = "exponential",
-                         subiter = 1,
                          prior_shape=1, prior_rate=1,
-                         Vini = NULL,
                          display_progress=TRUE){
   n_baches <- min(n_baches, dims[3])
   out = doVB_pois_s_2D_bin(filepath_x,
@@ -162,7 +160,8 @@ NMF2D_svb_bin <- function(filepath_x,
                            N1 = dims[3],
                            Nr = dims[1], Nc = dims[2],
                            bsize = n_baches,
-                           lr_param = lr_param, lr_type = lr_type,
+                           lr_param = lr_param,
+                           lr_type = lr_type,
                            display_progress = display_progress)
   return(out)
 }

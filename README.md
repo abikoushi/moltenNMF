@@ -31,3 +31,4 @@ New Features :
 
 - `NMF2D_vb`
 - `NMF2D_svb`
+- `mNMF_svb`

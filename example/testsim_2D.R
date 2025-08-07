@@ -103,10 +103,10 @@ head(res$shape[[1]])
 head(res$shape[[2]])
 V = moltenNMF:::meanV_array(res)
 V = moltenNMF:::rearrange_cols(V, normalize = FALSE)
-matlineplot(V = t(V[[1]]))
-
 fit2 = V[[1]]%*%t(V[[2]])
 ax_lim = c(0, max(max(dat$Y), max(fit2)))
+plot(x=c(fit2), y=c(as.matrix(dat$Y)), pch=".", xlab="fitted", ylab="observed")
+abline(0,1,col="lightgrey")
 
 p2 = ggplot(data = NULL, aes(x=c(fit2), y=c(as.matrix(dat$Y))))+
   geom_bin2d(aes(fill = after_stat(log10(count))))+
