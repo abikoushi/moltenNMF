@@ -26,7 +26,8 @@ system.time({
 #   6.15     0.50  2.37
 
 plot(out$ELBO[-1], type = "l")
-V = moltenNMF:::meanV_array(out)
+is.matrix(out$shape)
+V = moltenNMF::meanV(out)
 V = moltenNMF:::rearrange_cols(V)
 fit1 = V[[1]]%*%t(V[[2]])
 

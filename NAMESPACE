@@ -37,3 +37,4 @@ export("rowfilter_mtx")
 # export("uriboimage")
 
 export("meanV")
+export("rearrange_cols")

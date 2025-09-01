@@ -30,6 +30,7 @@ NMF2D_vb(Y, rank, iter = 100, weight = NULL,
   \code{\link{NMF2D_svb}}
 }
 \examples{
+## Not run:
 library(Matrix)
 set_data_mf <- function(L, nrow, ncol, mu=0){
   W <- matrix(rnorm(nrow*L,0,1), ncol=L)
@@ -45,4 +46,5 @@ system.time({
   out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)
 })
 plot(out$ELBO[-1], type = "l")
+## End(**Not run**)
 }

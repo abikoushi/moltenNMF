@@ -11,6 +11,7 @@ meanV_array <- function(out, logarithm = FALSE){
 meanV <- function(out, logarithm = FALSE){
   if(is.list(out$shape)){
     V = meanV_array(out = out, logarithm = logarithm)
+    return(V)
   }
   if(is.matrix(out$shape)){
     if(logarithm){
@@ -18,21 +19,14 @@ meanV <- function(out, logarithm = FALSE){
     }else{
       V = out$shape/out$rate      
     }
+    return(V)
   }
-  return(V)
 }
 
 rearrange_cols <- function(Vm, axis = 1L,
                            FUN = var, 
                            normalize = FALSE,
                            decreasing = TRUE){
-  if(is.matrix(Vm)){
-    if(normalize){
-      Vm <- sweep(Vm, 1, rowSums(Vm), FUN = "/") 
-    }
-    ord = order(apply(Vm, 2, FUN = FUN), decreasing = decreasing)
-    Vm = Vm[, ord]
-  }
   if(is.list(Vm)){
     if(normalize){
       for(i in 1:length(Vm)){
@@ -42,7 +36,16 @@ rearrange_cols <- function(Vm, axis = 1L,
     ord = order(apply(Vm[[axis]], 2, FUN = FUN), decreasing = decreasing)
     for(i in 1:length(Vm)){
       Vm[[i]] = Vm[[i]][, ord]
-    }    
+    }
+    return(Vm)
   }
-  return(Vm)
+  
+  if(is.matrix(Vm)){
+    if(normalize){
+      Vm <- sweep(Vm, 1, rowSums(Vm), FUN = "/") 
+    }
+    ord = order(apply(Vm, 2, FUN = FUN), decreasing = decreasing)
+    Vm = Vm[, ord]
+    return(Vm)
+  }
 }
