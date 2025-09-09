@@ -42,15 +42,14 @@ void readmtx(arma::umat & X,
   }
 }
 
-// [[Rcpp::export]]
-List read_mtx(const std::string & readtxt,
-              const arma::uvec & bag,
-              const int & x_dim){
-  arma::umat X(bag.n_rows, x_dim);
-  arma::vec val(bag.n_rows);
-  readmtx(X, val, readtxt, bag, 2);
-  return List::create(X, val);
-}
+// List read_mtx(const std::string & readtxt,
+//               const arma::uvec & bag,
+//               const int & x_dim){
+//   arma::umat X(bag.n_rows, x_dim);
+//   arma::vec val(bag.n_rows);
+//   readmtx(X, val, readtxt, bag, 2);
+//   return List::create(X, val);
+// }
 
 void rankindex(arma::uvec & x, const arma::uvec & uid){
   for(int i=0; i < (int) uid.n_rows; i++){

@@ -85,15 +85,11 @@ obsfitloss_2d_mtx <- function(readtxt, V1, V2, n_header) {
     .Call(`_moltenNMF_obsfitloss_2d_mtx`, readtxt, V1, V2, n_header)
 }
 
-rowmeanvar_txt <- function(n_row, n_col, readtxt, n_header) {
+rowmeanvar_txt <- function(n_row, n_col, readtxt, n_header = 2L) {
     .Call(`_moltenNMF_rowmeanvar_txt`, n_row, n_col, readtxt, n_header)
 }
 
-rowfilter_mtx <- function(readtxt, writetxt, rowind) {
-    invisible(.Call(`_moltenNMF_rowfilter_mtx`, readtxt, writetxt, rowind))
-}
-
-read_mtx <- function(readtxt, bag, x_dim) {
-    .Call(`_moltenNMF_read_mtx`, readtxt, bag, x_dim)
+rowfilter_mtx <- function(readtxt, writetxt, rowind, n_header = 2L) {
+    invisible(.Call(`_moltenNMF_rowfilter_mtx`, readtxt, writetxt, rowind, n_header))
 }
 

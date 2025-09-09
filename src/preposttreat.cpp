@@ -19,7 +19,8 @@ double mseloss(const double & obs , const double & fit){
 //post-
 ////
 // [[Rcpp::export]]
-List obsfitloss_mtx(const std::string & readtxt, arma::mat fit, const int & n_header){
+List obsfitloss_mtx(const std::string & readtxt,
+                    arma::mat fit, const int & n_header){
   double MSE = 0;
   double pois = 0;
   int x;
@@ -125,7 +126,7 @@ List obsfitloss_2d_mtx(const std::string & readtxt,
 List rowmeanvar_txt(const int & n_row,
                     const int & n_col,
                     const std::string & readtxt,
-                    const int & n_header) {
+                    const int & n_header = 2) {
   int x;
   // int y;
   double v;
@@ -165,16 +166,22 @@ List rowmeanvar_txt(const int & n_row,
 // [[Rcpp::export]]
 void rowfilter_mtx(const std::string & readtxt,
                    const std::string & writetxt,
-                   const arma::vec & rowind){
+                   const arma::vec & rowind,
+                   const int n_header = 2){
   int x;
   std::ifstream file(readtxt);
+  if (!file.is_open()) {
+    Rcpp::stop("Error: could not open input file '" + readtxt + "'");
+  }
   std::string str;
   std::ofstream newfile;
   newfile.open(writetxt);
-  // first line
-  std::getline(file, str);
-  newfile << str + "\n";
-  // second line
+  // header
+  for(int i = 0; i < (n_header - 1); i++){
+    std::getline(file, str);
+    newfile << str + "\n";
+  }
+  // size header
   std::getline(file, str);
   std::stringstream ss(str);
   std::vector<std::string> svec;
@@ -206,7 +213,7 @@ void rowfilter_mtx(const std::string & readtxt,
   }
   //writing
   newfile << s0 + " " + std::to_string(nonzero) + "\n";
-  for(int i=0; i<nonzero; i++){
+  for(int i = 0; i < nonzero; i++){
     newfile << out[i];
   }
   newfile.close(); 

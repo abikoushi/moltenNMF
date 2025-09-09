@@ -435,28 +435,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // rowfilter_mtx
-void rowfilter_mtx(const std::string& readtxt, const std::string& writetxt, const arma::vec& rowind);
-RcppExport SEXP _moltenNMF_rowfilter_mtx(SEXP readtxtSEXP, SEXP writetxtSEXP, SEXP rowindSEXP) {
+void rowfilter_mtx(const std::string& readtxt, const std::string& writetxt, const arma::vec& rowind, const int n_header);
+RcppExport SEXP _moltenNMF_rowfilter_mtx(SEXP readtxtSEXP, SEXP writetxtSEXP, SEXP rowindSEXP, SEXP n_headerSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type readtxt(readtxtSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type writetxt(writetxtSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type rowind(rowindSEXP);
-    rowfilter_mtx(readtxt, writetxt, rowind);
+    Rcpp::traits::input_parameter< const int >::type n_header(n_headerSEXP);
+    rowfilter_mtx(readtxt, writetxt, rowind, n_header);
     return R_NilValue;
-END_RCPP
-}
-// read_mtx
-List read_mtx(const std::string& readtxt, const arma::uvec& bag, const int& x_dim);
-RcppExport SEXP _moltenNMF_read_mtx(SEXP readtxtSEXP, SEXP bagSEXP, SEXP x_dimSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::string& >::type readtxt(readtxtSEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type bag(bagSEXP);
-    Rcpp::traits::input_parameter< const int& >::type x_dim(x_dimSEXP);
-    rcpp_result_gen = Rcpp::wrap(read_mtx(readtxt, bag, x_dim));
-    return rcpp_result_gen;
 END_RCPP
 }
 
@@ -483,8 +471,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_obsfitloss_mtx", (DL_FUNC) &_moltenNMF_obsfitloss_mtx, 3},
     {"_moltenNMF_obsfitloss_2d_mtx", (DL_FUNC) &_moltenNMF_obsfitloss_2d_mtx, 4},
     {"_moltenNMF_rowmeanvar_txt", (DL_FUNC) &_moltenNMF_rowmeanvar_txt, 4},
-    {"_moltenNMF_rowfilter_mtx", (DL_FUNC) &_moltenNMF_rowfilter_mtx, 3},
-    {"_moltenNMF_read_mtx", (DL_FUNC) &_moltenNMF_read_mtx, 3},
+    {"_moltenNMF_rowfilter_mtx", (DL_FUNC) &_moltenNMF_rowfilter_mtx, 4},
     {NULL, NULL, 0}
 };
 

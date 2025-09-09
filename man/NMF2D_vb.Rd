@@ -9,8 +9,6 @@ NMF2D_vb(Y, rank, iter = 100, weight = NULL,
          prior_shape = 1, prior_rate = 1, 
          Vini = NULL, dims = NULL, 
          display_progress = TRUE)
-         
-         
 }
 \arguments{
   \item{Y}{A sparse matrix (class \code{dgTMatrix} or coercible to it).}
