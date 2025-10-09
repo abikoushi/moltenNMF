@@ -14,7 +14,11 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
 }
 
 dat <- set_data_mf(2, 502, 11)
-X <- moltenNMF::sparse_onehot(~row+col, data=expand.grid(row=1:502, col=1:11))
+X <- sparse_onehot(~row+col, data=expand.grid(row=1:502, col=1:11))
+#X2 <- moltenNMF:::sparse_onehot2(~row+col, data=expand.grid(row=1:502, col=1:11))
+
+str(X)
+
 
 bm = bench::mark({
   out_d <- moltenNMF:::mNMF_vb.default(as.integer(dat$Y), X = X, L = 2, iter=1000)
@@ -54,26 +58,26 @@ X0 = X[-wch,]
 # all(colSums(X[-wch,])==diff(X0@p))
 # 
 
-system.time({
-  out2 = moltenNMF:::mNMF_vb_sp(y = Y1, X = X1, xp0 = X0@p, L=2,
-                                iter=1000,
-                                a=0.5, b=0.01,
-                                V=NULL,
-                                display_progress=TRUE,
-                                indices=NULL)  
-})
+# system.time({
+#   out2 = moltenNMF:::mNMF_vb_sp(y = Y1, X = X1, xp0 = X0@p, L=2,
+#                                 iter=1000,
+#                                 a=0.5, b=0.01,
+#                                 V=NULL,
+#                                 display_progress=TRUE,
+#                                 indices=NULL)  
+# })
 
 # plot(out_d$ELBO[-1], type = "l")
 # plot(out2$ELBO[-1], type = "l", col="red")
 
-V <- out2$shape/out2$rate
-f2 <- moltenNMF::product_m(X, V)
-plot(c(as.matrix(dat$Y)), f2,  pch=1, col=rgb(0,0,0,0.1), xlab="fitted", ylab="obsereved",cex=0.5)
-points(c(as.matrix(dat$Y)), f_d,  pch=2, col=rgb(0,0.5,1,0.1), xlab="fitted", ylab="obsereved", cex=0.5)
-abline(0, 1, col="grey", lty=2)
+# V <- out2$shape/out2$rate
+# f2 <- moltenNMF::product_m(X, V)
+# plot(c(as.matrix(dat$Y)), f2,  pch=1, col=rgb(0,0,0,0.1), xlab="fitted", ylab="obsereved",cex=0.5)
+# points(c(as.matrix(dat$Y)), f_d,  pch=2, col=rgb(0,0.5,1,0.1), xlab="fitted", ylab="obsereved", cex=0.5)
+# abline(0, 1, col="grey", lty=2)
 
-mean((c(as.matrix(dat$Y))-f2)^2)
-mean((c(as.matrix(dat$Y))-f_d)^2)
+#mean((c(as.matrix(dat$Y))-f2)^2)
+#mean((c(as.matrix(dat$Y))-f_d)^2)
 
 # probX0 = colMeans(X[-wch,])
 # N0 = nrow(X)-length(wch)
@@ -86,11 +90,11 @@ mean((c(as.matrix(dat$Y))-f_d)^2)
 #                        indices=NULL)
 # plot(out2$ELBO, type = "l")
 
-V <- out2$shape/out2$rate
-f2 <- moltenNMF::product_m(X, V)
-plot(as.matrix(dat$Y), f2,  pch=1, col=rgb(0,0,0,0.2), xlab="fitted", ylab="obsereved")
-points(as.matrix(dat$Y), f_d,  pch=2, col=rgb(0,0,0.5,0.2), xlab="fitted", ylab="obsereved")
-abline(0, 1, col="grey", lty=2)
+# V <- out2$shape/out2$rate
+# f2 <- moltenNMF::product_m(X, V)
+# plot(as.matrix(dat$Y), f2,  pch=1, col=rgb(0,0,0,0.2), xlab="fitted", ylab="obsereved")
+# points(as.matrix(dat$Y), f_d,  pch=2, col=rgb(0,0,0.5,0.2), xlab="fitted", ylab="obsereved")
+# abline(0, 1, col="grey", lty=2)
 
 
 ####
@@ -129,12 +133,12 @@ abline(0, 1, col="grey", lty=2)
 y = as.integer(dat$Y)
 wch = which(y>0)
 Y = sparseVector(y[wch], wch, length = length(y))
-
+length(Y)
 system.time({
   out_s <- moltenNMF:::mNMF_svb(Y, X = X, L = 2,
                                 n_epochs = 100, 
-                                n_batches = 2000,
-                                lr_param = c(20,0.9), 
+                                n_batches = 1000,
+                                lr_param = c(15,0.8), 
                                 lr_type = "exponential",
                                 display_progress = TRUE)
 })

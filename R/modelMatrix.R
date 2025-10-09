@@ -25,43 +25,88 @@ sparse_cate <- function(x, repr = "C", binary_dummy=FALSE){
   return(m)
 }
 
-
 sparse_onehot <- function(object,
-                          data = environment(object),
-                          #dummy_m = 0L,
-                          xlev = NULL,
-                          sep = "_",
-                          interaction_operator = ":",
-                          na.action='na.pass',
-                          repr = "C",
-                          binary_dummy=FALSE){
+                           data = environment(object),
+                           #dummy_m = 0L,
+                           xlev = NULL,
+                           sep = "_",
+                           interaction_operator = ":",
+                           na.action='na.pass',
+                           repr = "C",
+                           binary_dummy=FALSE){
   data <- model.frame(object, data, xlev=xlev, na.action=na.action)
   t <- if(missing(data)) terms(object) else terms(object, data=data)
   labs <- attr(t, "term.labels")
-  lx <- vector("list", length = length(labs)) 
+  
+  li <- vector("list", length = length(labs))
+  lp <- vector("list", length = length(labs))
+  l_labs <- vector("list", length = length(labs))
+  len = integer(length(labs))
+  last_p <- 0L
   for(i in 1:length(labs)){
     if(any(grepl(interaction_operator, labs[i]))){
       lab2 <- unlist(strsplit(labs[i], interaction_operator))
       cmat <- sapply(lab2, function(x){
-        ifelse(is.na(data[[x]]),NA_character_,as.character(data[[x]]))
-        })
+        ifelse(is.na(data[[x]]), NA_character_, as.character(data[[x]]))
+      })
       ct <- ifelse(apply(is.na(cmat),1,any), NA_character_, apply(cmat, 1, paste, collapse=":"))
-      lx[[i]] <- sparse_cate(ct, repr = repr, binary_dummy = binary_dummy)
+      X_i <- t(moltenNMF:::sparse_cate(ct, repr = repr, binary_dummy = binary_dummy))
     }else{
-      lx[[i]] <- sparse_cate(data[[labs[i]]], repr = repr, binary_dummy = binary_dummy)      
+      X_i <- t(moltenNMF:::sparse_cate(data[[labs[i]]], repr = repr, binary_dummy = binary_dummy))
     }
+    l_labs[[i]] <- colnames(X_i)
+    len[i] <- ncol(X_i)
+    li[[i]] <- X_i@i
+    lp[[i]] <- X_i@p[-1] + last_p
+    last_p <- lp[[i]][length(lp[[i]])]
   }
-  X <- do.call("rbind", lx)
-  X <- t(X)
-  clabs <- unlist(sapply(lx, rownames))
-  len <- unlist(sapply(lx, nrow))
+  X = sparseMatrix(i = unlist(li) + 1L,  p = c(0L, unlist(lp)))
+  clabs <- unlist(l_labs)
+  # len <- unlist(sapply(lx, nrow))
   colnames(X) <- paste(rep(labs, len), clabs, sep=sep)
   attr(X, "indices") <- c(0L, cumsum(len))
   attr(X, "term.labels") <- labs
   attr(X, "value.labels") <- clabs
-  attr(X, "assign") <- rep(1:length(lx), len)
-  return(X)
+  attr(X, "assign") <- rep(1:length(labs), len)
+  return( X )
 }
+
+# sparse_onehot <- function(object,
+#                           data = environment(object),
+#                           #dummy_m = 0L,
+#                           xlev = NULL,
+#                           sep = "_",
+#                           interaction_operator = ":",
+#                           na.action='na.pass',
+#                           repr = "C",
+#                           binary_dummy=FALSE){
+#   data <- model.frame(object, data, xlev=xlev, na.action=na.action)
+#   t <- if(missing(data)) terms(object) else terms(object, data=data)
+#   labs <- attr(t, "term.labels")
+#   lx <- vector("list", length = length(labs)) 
+#   for(i in 1:length(labs)){
+#     if(any(grepl(interaction_operator, labs[i]))){
+#       lab2 <- unlist(strsplit(labs[i], interaction_operator))
+#       cmat <- sapply(lab2, function(x){
+#         ifelse(is.na(data[[x]]),NA_character_,as.character(data[[x]]))
+#         })
+#       ct <- ifelse(apply(is.na(cmat),1,any), NA_character_, apply(cmat, 1, paste, collapse=":"))
+#       lx[[i]] <- sparse_cate(ct, repr = repr, binary_dummy = binary_dummy)
+#     }else{
+#       lx[[i]] <- sparse_cate(data[[labs[i]]], repr = repr, binary_dummy = binary_dummy)      
+#     }
+#   }
+#   X <- do.call("rbind", lx)
+#   X <- t(X)
+#   clabs <- unlist(sapply(lx, rownames))
+#   len <- unlist(sapply(lx, nrow))
+#   colnames(X) <- paste(rep(labs, len), clabs, sep=sep)
+#   attr(X, "indices") <- c(0L, cumsum(len))
+#   attr(X, "term.labels") <- labs
+#   attr(X, "value.labels") <- clabs
+#   attr(X, "assign") <- rep(1:length(lx), len)
+#   return(X)
+# }
 
 slice_rows <- function(x, i){
   out = x[i,]

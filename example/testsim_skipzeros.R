@@ -52,12 +52,14 @@ system.time({
                                 M_max = 100,
                                 display_progress = TRUE)
 })
-
+head(Y1)
 
 is.list(out_s$shape/out_s$rate)
 plot(out_s$ELBO[-1], type = "l")
-#str(out_s)
 
+f=product_m(X1, out_s$shape/out_s$rate)
+plot(f, Y1, pch=".", col=rgb(0,0,0,0.5))
+abline(0,1,col="royalblue")
 # corVs = rearrange_winner_ord(log(V),
 #                              V_s = digamma(out_s$shape) - log(out_s$rate))
 corVs = rearrange_winner_ord(V,
