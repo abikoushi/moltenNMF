@@ -22,6 +22,24 @@ void up_latentV(arma::field<arma::mat> & V,
   }
 }
 
+
+// void up_latentV_optimized(arma::field<arma::mat> & V,
+//                           arma::field<arma::mat> & logV,
+//                           const arma::field<arma::mat> & alpha,
+//                           const arma::mat & beta){
+//   const int K = beta.n_rows;
+//   const int L = beta.n_cols;
+//   for(int k = 0; k < K; k++){
+//     for(int l = 0; l < L; l++){
+//       double log_beta = log(beta(k, l));
+//       arma::vec alpha_kl = alpha(k).col(l);
+//       V(k).col(l) = alpha_kl / beta(k, l);
+//       //期待値誤り
+//       logV(k).col(l) = alpha_kl % (log(alpha_kl) - 1.0 - log_beta) - lgamma(alpha_kl);
+//     }
+//   }
+// }
+
 void up_latentV(arma::field<arma::mat> & V,
                 arma::field<arma::mat> & logV,
                 const arma::field<arma::mat> & alpha,

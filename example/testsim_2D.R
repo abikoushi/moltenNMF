@@ -18,6 +18,7 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
 
 dat <- set_data_mf(3, 99, 500)
 
+hist(as.numeric(dat$Y))
 
 system.time({
   out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)
