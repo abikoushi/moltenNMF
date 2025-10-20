@@ -23,9 +23,8 @@ hist(as.numeric(dat$Y))
 system.time({
   out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)
 })
-# ユーザ システム  経過 
-#   6.15     0.50  2.37
-
+#  user  system elapsed 
+# 8.592   0.074   8.767 
 plot(out$ELBO[-1], type = "l")
 is.matrix(out$shape)
 V = moltenNMF::meanV(out)

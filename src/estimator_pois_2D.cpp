@@ -34,7 +34,7 @@ double up_B_2D(const arma::field<arma::mat> & alpha,
                arma::field<arma::mat> & logV,
                const double & b,
                const int & L,
-               const arma::uvec & dims, 
+               const arma::uvec & dims,
                const int & k){
   double lp = 0;
   arma::rowvec B0 = sumV(V, k);
@@ -171,7 +171,7 @@ double up_theta_2D(arma::field<arma::mat> & alpha,
   up_A_2D(alpha, logV, y, X, a, L, dims, 0);
   up_B_2D(alpha, beta, V, logV, weight, b, L, dims, 0);
   lp += up_A_2D(alpha, logV, y, X, a, L, dims, 1);
-  up_B_2D(alpha, beta, V, logV, weight, b, L,dims, 1);
+  up_B_2D(alpha, beta, V, logV, weight, b, L, dims, 1);
   return lp;
 }
 
