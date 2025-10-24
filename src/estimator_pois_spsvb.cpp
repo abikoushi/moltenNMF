@@ -12,6 +12,7 @@
 // [[Rcpp::depends(RcppProgress)]]
 // [[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
+#define ARMA_64BIT_WORD 1
 
 ////
 //update variational parameters
