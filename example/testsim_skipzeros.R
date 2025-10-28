@@ -3,6 +3,9 @@ library(Matrix)
 library(tidyr)
 library(dplyr)
 library(ggplot2)
+
+moltenNMF:::check_arma64()
+
 rearrange_winner_ord <- function(V,V_s){
   cmat = cor(V, V_s)
   ord =integer(ncol(V))
@@ -13,12 +16,13 @@ rearrange_winner_ord <- function(V,V_s){
   list(V=V_s[,ord], cor=diag(cmat[,ord]))
 }
 
-i = 3
+i = 1
 L <- 5L
 ncols = c(100, 500, 1000)
 df <- as.data.frame(expand.grid(row=factor(1:100),
                                 col=factor(1:ncols[i]),
                                 depth=factor(1:2)))
+
 X <- sparse_onehot(~ ., data=df)
 N <- nrow(X)
 D <- ncol(X)
@@ -27,20 +31,10 @@ ord = order(apply(log(V), 2, var), decreasing = TRUE)
 V = V[,ord]
 lambda <- product_m.default(X, V)  
 Y <- rpois(N, lambda)
-
 wch = which(Y>0)
+
 Y1 = Y[wch]
 X1 = slice_rows(X, wch)
-
-# system.time({
-#   out_s <- moltenNMF:::mNMF_svb_batch(Y1, X = X1,
-#                                 N = nrow(X), L = L,
-#                                 n_epochs = 100,
-#                                 lr_param = c(10,0.9),
-#                                 lr_type = "exponential",
-#                                 M_max = 100,
-#                                 display_progress = TRUE)
-# })
 
 system.time({
   out_s <- moltenNMF:::mNMF_svb(Y1, X = X1,
@@ -54,7 +48,9 @@ system.time({
 })
 head(Y1)
 
-is.list(out_s$shape/out_s$rate)
+
+
+#is.list(out_s$shape/out_s$rate)
 plot(out_s$ELBO[-1], type = "l")
 
 f=product_m(X1, out_s$shape/out_s$rate)
@@ -118,14 +114,14 @@ system.time({
                                 display_progress = TRUE)
 })
 
-system.time({
-  out_s2 <- moltenNMF:::mNMF_svb_batch(Y1, X = X1,
-                                N = nrow(X), L = L,
-                                n_epochs = 500,
-                                lr_param = c(1,0.9),
-                                lr_type = "exponential",
-                                display_progress = TRUE)
-})
+# system.time({
+#   out_s2 <- moltenNMF:::mNMF_svb_batch(Y1, X = X1,
+#                                 N = nrow(X), L = L,
+#                                 n_epochs = 500,
+#                                 lr_param = c(1,0.9),
+#                                 lr_type = "exponential",
+#                                 display_progress = TRUE)
+# })
 
 plot(out_s$ELBO[-1], type="l", xlim = c(0,500))
 lines(out_s2$ELBO[-1], type="l", col="royalblue")

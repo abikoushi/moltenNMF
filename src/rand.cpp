@@ -13,7 +13,7 @@ arma::mat rand_init(const arma::mat & alpha, const arma::rowvec & beta){
   return Z;
 }
 
-arma::umat randpick_c(int N1, int b_size) {
+arma::umat randpick_c(arma::uword N1, arma::uword b_size) {
   if (b_size > N1) b_size = N1;
   arma::uvec rind = arma::randperm(N1);
   int rem = N1 % b_size;

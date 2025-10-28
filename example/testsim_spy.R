@@ -108,11 +108,11 @@ probX0 = colMeans(X[-wch,])
 N0 = nrow(X)-length(wch)
 
 system.time({
-  out_s <- moltenNMF:::mNMF_svb_sp(Y1, X = X1,
+  out_s <- moltenNMF:::mNMF_svb(Y1, X = X1,
                                    N = nrow(X), L = 2,
-                                   n_epochs = 1, 
+                                   n_epochs = 10, 
                                    n_batches = 2000,
-                                   lr_param = c(15,0.9), 
+                                   lr_param = c(15,0.8), 
                                    lr_type = "exponential",
                                    display_progress = TRUE)
 })

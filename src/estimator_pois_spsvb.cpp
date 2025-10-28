@@ -12,12 +12,21 @@
 // [[Rcpp::depends(RcppProgress)]]
 // [[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
-#define ARMA_64BIT_WORD 1
+#define ARMA_64BIT_WORD
+
+// // [[Rcpp::export]]
+// bool check_arma64() {
+// #ifdef ARMA_64BIT_WORD
+//   return true;
+// #else
+//   return false;
+// #endif
+// }
 
 ////
 //update variational parameters
 ////
-void up_theta_sp(const int & N,
+void up_theta_sp(const arma::uword & N,
                  arma::mat & alpha,
                  arma::mat & beta,
                  arma::vec & R,
@@ -31,7 +40,7 @@ void up_theta_sp(const int & N,
                  const double & N1S,
                  const double & a,
                  const double & b,
-                 const int & M_max){
+                 const arma::uword & M_max){
   //TimerLogger up_theta_total("up_theta");
   int K = (varind.n_rows - 1);
   int L = V.n_cols;
@@ -40,7 +49,7 @@ void up_theta_sp(const int & N,
   alpha = N1S*mysum_t(alpha.n_rows, xi, xp, r.each_col()%(y/R)) + a;
   arma::vec rl(y.n_rows);
   //for geometric sampling
-  int n0 = R::rgeom(rho);
+  arma::uword n0 = R::rgeom(rho);
   int M = std::min(M_max, n0);
   double MR = (double) n0 / (double) M;
   arma::vec vl(V.n_rows);
@@ -88,12 +97,12 @@ List doSVB_pois_sp_skip(const int & N,
                     const double & a,
                     const double & b,
                     arma::mat & V,
-                    const int & bsize,
+                    const arma::uword & bsize,
                     const arma::vec & lr_param,
                     const std::string & lr_type,
                     const int & M_max,
                     const bool & display_progress){
-  const int N1 =  yv.n_rows;
+  const arma::uword N1 =  yv.n_rows;
   arma::mat logV = log(V);
   arma::mat alpha = arma::ones<arma::mat>(D, L);
   arma::mat beta(D, L);

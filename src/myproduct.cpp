@@ -1,8 +1,7 @@
 #include <RcppArmadillo.h>
 #include "myproduct.h"
 
-
-arma::mat myprod(const int & N,
+arma::mat myprod(const arma::uword & N,
                  const arma::uvec & xi,
                  const arma::uvec & xp,
                  const arma::mat & lam) {
@@ -16,7 +15,7 @@ arma::mat myprod(const int & N,
   return out;
 }
 
-arma::vec myprodvec(const int & n,
+arma::vec myprodvec(const arma::uword & n,
                     const arma::uvec & xi, const arma::uvec & xp,
                     const arma::vec & lam) {
   arma::vec out(n, arma::fill::ones);
@@ -30,7 +29,7 @@ arma::vec myprodvec(const int & n,
 }
 
 
-arma::vec myprodvec_sub(const int & n, const arma::uvec & xi, const arma::uvec & xp,
+arma::vec myprodvec_sub(const arma::uword & n, const arma::uvec & xi, const arma::uvec & xp,
                         const int & start, const int & end, const arma::vec & lam) {
   arma::vec out(n, arma::fill::ones);
   for(int i = start; i < end; i++){
@@ -42,7 +41,7 @@ arma::vec myprodvec_sub(const int & n, const arma::uvec & xi, const arma::uvec &
   return out;
 }
 
-arma::mat mysum_t(const int & N,
+arma::mat mysum_t(const arma::uword & N,
                   const arma::uvec & xi,
                   const arma::uvec & xp,
                   const arma::mat & lam) {
@@ -58,7 +57,7 @@ arma::mat mysum_t(const int & N,
   return out;
 }
 
-arma::mat mysum_t_vec(const int & N,
+arma::mat mysum_t_vec(const arma::uword & N,
                   const arma::uvec & xi,
                   const arma::uvec & xp,
                   const arma::vec & lam) {
@@ -75,7 +74,7 @@ arma::mat mysum_t_vec(const int & N,
 
 
 // [[Rcpp::export]]
-arma::vec summyprod(const int & n, const arma::uvec & xi,
+arma::vec summyprod(const arma::uword & n, const arma::uvec & xi,
                     const arma::uvec & xp, const arma::mat & lam) {
   arma::vec out = arma::zeros<arma::vec>(n);
   for(arma::uword l = 0; l < lam.n_cols; l++){

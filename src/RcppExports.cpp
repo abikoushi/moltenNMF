@@ -250,7 +250,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // doSVB_pois_sp_skip
-List doSVB_pois_sp_skip(const int& N, const arma::vec& yv, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const int& iter, const double& a, const double& b, arma::mat& V, const int& bsize, const arma::vec& lr_param, const std::string& lr_type, const int& M_max, const bool& display_progress);
+List doSVB_pois_sp_skip(const int& N, const arma::vec& yv, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const int& iter, const double& a, const double& b, arma::mat& V, const arma::uword& bsize, const arma::vec& lr_param, const std::string& lr_type, const int& M_max, const bool& display_progress);
 RcppExport SEXP _moltenNMF_doSVB_pois_sp_skip(SEXP NSEXP, SEXP yvSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP VSEXP, SEXP bsizeSEXP, SEXP lr_paramSEXP, SEXP lr_typeSEXP, SEXP M_maxSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -266,7 +266,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const double& >::type a(aSEXP);
     Rcpp::traits::input_parameter< const double& >::type b(bSEXP);
     Rcpp::traits::input_parameter< arma::mat& >::type V(VSEXP);
-    Rcpp::traits::input_parameter< const int& >::type bsize(bsizeSEXP);
+    Rcpp::traits::input_parameter< const arma::uword& >::type bsize(bsizeSEXP);
     Rcpp::traits::input_parameter< const arma::vec& >::type lr_param(lr_paramSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type lr_type(lr_typeSEXP);
     Rcpp::traits::input_parameter< const int& >::type M_max(M_maxSEXP);
@@ -314,12 +314,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // summyprod
-arma::vec summyprod(const int& n, const arma::uvec& xi, const arma::uvec& xp, const arma::mat& lam);
+arma::vec summyprod(const arma::uword& n, const arma::uvec& xi, const arma::uvec& xp, const arma::mat& lam);
 RcppExport SEXP _moltenNMF_summyprod(SEXP nSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP lamSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const int& >::type n(nSEXP);
+    Rcpp::traits::input_parameter< const arma::uword& >::type n(nSEXP);
     Rcpp::traits::input_parameter< const arma::uvec& >::type xi(xiSEXP);
     Rcpp::traits::input_parameter< const arma::uvec& >::type xp(xpSEXP);
     Rcpp::traits::input_parameter< const arma::mat& >::type lam(lamSEXP);

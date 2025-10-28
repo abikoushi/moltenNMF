@@ -8,19 +8,16 @@ void subset_spx(arma::uvec & xi2, arma::uvec & xp2,
   for (arma::uword i = 0; i < uid.n_elem; ++i) {
     uid_lookup[uid(i)] = i;
   }
-  
   std::vector<arma::uword> xi_buf;
   std::vector<arma::uword> up_buf;
-  
   xp2 = arma::uvec(xp.n_rows, arma::fill::zeros);
   arma::uword count = 0;
-  
   for (arma::uword i = 0; i < xp.n_rows - 1; ++i) {
     for (arma::uword j = xp(i); j < xp(i + 1); ++j) {
       arma::uword val = xi(j);
       auto it = uid_lookup.find(val);
       if (it != uid_lookup.end()) {
-        xi_buf.push_back(it->second);
+        xi_buf.push_back(it -> second);
         up_buf.push_back(i);
         ++count;
       }
