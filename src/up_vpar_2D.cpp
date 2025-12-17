@@ -56,10 +56,7 @@ void up_latentV_uid(arma::field<arma::mat> & V,
 arma::rowvec sumV_uid(const arma::field<arma::mat> V, 
                       const arma::field<arma::uvec> uid,
                       const int k){
-  int not_k = 1;
-  if(k==1){
-    not_k = 0;
-  }
+  int not_k = 1-k;
   arma::rowvec SumV = sum(V(not_k).rows(uid(not_k)), 0);
   return SumV;
 }
@@ -68,10 +65,7 @@ arma::rowvec sumV_uid(const arma::field<arma::mat> V,
                       const arma::field<arma::uvec> uid,
                       const int k,
                       const arma::field<arma::vec> weight){
-  int not_k = 1;
-  if(k==1){
-    not_k = 0;
-  }
+  int not_k = 1-k;
   arma::mat Vk = V(not_k).rows(uid(not_k));
   Vk.each_col() %= weight(k).rows(uid(not_k));
   arma::rowvec SumV = sum(Vk, 0);

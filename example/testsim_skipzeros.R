@@ -4,8 +4,6 @@ library(tidyr)
 library(dplyr)
 library(ggplot2)
 
-moltenNMF:::check_arma64()
-
 rearrange_winner_ord <- function(V,V_s){
   cmat = cor(V, V_s)
   ord =integer(ncol(V))

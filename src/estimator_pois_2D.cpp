@@ -436,7 +436,6 @@ List doVB_pois_s_2D_bin(const std::string & filepath_x,
   arma::mat beta(2, L);
   beta.row(0) = sum(V(1), 0) + b;
   beta.row(1) = sum(V(0), 0) + b;
-  // beta.print();
   arma::vec lp = arma::zeros<arma::vec>(iter);
   std::unique_ptr<lr> g;
   set_lr_method(g, lr_type);
@@ -464,7 +463,6 @@ List doVB_pois_s_2D_bin(const std::string & filepath_x,
     lp(epoc) /= (double) bags.n_cols;
     lp(epoc) += kld2(alpha, beta, a, b);
     pb.increment();
-    // beta.print();
   }
   return List::create(Named("shape")=alpha,
                       Named("rate")=beta,
