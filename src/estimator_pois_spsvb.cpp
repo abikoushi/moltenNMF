@@ -26,7 +26,9 @@ using namespace Rcpp;
 ////
 //update variational parameters
 ////
-void up_theta_sp(const arma::uword & N,
+//rho = N1 / N;
+//N1S = N1/bsize
+bool up_theta_sp(const arma::uword & N,
                  arma::mat & alpha,
                  arma::mat & beta,
                  arma::vec & R,
@@ -46,7 +48,7 @@ void up_theta_sp(const arma::uword & N,
   int L = V.n_cols;
   arma::mat r =  myprod(y.n_rows, xi, xp, exp(logV));
   R = sum(r, 1);
-  alpha = N1S*mysum_t(alpha.n_rows, xi, xp, r.each_col()%(y/R)) + a;
+  alpha = N1S * mysum_t(alpha.n_rows, xi, xp, r.each_col()%(y/R)) + a;
   arma::vec rl(y.n_rows);
   //for geometric sampling
   arma::uword n0 = R::rgeom(rho);
@@ -55,7 +57,6 @@ void up_theta_sp(const arma::uword & N,
   arma::vec vl(V.n_rows);
   arma::vec vl0(M);
   arma::umat U(M, K);
-  ///
   for(int l = 0; l < L; l++){
     rl = r.col(l);
     vl = V.col(l);
@@ -71,7 +72,9 @@ void up_theta_sp(const arma::uword & N,
       beta.col(l).rows(start, end - 1) = B + b;
     }
   }
+  return (n0>M_max);
 }
+
 
 void upEV(arma::mat & V, arma::mat & logV,
           const arma::mat & alpha,
@@ -112,6 +115,7 @@ List doSVB_pois_sp_skip(const int & N,
   arma::vec ll = arma::zeros<arma::vec>(iter);
   std::unique_ptr<lr> g;
   set_lr_method(g, lr_type);
+  bool reach_max = false;
   const double N1S = ((double) N1) / ((double) bsize);
   const double p1 = ((double) N1) / ((double) N);
   Progress pb(iter, display_progress);
@@ -130,10 +134,11 @@ List doSVB_pois_sp_skip(const int & N,
       arma::mat alpha_s = alpha;
       arma::mat beta_s = beta;
       arma::vec SR = R.rows(uid);
-      up_theta_sp(N, alpha_s, beta_s,
+      bool reach_max_c = up_theta_sp(N, alpha_s, beta_s,
                   SR, V, logV,
                   S_yv, S_xi, S_xp, varind,
                   p1, N1S, a, b, M_max);
+      reach_max = reach_max | reach_max_c; 
       R(uid) = SR;
       alpha.rows(up) = nu2 * alpha.rows(up) + nu * alpha_s.rows(up);
       beta.rows(up) = nu2 * beta.rows(up) + nu * beta_s.rows(up);
@@ -142,9 +147,10 @@ List doSVB_pois_sp_skip(const int & N,
     ll.row(epoc) += lowerbound_logML_pois(alpha, beta, V, logV, R, yv, a, b);      
     pb.increment();
   }
-  return List::create(Named("shape")=alpha,
-                      Named("rate")=beta,
-                      Named("ELBO")=ll);
+  return List::create(Named("shape") = alpha,
+                      Named("rate") = beta,
+                      Named("ELBO") = ll,
+                      Named("reach_max") = reach_max);
 }
 
 // [[Rcpp::export]]
@@ -174,16 +180,18 @@ List doSVB_pois_sp_skip_batch(const int & N,
   std::unique_ptr<lr> g;
   set_lr_method(g, lr_type);
   const double p1 = ((double) N1) / ((double) N);
+  bool reach_max = false;
   Progress pb(iter, display_progress);
   for(int epoc = 0; epoc < iter; epoc++){
     double nu = g -> lr_t(epoc, lr_param);
     double nu2 = 1.0 - nu;
       arma::mat alpha_s = alpha;
       arma::mat beta_s = beta;
-      up_theta_sp(N, alpha_s, beta_s,
+      bool reach_max_c = up_theta_sp(N, alpha_s, beta_s,
                   R, V, logV,
                   yv, xi, xp, varind,
                   p1, 1.0, a, b, M_max);
+      reach_max = reach_max | reach_max_c; 
       alpha = nu2 * alpha + nu * alpha_s;
       beta = nu2 * beta + nu * beta_s;
       V = alpha/beta;
@@ -193,5 +201,6 @@ List doSVB_pois_sp_skip_batch(const int & N,
   }
   return List::create(Named("shape")=alpha,
                       Named("rate")=beta,
-                      Named("ELBO")=ll);
+                      Named("ELBO")=ll,
+                      Named("reach_max") = reach_max);
 }
