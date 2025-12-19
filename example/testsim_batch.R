@@ -4,10 +4,6 @@ library(tidyr)
 library(dplyr)
 library(ggplot2)
 
-####
-#batch
-####
-
 fullranktrans <- function(X) {
   ind = attr(X, "indices")
   termlen = length(ind[-1])
@@ -50,7 +46,6 @@ rearrange_winner_ord <- function(V, V_s) {
   list(V = V_s[, ord], cor = diag(cmat[, ord]))
 }
 
-
 i = 1
 L <- 5L
 ncols = c(100, 500, 1000)
@@ -64,16 +59,11 @@ X <- sparse_onehot(~., data = df)
 N <- nrow(X)
 D <- ncol(X)
 set.seed(123456789)
-V <- matrix(rlnorm(L * D, 0, 1), D, L)
+V <- matrix(rlnorm(L * D, -1, 1), D, L)
 ord = order(apply(log(V), 2, var), decreasing = TRUE)
 V = V[, ord]
 lambda <- product_m.default(X, V)
 Y <- rpois(N, lambda)
-wch = which(Y > 0)
-
-Y1 = Y[wch]
-X1 = slice_rows(X, wch)
-length(wch) / length(Y)
 
 st = system.time({
   out_d <- moltenNMF::mNMF_vb.default(
@@ -90,7 +80,7 @@ Xs <- sparse.model.matrix(~., data = df)
 Xs = set_attr_modelmat(Xs)
 
 wch = which(Y > 0)
-Y_sp = sparseVector(Y1, wch, length = length(Y))
+Y_sp = sparseVector(Y[wch], wch, length = length(Y))
 st2 = system.time({
   out_sb <- moltenNMF::mNMF_vb.default(
     Y_sp,
@@ -103,10 +93,28 @@ st2 = system.time({
 
 st2 / st
 
+
+Xs1 = slice_rows(Xs, wch)
+st_bs <- system.time({
+  out_bs <- moltenNMF:::mNMF_bsvb(
+    Y_sp@x,
+    X = Xs1,
+    N = nrow(X),
+    L = L,
+    n_epochs = 500,
+    M_max = 10L,
+    display_progress = TRUE
+  )
+})
+
+st_bs
+
 plot(out_d$ELBO[-1], type = "l")
-lines(out_sb$ELBO[-1], type = "l", col = "royalblue", lty = 2)
+plot(out_bs$ELBO[-1], type = "l", col = "royalblue", lty = 2)
+plot(out_bs$ELBO[-1], type = "l")
 
-
+V_bs <- out_bs$shape / out_bs$rate
+f_bs = product_m(Xs, V_bs)
 V_d <- out_d$shape / out_d$rate
 f_d <- moltenNMF::product_m(X, V_d)
 V_sb <- out_sb$shape / out_sb$rate
@@ -115,7 +123,7 @@ f_sb <- moltenNMF::product_m(Xs, V_sb)
 ggplot() +
   geom_point(aes(x = f_d, y = as.matrix(Y)), alpha = 0.25, shape = 1) +
   geom_point(
-    aes(x = f_sb, y = as.matrix(Y)),
+    aes(x = f_bs, y = as.matrix(Y)),
     alpha = 0.25,
     colour = "royalblue",
     shape = 2

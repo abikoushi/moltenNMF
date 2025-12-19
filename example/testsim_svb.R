@@ -39,23 +39,6 @@ X1 = slice_rows(X, wch)
 length(wch) / length(Y)
 
 system.time({
-  out_b <- moltenNMF:::mNMF_bsvb(
-    Y1,
-    X = X1,
-    N = nrow(X),
-    L = L,
-    n_epochs = 200,
-    M_max = 10L,
-    display_progress = TRUE
-  )
-})
-plot(out_b$ELBO[-1], type = "l")
-
-f = product_m(X, out_b$shape / out_b$rate)
-plot(f, Y, pch = ".", col = rgb(0, 0, 0, 0.5))
-abline(0, 1, col = "royalblue")
-
-system.time({
   out_s <- moltenNMF:::mNMF_svb(
     Y1,
     X = X1,
@@ -76,5 +59,3 @@ plot(out_s$ELBO[-1], type = "l")
 f = product_m(X, out_s$shape / out_s$rate)
 plot(f, Y, pch = ".", col = rgb(0, 0, 0, 0.5))
 abline(0, 1, col = "royalblue")
-
-#TODO:batch shape update みなおし
