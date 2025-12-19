@@ -5,6 +5,7 @@
 #include <random>
 #include <chrono>
 #include <iostream>
+#include "geometricsampling.h"
 // #include "TimerLogger.h"
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]

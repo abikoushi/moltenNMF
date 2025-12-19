@@ -1,6 +1,7 @@
 #include <RcppArmadillo.h>
 #include "myproduct.h"
 #include "logexpfuns.h"
+#include "up_shape.h"
 #include "up_rate.h"
 #include "geometricsampling.h"
 #include "ELBO.h"
@@ -153,6 +154,46 @@ List doSVB_pois_sp_skip(const int & N,
                       Named("reach_max") = reach_max);
 }
 
+bool up_B_sp(const int & N,
+          arma::mat & beta,
+          arma::mat & V,
+          arma::mat & logV,
+          const arma::mat & alpha,
+          const arma::uvec & xi,
+          const arma::uvec & xp,
+          const arma::uvec & varind,
+          const double & rho,
+          const double & b,
+          const arma::uword & M_max){
+  int K = (varind.n_rows - 1);
+  int L = V.n_cols;
+  //for geometric sampling
+  arma::uword n0 = R::rgeom(rho);
+  int M = std::min(M_max, n0);
+  double MR = (double) n0 / (double) M;
+  arma::vec vl(V.n_rows);
+  arma::vec vl0(M);
+  arma::umat U(M, K);
+  for(int l = 0; l < L; l++){
+    arma::vec vl = myprodvec(N, xi, xp, V.col(l));
+    vl0 = geomprod_all(M, V.col(l), varind, U);
+    for(int k=0; k<K; k++){
+      int start = varind(k);
+      int end = varind(k+1);
+      int dsub = end - start;
+      vl /= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
+      arma::vec B1 = mysum_t(varind(k+1) - varind(k), xi, xp.rows(varind(k), varind(k+1)), vl);
+      arma::vec B0 = geomsum_k(dsub, M, MR, vl0, vl, varind, k, U);
+      arma::vec B = B1 + B0 + b;
+      beta.col(l).rows(varind(k), varind(k+1) - 1) = B;
+      V.col(l).rows(varind(k), varind(k+1) - 1) = alpha.col(l).rows(varind(k), varind(k+1) - 1)/B;
+      vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
+    }
+    logV = mat_digamma(alpha) - log(beta);
+  }
+  return (n0>M_max);
+}
+
 // [[Rcpp::export]]
 List doSVB_pois_sp_skip_batch(const int & N,
                         const arma::vec & yv,
@@ -165,8 +206,6 @@ List doSVB_pois_sp_skip_batch(const int & N,
                         const double & a,
                         const double & b,
                         arma::mat & V,
-                        const arma::vec & lr_param,
-                        const std::string & lr_type,
                         const int & M_max,
                         const bool & display_progress){
   const int N1 =  yv.n_rows;
@@ -177,26 +216,14 @@ List doSVB_pois_sp_skip_batch(const int & N,
   plus_Bs(N, beta, V, xi, xp, varind);
   arma::vec R = arma::zeros<arma::vec>(N1);
   arma::vec ll = arma::zeros<arma::vec>(iter);
-  std::unique_ptr<lr> g;
-  set_lr_method(g, lr_type);
   const double p1 = ((double) N1) / ((double) N);
   bool reach_max = false;
   Progress pb(iter, display_progress);
   for(int epoc = 0; epoc < iter; epoc++){
-    double nu = g -> lr_t(epoc, lr_param);
-    double nu2 = 1.0 - nu;
-      arma::mat alpha_s = alpha;
-      arma::mat beta_s = beta;
-      bool reach_max_c = up_theta_sp(N, alpha_s, beta_s,
-                  R, V, logV,
-                  yv, xi, xp, varind,
-                  p1, 1.0, a, b, M_max);
-      reach_max = reach_max | reach_max_c; 
-      alpha = nu2 * alpha + nu * alpha_s;
-      beta = nu2 * beta + nu * beta_s;
-      V = alpha/beta;
-      logV = mat_digamma(alpha) - log(beta);
-    ll.row(epoc) += lowerbound_logML_pois(alpha, beta, V, logV, R, yv, a, b);      
+    up_A(alpha, R, logV, yv, xi, xp, a);
+    bool reach_max_c = up_B_sp(N, beta, V, logV, alpha, xi, xp, varind, p1, b, M_max);
+    reach_max = reach_max | reach_max_c;
+    ll.row(epoc) += lowerbound_logML_pois(alpha, beta, V, logV, R, yv, a, b);
     pb.increment();
   }
   return List::create(Named("shape")=alpha,
