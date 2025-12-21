@@ -311,6 +311,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// myprod
+arma::mat myprod(const arma::uword& N, const arma::uvec& xi, const arma::uvec& xp, const arma::mat& lam);
+RcppExport SEXP _moltenNMF_myprod(SEXP NSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP lamSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::uword& >::type N(NSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type xi(xiSEXP);
+    Rcpp::traits::input_parameter< const arma::uvec& >::type xp(xpSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type lam(lamSEXP);
+    rcpp_result_gen = Rcpp::wrap(myprod(N, xi, xp, lam));
+    return rcpp_result_gen;
+END_RCPP
+}
 // summyprod
 arma::vec summyprod(const arma::uword& n, const arma::uvec& xi, const arma::uvec& xp, const arma::mat& lam);
 RcppExport SEXP _moltenNMF_summyprod(SEXP nSEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP lamSEXP) {
@@ -461,6 +475,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_moltenNMF_doSVB_pois_sp_skip", (DL_FUNC) &_moltenNMF_doSVB_pois_sp_skip, 16},
     {"_moltenNMF_doSVB_pois_sp_skip_batch", (DL_FUNC) &_moltenNMF_doSVB_pois_sp_skip_batch, 13},
     {"_moltenNMF_check_lr", (DL_FUNC) &_moltenNMF_check_lr, 3},
+    {"_moltenNMF_myprod", (DL_FUNC) &_moltenNMF_myprod, 4},
     {"_moltenNMF_summyprod", (DL_FUNC) &_moltenNMF_summyprod, 4},
     {"_moltenNMF_NegBin_lp", (DL_FUNC) &_moltenNMF_NegBin_lp, 7},
     {"_moltenNMF_Poisson_lp", (DL_FUNC) &_moltenNMF_Poisson_lp, 6},

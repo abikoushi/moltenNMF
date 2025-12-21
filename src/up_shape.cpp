@@ -2,7 +2,7 @@
 #include "myproduct.h"
 #include "up_shape.h"
 using namespace Rcpp;
-#include "TimerLogger.h"
+//#include "TimerLogger.h"
 
 // update shape parameters
 void up_A(arma::mat & alpha,
@@ -16,6 +16,7 @@ void up_A(arma::mat & alpha,
   R = sum(r, 1);
   alpha = mysum_t(alpha.n_rows, xi, xp, r.each_col()%(y/R)) + a; //D,L
 }
+
 
 ////
 //sparse y

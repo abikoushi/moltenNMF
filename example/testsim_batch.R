@@ -4,20 +4,6 @@ library(tidyr)
 library(dplyr)
 library(ggplot2)
 
-fullranktrans <- function(X) {
-  ind = attr(X, "indices")
-  termlen = length(ind[-1])
-  A = matrix(0, ind[length(ind)], ind[length(ind)] - termlen + 1)
-  for (k in 1:termlen) {
-    start = ind[k] + 2
-    for (i in start:ind[-1][k]) {
-      A[i, i - k + 1] <- 1
-    }
-  }
-  A[, 1] <- 1 / termlen
-  return(A)
-}
-
 set_attr_modelmat <- function(X) {
   if (!is.null(attr(X, "assign"))) {
     attr(X, "indices") <- c(0L, cumsum(rle(attr(X, "assign"))$lengths))
@@ -74,7 +60,7 @@ st = system.time({
     display_progress = TRUE
   )
 })
-
+st
 
 Xs <- sparse.model.matrix(~., data = df)
 Xs = set_attr_modelmat(Xs)

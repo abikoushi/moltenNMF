@@ -1,6 +1,7 @@
 #include <RcppArmadillo.h>
 #include "myproduct.h"
 
+// [[Rcpp::export]]
 arma::mat myprod(const arma::uword & N,
                  const arma::uvec & xi,
                  const arma::uvec & xp,

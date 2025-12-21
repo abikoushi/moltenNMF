@@ -57,6 +57,10 @@ check_lr <- function(epoc, lr_param, lr_type) {
     .Call(`_moltenNMF_check_lr`, epoc, lr_param, lr_type)
 }
 
+myprod <- function(N, xi, xp, lam) {
+    .Call(`_moltenNMF_myprod`, N, xi, xp, lam)
+}
+
 summyprod <- function(n, xi, xp, lam) {
     .Call(`_moltenNMF_summyprod`, n, xi, xp, lam)
 }
