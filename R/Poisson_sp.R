@@ -102,10 +102,10 @@ mNMF_bsvb <- function(
   if (!any(class(y) == "dsparseVector" | class(y) == "isparseVector")) {
     stopifnot(!is.null(N))
     out <- doSVB_pois_sp_skip_batch(
-      N,
-      y,
-      X@i,
-      X@p,
+      N=N,
+      yv=y,
+      xi=X@i,
+      xp=X@p,
       varind = indices,
       D = X@Dim[2],
       L = L,
@@ -118,10 +118,10 @@ mNMF_bsvb <- function(
     )
   } else {
     out <- doSVB_pois_sp_skip_batch(
-      y@length,
-      y@x,
-      X@i,
-      X@p,
+      N=y@length,
+      yv=y@x,
+      xi=X@i,
+      xp=X@p,
       varind = indices,
       D = X@Dim[2],
       L = L,

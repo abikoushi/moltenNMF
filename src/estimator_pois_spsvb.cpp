@@ -189,7 +189,7 @@ bool up_B_sp(const int & N,
       V.col(l).rows(varind(k), varind(k+1) - 1) = alpha.col(l).rows(varind(k), varind(k+1) - 1)/B;
       vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
     }
-    logV = vec_digamma(alpha) - log(beta);
+    logV = mat_digamma(alpha) - log(beta);
   }
   return (n0>M_max);
 }

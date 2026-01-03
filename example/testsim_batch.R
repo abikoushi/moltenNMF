@@ -83,7 +83,7 @@ st2 / st
 Xs1 = slice_rows(Xs, wch)
 st_bs <- system.time({
   out_bs <- moltenNMF:::mNMF_bsvb(
-    Y_sp@x,
+    y=Y_sp,
     X = Xs1,
     N = nrow(X),
     L = L,
@@ -109,10 +109,16 @@ f_sb <- moltenNMF::product_m(Xs, V_sb)
 ggplot() +
   geom_point(aes(x = f_d, y = as.matrix(Y)), alpha = 0.25, shape = 1) +
   geom_point(
-    aes(x = f_bs, y = as.matrix(Y)),
+    aes(x = f_sb, y = as.matrix(Y)),
     alpha = 0.25,
     colour = "royalblue",
     shape = 2
+  ) +
+  geom_point(
+    aes(x = f_bs, y = as.matrix(Y)),
+    alpha = 0.25,
+    colour = "orange",
+    shape = 3
   ) +
   geom_abline(intercept = 0, slope = 1, linetype = 2, colour = "lightgrey") +
   theme_bw()
