@@ -20,7 +20,7 @@ void up_tau(double & tau,
   arma::vec ybar = sum(myprod(z.n_rows, xi, xp, V), 1);
   arma::vec ahat = (y+tau);
   arma::vec bhat = (ybar+tau);
-  arma::vec logz = vec_digamma(ahat) - log(bhat);
+  arma::vec logz = mat_digamma(ahat) - log(bhat);
   z = ahat/bhat;
   tau += sum(logz - z + log(tau) + 1 - R::digamma(tau))/(y.n_rows*(1/tau - R::trigamma(tau)));
 }
@@ -40,7 +40,7 @@ double lowerbound_logML2(const arma::vec & z,
   arma::vec ahat = (y+tau);
   arma::vec ybar = sum(myprod(y.n_rows, xi, xp, lambda), 1);
   arma::vec bhat = (ybar+tau);
-  arma::vec logz = vec_digamma(ahat) - log(bhat);
+  arma::vec logz = mat_digamma(ahat) - log(bhat);
   return sum(-R + y%log(R) - lgamma(y+1) + y%logz) +
     + accu((a-1)*loglambda - b*lambda + a*log(beta) - std::lgamma(a)) +
     - accu((alpha-1)%loglambda - beta%lambda + alpha%log(beta) - lgamma(alpha))+

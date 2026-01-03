@@ -4,16 +4,6 @@
 #include <armadillo>    // arma::vec
 #include <algorithm>    // std::transform
 
-/*
-arma::vec digamma_vec(const arma::vec& x) {
-  arma::vec out(x.n_elem);
-  std::transform(x.begin(), x.end(), out.begin(), [](double xi) {
-    return R::digamma(xi);
-  });
-  return out;
-}
-*/
-
 double xlogy(const double & x, const double & y){
   double res = 0.0;
   if(y > 0.0){
@@ -33,14 +23,22 @@ arma::rowvec softmax(const arma::rowvec & x){
   return exp(u)/sum(exp(u));
 }
 
-arma::mat mat_digamma(arma::mat a){
-  int K = a.n_rows;
-  int L = a.n_cols;
-  arma::mat out(K,L);
-  for(int k=0;k<K;k++){
-    for(int l=0;l<L;l++){
-      out(k,l) = R::digamma(a(k,l));
-    }
+// arma::mat mat_digamma(const arma::mat & a){
+//   int K = a.n_rows;
+//   int L = a.n_cols;
+//   arma::mat out(K,L);
+//   for(int k=0;k<K;k++){
+//     for(int l=0;l<L;l++){
+//       out(k,l) = R::digamma(a(k,l));
+//     }
+//   }
+//   return out;
+// }
+
+arma::mat mat_digamma(const arma::mat & a){
+  arma::mat out = a;
+  for (auto &x : out) {
+    x = R::digamma(x);
   }
   return out;
 }

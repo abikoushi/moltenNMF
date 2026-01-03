@@ -83,7 +83,7 @@ void upEV(arma::mat & V, arma::mat & logV,
           const arma::uvec & up){
   //TimerLogger up_V_total("up_V");
   V.rows(up) = alpha.rows(up)/beta.rows(up);
-  logV.rows(up) = mat_digamma(alpha.rows(up)) - log(beta.rows(up));
+  logV.rows(up) = vec_digamma(alpha.rows(up)) - log(beta.rows(up));
 }
 
 /////
@@ -189,7 +189,7 @@ bool up_B_sp(const int & N,
       V.col(l).rows(varind(k), varind(k+1) - 1) = alpha.col(l).rows(varind(k), varind(k+1) - 1)/B;
       vl %= myprodvec_sub(N, xi, xp, varind(k), varind(k+1), V.col(l));
     }
-    logV = mat_digamma(alpha) - log(beta);
+    logV = vec_digamma(alpha) - log(beta);
   }
   return (n0>M_max);
 }

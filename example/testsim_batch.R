@@ -60,7 +60,7 @@ st = system.time({
     display_progress = TRUE
   )
 })
-st
+print(st)
 
 Xs <- sparse.model.matrix(~., data = df)
 Xs = set_attr_modelmat(Xs)
