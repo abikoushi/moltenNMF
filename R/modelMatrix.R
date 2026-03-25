@@ -50,9 +50,9 @@ sparse_onehot <- function(object,
         ifelse(is.na(data[[x]]), NA_character_, as.character(data[[x]]))
       })
       ct <- ifelse(apply(is.na(cmat),1,any), NA_character_, apply(cmat, 1, paste, collapse=":"))
-      X_i <- t(moltenNMF:::sparse_cate(ct, repr = repr, binary_dummy = binary_dummy))
+      X_i <- t(sparse_cate(ct, repr = repr, binary_dummy = binary_dummy))
     }else{
-      X_i <- t(moltenNMF:::sparse_cate(data[[labs[i]]], repr = repr, binary_dummy = binary_dummy))
+      X_i <- t(sparse_cate(data[[labs[i]]], repr = repr, binary_dummy = binary_dummy))
     }
     l_labs[[i]] <- colnames(X_i)
     len[i] <- ncol(X_i)

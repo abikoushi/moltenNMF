@@ -2,8 +2,11 @@ library(moltenNMF)
 library(Matrix)
 library(dplyr)
 library(ggplot2)
-library(rliger)
+library(bench)
+#library(rliger)
 #library(patchwork)
+
+# moltenNMF:::check_arma64()
 
 set_data_mf <- function(L, nrow, ncol, mu=0){
   W <- matrix(rnorm(nrow*L,0,1), ncol=L)
@@ -16,15 +19,22 @@ set_data_mf <- function(L, nrow, ncol, mu=0){
   list(Y=Y, trueW=W[,ord], trueH=H[ord,])
 }
 
-dat <- set_data_mf(3, 99, 500)
+dat <- set_data_mf(3, 109, 500)
 
-hist(as.numeric(dat$Y))
+hist(as.numeric(dat$Y), breaks = "scott")
 
-system.time({
-  out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)
+bt <- bench::bench_time({
+  bm <- bench::bench_memory({
+    out <- moltenNMF:::NMF2D_vb(dat$Y, rank = 3, iter = 1000)    
+  })
 })
-#  user  system elapsed 
-# 8.592   0.074   8.767 
+
+print(bt)
+#process    real 
+#  2.29s   2.28s 
+print(bm)
+#1.07MB
+
 plot(out$ELBO[-1], type = "l")
 is.matrix(out$shape)
 V = moltenNMF::meanV(out)
@@ -32,7 +42,7 @@ V = moltenNMF:::rearrange_cols(V)
 fit1 = V[[1]]%*%t(V[[2]])
 
 p1 = ggplot(data = NULL, aes(x=c(fit1), y=c(as.matrix(dat$Y))))+
-  geom_bin2d(aes(fill = after_stat(log10(count))))+
+  geom_bin2d(aes(fill = after_stat(log10(count))), bins = 30)+
   geom_abline(intercept = 0, slope = 1, linetype=2, colour="grey")
 print(p1)
 

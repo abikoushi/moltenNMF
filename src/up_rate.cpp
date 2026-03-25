@@ -2,10 +2,9 @@
 #include "myproduct.h"
 #include "logexpfuns.h"
 #include "up_rate.h"
-#include <random>
-#include <chrono>
-#include <iostream>
-#include "geometricsampling.h"
+// #include <random>
+// #include <chrono>
+// #include <iostream>
 // #include "TimerLogger.h"
 using namespace Rcpp;
 // [[Rcpp::depends(RcppArmadillo)]]

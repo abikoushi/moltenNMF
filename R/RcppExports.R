@@ -17,44 +17,12 @@ doVB_pois_sp <- function(N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display
     .Call(`_moltenNMF_doVB_pois_sp`, N, yv, yi, xi, xp, varind, D, L, iter, a, b, V, display_progress)
 }
 
-doVB_pois_2D <- function(V, y, rowi, coli, dims, L, iter, a, b, display_progress) {
-    .Call(`_moltenNMF_doVB_pois_2D`, V, y, rowi, coli, dims, L, iter, a, b, display_progress)
-}
-
-doVB_pois_2D_ww <- function(V, y, rowi, coli, dims, L, iter, weight, a, b, display_progress) {
-    .Call(`_moltenNMF_doVB_pois_2D_ww`, V, y, rowi, coli, dims, L, iter, weight, a, b, display_progress)
-}
-
-doVB_pois_s_2D <- function(y, rowi, coli, L, iter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress) {
-    .Call(`_moltenNMF_doVB_pois_s_2D`, y, rowi, coli, L, iter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress)
-}
-
-doVB_pois_s_2D_ww <- function(y, rowi, coli, L, iter, weight, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress) {
-    .Call(`_moltenNMF_doVB_pois_s_2D_ww`, y, rowi, coli, L, iter, weight, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress)
-}
-
-doVB_pois_s_2D_bin <- function(filepath_x, filepath_y, L, iter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress) {
-    .Call(`_moltenNMF_doVB_pois_s_2D_bin`, filepath_x, filepath_y, L, iter, a, b, N1, Nr, Nc, bsize, lr_param, lr_type, display_progress)
-}
-
 doVB_pois_offset_sp <- function(N, yv, yi, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress) {
     .Call(`_moltenNMF_doVB_pois_offset_sp`, N, yv, yi, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress)
 }
 
 doVB_pois_offset <- function(y, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress) {
     .Call(`_moltenNMF_doVB_pois_offset`, y, xi, xp, varind, D, L, tau, iter, a, b, V, display_progress)
-}
-
-doSVB_pois_sp_skip <- function(N, yv, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, M_max, display_progress) {
-    .Call(`_moltenNMF_doSVB_pois_sp_skip`, N, yv, xi, xp, varind, D, L, iter, a, b, V, bsize, lr_param, lr_type, M_max, display_progress)
-}
-
-doSVB_pois_sp_skip_batch <- function(N, yv, xi, xp, varind, D, L, iter, a, b, V, M_max, display_progress) {
-    .Call(`_moltenNMF_doSVB_pois_sp_skip_batch`, N, yv, xi, xp, varind, D, L, iter, a, b, V, M_max, display_progress)
-}
-
-check_lr <- function(epoc, lr_param, lr_type) {
-    .Call(`_moltenNMF_check_lr`, epoc, lr_param, lr_type)
 }
 
 myprod <- function(N, xi, xp, lam) {
@@ -83,14 +51,6 @@ NegbinGamma_rng <- function(N, np, xi, xp, alpha, beta, tau) {
 
 obsfitloss_mtx <- function(readtxt, fit, n_header) {
     .Call(`_moltenNMF_obsfitloss_mtx`, readtxt, fit, n_header)
-}
-
-obsfitloss_2d_mtx <- function(readtxt, V1, V2, n_header) {
-    .Call(`_moltenNMF_obsfitloss_2d_mtx`, readtxt, V1, V2, n_header)
-}
-
-rowmeanvar_txt <- function(n_row, n_col, readtxt, n_header = 2L) {
-    .Call(`_moltenNMF_rowmeanvar_txt`, n_row, n_col, readtxt, n_header)
 }
 
 rowfilter_mtx <- function(readtxt, writetxt, rowind, n_header = 2L) {

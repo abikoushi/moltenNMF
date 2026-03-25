@@ -28,12 +28,12 @@ List obsfitloss_mtx(const std::string & readtxt,
   double v;
   std::ifstream file(readtxt);
   std::string str;    
-  int index = 0;
+  //int index = 0;
   // int n = 0;
   for(int i=0; i<n_header; i++){
     //skip header
     std::getline(file, str);
-    index++;
+    //index++;
   }
   while(std::getline(file, str)){
     //index++;
@@ -62,7 +62,7 @@ List obsfitloss_mtx(const std::string & readtxt,
                       Named("MSE")=MSE);
 }
 
-// [[Rcpp::export]]
+
 List obsfitloss_2d_mtx(const std::string & readtxt,
                        const arma::mat & V1,
                        const arma::mat & V2,
@@ -75,12 +75,12 @@ List obsfitloss_2d_mtx(const std::string & readtxt,
   double v;
   std::ifstream file(readtxt);
   std::string str;
-  int index = 0;
+  //int index = 0;
   // int n = 0;
   for(int i=0; i<n_header; i++){
     //skip header
     std::getline(file, str);
-    index++;
+    //index++;
   }
   while(std::getline(file, str)){
     //index++;
@@ -122,7 +122,6 @@ List obsfitloss_2d_mtx(const std::string & readtxt,
 //pre-
 ////
 
-// [[Rcpp::export]]
 List rowmeanvar_txt(const int & n_row,
                     const int & n_col,
                     const std::string & readtxt,
@@ -132,14 +131,14 @@ List rowmeanvar_txt(const int & n_row,
   double v;
   std::ifstream file(readtxt);
   std::string str;
-  int index = 0;
+  // int index = 0;
   // int n = 0;
   arma::vec vout = arma::zeros<arma::vec>(n_row);
   arma::vec v2out = arma::zeros<arma::vec>(n_row);
   for(int i=0; i<n_header; i++){
     //skip header
     std::getline(file, str);
-    index++;
+    // index++;
   }
   while(std::getline(file, str)){
     std::stringstream ss(str);

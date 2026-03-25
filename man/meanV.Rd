@@ -1,4 +1,4 @@
-\name{meanVy}
+\name{meanV}
 \alias{meanV}
 \title{Compute Mean of Posterior Distributions}
 \description{
