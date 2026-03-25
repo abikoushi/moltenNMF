@@ -11,20 +11,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// read_bin
-List read_bin(const std::string& filepath_x, const std::string& filepath_y, const arma::uvec& bag, const int& x_dim);
-RcppExport SEXP _moltenNMF_read_bin(SEXP filepath_xSEXP, SEXP filepath_ySEXP, SEXP bagSEXP, SEXP x_dimSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::string& >::type filepath_x(filepath_xSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type filepath_y(filepath_ySEXP);
-    Rcpp::traits::input_parameter< const arma::uvec& >::type bag(bagSEXP);
-    Rcpp::traits::input_parameter< const int& >::type x_dim(x_dimSEXP);
-    rcpp_result_gen = Rcpp::wrap(read_bin(filepath_x, filepath_y, bag, x_dim));
-    return rcpp_result_gen;
-END_RCPP
-}
 // doVB_negbin
 List doVB_negbin(const arma::vec& y, const arma::uvec& xi, const arma::uvec& xp, const arma::uvec& varind, const int& D, const int& L, const int& iter, const double& a, const double& b, arma::mat& V, const bool& display_progress);
 RcppExport SEXP _moltenNMF_doVB_negbin(SEXP ySEXP, SEXP xiSEXP, SEXP xpSEXP, SEXP varindSEXP, SEXP DSEXP, SEXP LSEXP, SEXP iterSEXP, SEXP aSEXP, SEXP bSEXP, SEXP VSEXP, SEXP display_progressSEXP) {
@@ -258,7 +244,6 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_moltenNMF_read_bin", (DL_FUNC) &_moltenNMF_read_bin, 4},
     {"_moltenNMF_doVB_negbin", (DL_FUNC) &_moltenNMF_doVB_negbin, 11},
     {"_moltenNMF_doVB_pois", (DL_FUNC) &_moltenNMF_doVB_pois, 11},
     {"_moltenNMF_doVB_pois_sp", (DL_FUNC) &_moltenNMF_doVB_pois_sp, 13},
